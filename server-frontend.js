@@ -1,12 +1,9 @@
-// Simple Node.js static server for the frontend
-// Ejecuta: node server-frontend.js
-
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 8081;
-const base = path.join(__dirname, 'frontend');
+const port = process.env.PORT || 8081;
+const publicDir = path.join(__dirname, 'frontend');
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -15,23 +12,34 @@ const mimeTypes = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
-  '.gif': 'image/gif',
+  '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon'
 };
 
 http.createServer((req, res) => {
-  // Si la ruta es '/', servir login.html en vez de index.html
-  let filePath = path.join(base, req.url === '/' ? '/login.html' : req.url);
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
+  console.log(`${req.method} ${req.url}`);
+  let requestedPath = req.url.split('?')[0];
+  let filePath = path.join(publicDir, requestedPath === '/' ? 'index.html' : requestedPath);
+
+  fs.exists(filePath, exists => {
+    if (!exists) {
       res.writeHead(404, {'Content-Type': 'text/plain'});
       res.end('404 Not Found');
-    } else {
-      const ext = path.extname(filePath);
-      res.writeHead(200, {'Content-Type': mimeTypes[ext] || 'application/octet-stream'});
-      res.end(data);
+      return;
     }
+    let ext = path.extname(filePath);
+    let contentType = mimeTypes[ext] || 'application/octet-stream';
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(500, {'Content-Type': 'text/plain'});
+        res.end('500 Internal Server Error');
+        return;
+      }
+      res.writeHead(200, {'Content-Type': contentType});
+      res.end(data);
+    });
   });
-}).listen(PORT, () => {
-  console.log(`Servidor frontend corriendo en http://localhost:${PORT}`);
+}).listen(port, () => {
+  console.log(`Frontend server running at http://localhost:${port}`);
 });

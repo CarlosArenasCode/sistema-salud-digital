@@ -1,13 +1,14 @@
 # Archivos compilados de Java
-backend/target/
+/backend/target/
 *.class
 *.jar
 *.war
 
 # Logs
-backend/logs/
+/backend/logs/
 *.log
 *.log.*
+*.log.gz
 
 # Base de datos local
 database/
