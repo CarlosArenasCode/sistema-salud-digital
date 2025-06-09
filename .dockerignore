@@ -1,0 +1,25 @@
+# Archivos de Docker
+Dockerfile.backend
+Dockerfile.frontend
+docker-compose.yml
+
+# Logs y datos temporales
+backend/logs/
+backend/target/
+*.log
+
+# Archivos de configuración local
+.env
+.env.local
+
+# Datos de PostgreSQL (volumen Docker)
+postgres_data/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.iml

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            font-family: sans-serif;
+        }
+        .login-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            width: 100%;
+            max-width: 340px;
+        }
+        .login-card h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.3rem; color: #374151; }
+        input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn:disabled { background: #9ca3af; }
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>Iniciar Sesión</h1>
+        <form id="loginForm">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn" id="loginButton">
+                <span id="buttonText">Iniciar Sesión</span>
+            </button>
+        </form>
+    </div>
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('errorMessage');
+            const loginButton = document.getElementById('loginButton');
+            const buttonText = document.getElementById('buttonText');
+            errorDiv.style.display = 'none';
+            if (!username || !password) {
+                showError('Por favor, complete todos los campos');
+                return;
+            }
+            loginButton.disabled = true;
+            buttonText.textContent = 'Verificando...';
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify({
+                        id: data.userId || 1,
+                        name: data.username || username,
+                        role: data.role || 'user'
+                    }));
+                    buttonText.textContent = '¡Acceso exitoso!';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    showError(errorData.message || 'Usuario o contraseña incorrectos');
+                }
+            } catch (error) {
+                showError('Error de conexión. Verifique el servidor.');
+            } finally {
+                if (buttonText.textContent !== '¡Acceso exitoso!') {
+                    loginButton.disabled = false;
+                    buttonText.textContent = 'Iniciar Sesión';
+                }
+            }
+        });
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 4000);
+        }
+        if (localStorage.getItem('auth_token')) {
+            window.location.href = 'dashboard.html';
+        }
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('password').focus();
+        });
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        });
+    </script>
+</body>
+</html>
+

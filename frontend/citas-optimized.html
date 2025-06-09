@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas - Sistema de Salud Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-heartbeat me-2"></i>Sistema de Salud Digital
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="pacientes-optimized.html">Pacientes</a>
+                <a class="nav-link" href="medicos-optimized.html">Médicos</a>
+                <a class="nav-link active" href="citas-optimized.html">Citas</a>
+                <a class="nav-link" href="medicamentos-optimized.html">Medicamentos</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-calendar-alt me-2"></i>Gestión de Citas Médicas
+                        </h5>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#citaModal">
+                            <i class="fas fa-plus me-2"></i>Nueva Cita
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="citasTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Paciente</th>
+                                        <th>Médico</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="citasTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar cita -->
+    <div class="modal fade" id="citaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="citaModalTitle">Nueva Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="citaForm">
+                        <input type="hidden" id="citaId">
+                        
+                        <div class="mb-3">
+                            <label for="pacienteId" class="form-label">Paciente *</label>
+                            <select class="form-select" id="pacienteId" required>
+                                <option value="">Seleccione un paciente</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="medicoId" class="form-label">Médico *</label>
+                            <select class="form-select" id="medicoId" required>
+                                <option value="">Seleccione un médico</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fechaCita" class="form-label">Fecha *</label>
+                                    <input type="date" class="form-control" id="fechaCita" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="horaCita" class="form-label">Hora *</label>
+                                    <input type="time" class="form-control" id="horaCita" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="motivoConsulta" class="form-label">Motivo de la Consulta</label>
+                            <textarea class="form-control" id="motivoConsulta" rows="3" placeholder="Describe el motivo de la consulta"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select class="form-select" id="estado">
+                                <option value="PROGRAMADA">Programada</option>
+                                <option value="CONFIRMADA">Confirmada</option>
+                                <option value="EN_CURSO">En Curso</option>
+                                <option value="COMPLETADA">Completada</option>
+                                <option value="CANCELADA">Cancelada</option>
+                                <option value="NO_ASISTIO">No Asistió</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" rows="2" placeholder="Observaciones adicionales"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveCitaBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/crud-manager.js"></script>
+    <script>
+        // Configuración específica para citas
+        const citaConfig = {
+            entityName: 'cita',
+            entityNamePlural: 'citas',
+            apiEndpoint: '/api/citas',
+            modalId: 'citaModal',
+            formId: 'citaForm',
+            tableBodyId: 'citasTableBody',
+            
+            fields: [
+                { name: 'pacienteId', type: 'select', required: true },
+                { name: 'medicoId', type: 'select', required: true },
+                { name: 'fechaCita', type: 'date', required: true },
+                { name: 'horaCita', type: 'time', required: true },
+                { name: 'motivoConsulta', type: 'textarea' },
+                { name: 'estado', type: 'select' },
+                { name: 'observaciones', type: 'textarea' }
+            ],
+
+            formatTableRow: function(cita) {
+                const estadoClass = {
+                    'PROGRAMADA': 'bg-warning',
+                    'CONFIRMADA': 'bg-info',
+                    'EN_CURSO': 'bg-primary',
+                    'COMPLETADA': 'bg-success',
+                    'CANCELADA': 'bg-danger',
+                    'NO_ASISTIO': 'bg-secondary'
+                };
+
+                return `
+                    <tr>
+                        <td>${cita.id}</td>
+                        <td>${cita.pacienteNombre || 'N/A'}</td>
+                        <td>${cita.medicoNombre || 'N/A'}</td>
+                        <td>${AppUtils.formatDate(cita.fechaCita)}</td>
+                        <td>${cita.horaCita || 'N/A'}</td>
+                        <td><span class="badge ${estadoClass[cita.estado] || 'bg-secondary'}">${cita.estado || 'N/A'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="citaManager.edit(${cita.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="citaManager.delete(${cita.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        };
+
+        // Inicializar el manager de citas
+        const citaManager = new CRUDManager(citaConfig);
+
+        // Cargar datos al inicializar la página
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadSelectOptions();
+            await citaManager.loadData();
+        });
+
+        // Función para cargar opciones de selects
+        async function loadSelectOptions() {
+            try {
+                // Cargar pacientes
+                const pacientes = await AppUtils.get('/api/pacientes');
+                const pacienteSelect = document.getElementById('pacienteId');
+                pacientes.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.fullName}`;
+                    pacienteSelect.appendChild(option);
+                });
+
+                // Cargar médicos
+                const medicos = await AppUtils.get('/api/medicos');
+                const medicoSelect = document.getElementById('medicoId');
+                medicos.forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.fullName} - ${medico.specialization}`;
+                    medicoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading select options:', error);
+                AppUtils.showAlert('Error al cargar las opciones', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

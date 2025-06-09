@@ -1,0 +1,26 @@
+# Dockerfile para el backend Spring Boot
+FROM openjdk:17-jdk-slim
+
+# Instalar Maven
+RUN apt-get update && apt-get install -y maven && apt-get clean
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de configuración de Maven
+COPY backend/pom.xml .
+
+# Descargar dependencias (cacheable)
+RUN mvn dependency:go-offline
+
+# Copiar código fuente
+COPY backend/src ./src
+
+# Compilar la aplicación
+RUN mvn clean package -DskipTests
+
+# Exponer puerto
+EXPOSE 8080
+
+# Comando para ejecutar la aplicación
+CMD ["java", "-jar", "target/backend-1.0-SNAPSHOT.jar"]

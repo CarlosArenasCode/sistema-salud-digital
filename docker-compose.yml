@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  database:
+    image: postgres:15
+    container_name: salud-database
+    environment:
+      POSTGRES_DB: sistema_salud
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/schema-postgresql.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./backend/src/main/resources/data-sample.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      - salud-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sistema_salud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: salud-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgresql
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/sistema_salud
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin123
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - salud-network
+    volumes:
+      - ./backend/logs:/app/logs
+
+  # Frontend Node.js
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: salud-frontend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    networks:
+      - salud-network
+
+volumes:
+  postgres_data:
+
+networks:
+  salud-network:
+    driver: bridge

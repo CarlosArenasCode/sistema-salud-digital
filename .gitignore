@@ -1,0 +1,49 @@
+# Archivos compilados de Java
+backend/target/
+*.class
+*.jar
+*.war
+
+# Logs
+backend/logs/
+*.log
+*.log.*
+
+# Base de datos local
+database/
+*.db
+*.sqlite
+
+# Configuraciones locales
+.env
+.env.local
+backend/src/main/resources/db.properties
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node.js (si se usa)
+node_modules/
+npm-debug.log*
+
+# Docker (opcional - puedes comentar si quieres incluir los volúmenes)
+postgres_data/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Archivos de respaldo
+*.bak
+*.backup
