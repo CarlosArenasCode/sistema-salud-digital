@@ -1,0 +1,12 @@
+# Multi-stage Dockerfile para Spring Boot backend
+FROM maven:3.8.7-eclipse-temurin-17 AS builder
+WORKDIR /app
+COPY backend/pom.xml .
+COPY backend/src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre-slim
+WORKDIR /app
+COPY --from=builder /app/target/backend-1.0-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","app.jar"]

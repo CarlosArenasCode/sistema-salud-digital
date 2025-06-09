@@ -25,11 +25,11 @@ try {
 
 # Detener contenedores existentes si los hay
 Write-Host "🔄 Deteniendo contenedores existentes..." -ForegroundColor Yellow
-docker-compose down
+docker-compose -f docker/docker-compose.yml down
 
 # Construir y levantar los servicios
 Write-Host "🚀 Construyendo y levantando servicios..." -ForegroundColor Yellow
-docker-compose up --build -d
+docker-compose -f docker/docker-compose.yml up --build -d
 
 # Esperar a que los servicios estén listos
 Write-Host "⏳ Esperando a que los servicios estén listos..." -ForegroundColor Yellow
@@ -37,7 +37,7 @@ Start-Sleep -Seconds 10
 
 # Verificar el estado de los servicios
 Write-Host "📋 Estado de los servicios:" -ForegroundColor Cyan
-docker-compose ps
+docker-compose -f docker/docker-compose.yml ps
 
 # Mostrar información de acceso
 Write-Host ""
@@ -47,8 +47,8 @@ Write-Host "🌐 Frontend: http://localhost:8081" -ForegroundColor Cyan
 Write-Host "🔧 Backend API: http://localhost:8080/api" -ForegroundColor Cyan
 Write-Host "🗄️  Base de datos: localhost:5432" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📊 Para ver logs: docker-compose logs -f" -ForegroundColor Yellow
-Write-Host "🛑 Para detener: docker-compose down" -ForegroundColor Yellow
+Write-Host "📊 Para ver logs: docker-compose -f docker/docker-compose.yml logs -f" -ForegroundColor Yellow
+Write-Host "🛑 Para detener: docker-compose -f docker/docker-compose.yml down" -ForegroundColor Yellow
 Write-Host ""
 
 # Abrir navegador automáticamente

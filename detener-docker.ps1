@@ -6,7 +6,7 @@ Write-Host "======================================================" -ForegroundC
 
 # Detener y remover contenedores
 Write-Host "🛑 Deteniendo contenedores..." -ForegroundColor Yellow
-docker-compose down
+docker-compose -f docker/docker-compose.yml down
 
 # Mostrar contenedores activos
 Write-Host "📋 Contenedores activos:" -ForegroundColor Cyan
