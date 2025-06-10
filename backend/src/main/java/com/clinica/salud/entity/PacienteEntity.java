@@ -4,11 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Entidad que representa a un paciente en el sistema de salud digital.
  * Mapea con la tabla 'pacientes' en PostgreSQL.
- * OPTIMIZADO: Reducido de 282 líneas a ~75 líneas usando Lombok
+ * Unificada y estandarizada en español.
  */
 @Entity
 @Table(name = "pacientes")
@@ -16,51 +17,59 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = true)
-public class PacienteEntity extends BaseEntity {
+@EqualsAndHashCode(callSuper = false)
+public class PacienteEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @Column(name = "id_usuario")
-    private Long userId;
+    private Long idUsuario;
     
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
+    @NotBlank(message = "Los nombres son obligatorios")
+    @Size(max = 100, message = "Los nombres no pueden exceder 100 caracteres")
     @Column(name = "nombres", nullable = false, length = 100)
-    private String firstName;
+    private String nombres;
     
-    @NotBlank(message = "El apellido es obligatorio")
-    @Size(max = 100, message = "El apellido no puede exceder 100 caracteres")
+    @NotBlank(message = "Los apellidos son obligatorios")
+    @Size(max = 100, message = "Los apellidos no pueden exceder 100 caracteres")
     @Column(name = "apellidos", nullable = false, length = 100)
-    private String lastName;
+    private String apellidos;
     
-    @Column(name = "fecha_nacimiento")
-    private LocalDate dateOfBirth;
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private LocalDate fechaNacimiento;
     
-    @Size(max = 10, message = "El género no puede exceder 10 caracteres")
+    @Pattern(regexp = "MASCULINO|FEMENINO|OTRO", message = "El género debe ser MASCULINO, FEMENINO u OTRO")
     @Column(name = "genero", length = 10)
-    private String gender;
-    
-    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
+    private String genero;
+      @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
     @Column(name = "telefono", length = 20)
-    private String phone;
+    private String telefono;
     
-    @Size(max = 255, message = "La dirección no puede exceder 255 caracteres")
-    @Column(name = "direccion")
-    private String address;
+    @Email(message = "Formato de email inválido")
+    @Size(max = 100, message = "El email no puede exceder 100 caracteres")
+    @Column(name = "correo_electronico", length = 100)
+    private String email;
+    
+    @Column(name = "direccion", columnDefinition = "TEXT")
+    private String direccion;
     
     @Size(max = 100, message = "El contacto de emergencia no puede exceder 100 caracteres")
     @Column(name = "contacto_emergencia", length = 100)
-    private String emergencyContact;
+    private String contactoEmergencia;
     
     @Size(max = 20, message = "El teléfono de emergencia no puede exceder 20 caracteres")
     @Column(name = "telefono_emergencia", length = 20)
-    private String emergencyPhone;
+    private String telefonoEmergencia;
     
     @Size(max = 5, message = "El tipo de sangre no puede exceder 5 caracteres")
     @Column(name = "tipo_sangre", length = 5)
-    private String bloodType;
+    private String tipoSangre;
     
     @Column(name = "alergias", columnDefinition = "TEXT")
-    private String allergies;
+    private String alergias;
     
     @Size(max = 100, message = "El seguro médico no puede exceder 100 caracteres")
     @Column(name = "seguro_medico", length = 100)
@@ -78,8 +87,42 @@ public class PacienteEntity extends BaseEntity {
     @Column(name = "ocupacion", length = 100)
     private String ocupacion;
     
+    @Builder.Default
+    @Column(name = "activo")
+    private Boolean activo = true;
+    
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+    
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
+    
+    // Relación con usuario
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
+    private UsuarioEntity usuario;
+    
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+        fechaActualizacion = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        fechaActualizacion = LocalDateTime.now();
+    }
+    
     // Método utilitario para obtener el nombre completo
-    public String getFullName() {
-        return firstName + " " + lastName;
+    public String getNombreCompleto() {
+        return nombres + " " + apellidos;
+    }
+    
+    // Método para calcular la edad
+    public int getEdad() {
+        if (fechaNacimiento != null) {
+            return LocalDate.now().getYear() - fechaNacimiento.getYear();
+        }
+        return 0;
     }
 }

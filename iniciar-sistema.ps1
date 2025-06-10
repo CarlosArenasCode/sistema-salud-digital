@@ -5,14 +5,18 @@
 $backendPath = "c:\WorkSpace\Sistema de Salud Digital\backend"
 $frontendPath = "c:\WorkSpace\Sistema de Salud Digital\frontend"
 
-# Inicializar la base de datos PostgreSQL antes de iniciar los servicios
-$initDbScript = "c:\WorkSpace\Sistema de Salud Digital\inicializar-db.ps1"
-if (Test-Path $initDbScript) {
-    Write-Host "Verificando e inicializando la base de datos PostgreSQL..."
-    pwsh -File $initDbScript
-    Write-Host "Verificación de base de datos completada."
-} else {
-    Write-Host "No se encontró el script de inicialización de base de datos: $initDbScript"
+# Omitir inicialización de base de datos para no modificar la BD
+Write-Host "Omitiendo verificación e inicialización de la base de datos."
+
+# Cambiar al directorio raíz del proyecto
+Set-Location -Path 'C:\WorkSpace\Sistema de Salud Digital'
+
+# Liberar puerto 8081 si está en uso
+$puertoFront = 8081
+$proceso = (Get-NetTCPConnection -LocalPort $puertoFront -ErrorAction SilentlyContinue).OwningProcess
+if ($proceso) {
+    Write-Host "Puerto $puertoFront en uso por PID $proceso. Matando proceso..."
+    Stop-Process -Id $proceso -Force -ErrorAction SilentlyContinue
 }
 
 # Iniciar backend en nueva ventana de PowerShell, asegurando el directorio correcto
@@ -25,9 +29,9 @@ try {
     $backendStarted = $false
 }
 
-# Iniciar servidor frontend en nueva ventana de PowerShell usando Node.js (puerto 8080) en lugar de Python
+# Iniciar servidor frontend en nueva ventana de PowerShell usando Node.js
 try {
-    Start-Process pwsh -ArgumentList "-NoExit", "-Command", "cd `"$PSScriptRoot`"; node server-frontend.js" -WorkingDirectory $PSScriptRoot -WindowStyle Normal
+    Start-Process pwsh -ArgumentList "-NoExit", "-Command", "node server-frontend.js" -WorkingDirectory $PSScriptRoot -WindowStyle Normal
     Start-Sleep -Seconds 2
     $frontendStarted = $true
 } catch {

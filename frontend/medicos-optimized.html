@@ -81,38 +81,37 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="doctorForm">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label">Nombres *</label>
-                            <input type="text" class="form-control" id="firstName" required>
+                    <div class="modal-body">                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombres *</label>
+                            <input type="text" class="form-control" id="nombres" required>
                         </div>
                         <div class="mb-3">
-                            <label for="lastName" class="form-label">Apellidos *</label>
-                            <input type="text" class="form-control" id="lastName" required>
+                            <label for="apellidos" class="form-label">Apellidos *</label>
+                            <input type="text" class="form-control" id="apellidos" required>
                         </div>
                         <div class="mb-3">
-                            <label for="specialization" class="form-label">Especialidad *</label>
-                            <input type="text" class="form-control" id="specialization" required>
+                            <label for="especializacion" class="form-label">Especialidad *</label>
+                            <input type="text" class="form-control" id="especializacion" required>
                         </div>
                         <div class="mb-3">
-                            <label for="licenseNumber" class="form-label">Licencia Médica</label>
-                            <input type="text" class="form-control" id="licenseNumber">
+                            <label for="numeroLicencia" class="form-label">Licencia Médica</label>
+                            <input type="text" class="form-control" id="numeroLicencia">
                         </div>
                         <div class="mb-3">
-                            <label for="phone" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="phone">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email">
                         </div>
                         <div class="mb-3">
-                            <label for="yearsOfExperience" class="form-label">Años de Experiencia</label>
-                            <input type="number" class="form-control" id="yearsOfExperience" min="0">
+                            <label for="anosExperiencia" class="form-label">Años de Experiencia</label>
+                            <input type="number" class="form-control" id="anosExperiencia" min="0">
                         </div>
                         <div class="mb-3">
-                            <label for="consultationFee" class="form-label">Tarifa de Consulta</label>
-                            <input type="number" class="form-control" id="consultationFee" step="0.01" min="0">
+                            <label for="tarifaConsulta" class="form-label">Tarifa de Consulta</label>
+                            <input type="number" class="form-control" id="tarifaConsulta" step="0.01" min="0">
                         </div>
                         <div class="mb-3">
                             <label for="consultorio" class="form-label">Consultorio</label>
@@ -144,29 +143,26 @@
             modalId: 'doctorModal',
             formId: 'doctorForm',
             tableBodyId: 'doctorsTableBody',
-            searchInputId: 'searchInput',
-            fields: [
-                { name: 'firstName', type: 'text', required: true },
-                { name: 'lastName', type: 'text', required: true },
-                { name: 'specialization', type: 'text', required: true },
-                { name: 'licenseNumber', type: 'text' },
-                { name: 'phone', type: 'tel' },
+            searchInputId: 'searchInput',            fields: [
+                { name: 'nombres', type: 'text', required: true },
+                { name: 'apellidos', type: 'text', required: true },
+                { name: 'especializacion', type: 'text', required: true },
+                { name: 'numeroLicencia', type: 'text' },
+                { name: 'telefono', type: 'tel' },
                 { name: 'email', type: 'email' },
-                { name: 'yearsOfExperience', type: 'number' },
-                { name: 'consultationFee', type: 'number' },
+                { name: 'anosExperiencia', type: 'number' },
+                { name: 'tarifaConsulta', type: 'number' },
                 { name: 'consultorio', type: 'text' },
                 { name: 'universidad', type: 'text' }
             ]
-        });
-
-        // Personalizar el renderizado de la tabla
+        });        // Personalizar el renderizado de la tabla
         medicoManager.renderTableRow = function(item) {
             return `
                 <tr>
-                    <td>${item.firstName || ''} ${item.lastName || ''}</td>
-                    <td>${item.specialization || ''}</td>
-                    <td>${item.licenseNumber || ''}</td>
-                    <td>${item.phone || ''}</td>
+                    <td>${item.nombres || ''} ${item.apellidos || ''}</td>
+                    <td>${item.especializacion || ''}</td>
+                    <td>${item.numeroLicencia || ''}</td>
+                    <td>${item.telefono || ''}</td>
                     <td>${item.email || ''}</td>
                     <td class="table-actions">
                         <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#doctorModal" onclick="medicoManager.edit(${item.id})">✏️</button>
@@ -194,10 +190,8 @@
         medicoManager.loadData = async function() {
             await originalLoadData();
             this.populateSpecialtyFilter();
-        };
-
-        medicoManager.populateSpecialtyFilter = function() {
-            const specialties = [...new Set(this.data.map(doc => doc.specialization).filter(Boolean))];
+        };        medicoManager.populateSpecialtyFilter = function() {
+            const specialties = [...new Set(this.data.map(doc => doc.especializacion).filter(Boolean))];
             const select = document.getElementById('specialityFilter');
             
             // Limpiar opciones existentes (excepto la primera)

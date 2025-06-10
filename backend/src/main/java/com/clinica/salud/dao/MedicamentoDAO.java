@@ -9,17 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class MedicamentoDAO {
-
-    public void insertar(Medicamento medicamento) {
-        String sql = "INSERT INTO medicamentos (nombre, descripcion, fabricante, concentracion, forma) VALUES (?, ?, ?, ?, ?)";
+public class MedicamentoDAO {    public void insertar(Medicamento medicamento) {
+        String sql = "INSERT INTO medicamentos (nombre, descripcion, fabricante, concentracion, forma_dosificacion, categoria, precio, stock, stock_minimo, requiere_receta, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, medicamento.getNombre());
             ps.setString(2, medicamento.getDescripcion());
             ps.setString(3, medicamento.getFabricante());
             ps.setString(4, medicamento.getConcentracion());
-            ps.setString(5, medicamento.getForma());
+            ps.setString(5, medicamento.getForma()); // mapear a forma_dosificacion
+            ps.setString(6, medicamento.getCategoria() != null ? medicamento.getCategoria() : "GENERAL");
+            ps.setBigDecimal(7, medicamento.getPrecio() != null ? medicamento.getPrecio() : java.math.BigDecimal.ZERO);
+            ps.setInt(8, medicamento.getStock() != null ? medicamento.getStock() : 0);
+            ps.setInt(9, 10); // stock_minimo por defecto
+            ps.setBoolean(10, medicamento.getRequiereReceta() != null ? medicamento.getRequiereReceta() : false);
+            ps.setBoolean(11, medicamento.getActivo() != null ? medicamento.getActivo() : true);
             ps.executeUpdate();
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {

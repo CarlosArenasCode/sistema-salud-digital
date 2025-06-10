@@ -162,14 +162,13 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
            "LOWER(h.observaciones) LIKE LOWER(CONCAT('%', :observations, '%'))")
     List<HistorialMedicoEntity> findByObservationsContaining(@Param("observations") String observations);    
     // Historial completo del paciente
-    @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
-           "h.paciente.id = :patientId " +
+    @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +           "h.paciente.id = :patientId " +
            "ORDER BY h.fechaVisita ASC")
     List<HistorialMedicoEntity> findCompletePatientHistory(@Param("patientId") Long patientId);
     
     // Consultas por especialización del médico
     @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
-           "h.medico.specialization = :specialization " +
+           "h.medico.especializacion = :especializacion " +
            "ORDER BY h.fechaVisita DESC")
-    List<HistorialMedicoEntity> findRecordsByMedicalSpecialization(@Param("specialization") String specialization);
+    List<HistorialMedicoEntity> findRecordsByMedicalSpecialization(@Param("especializacion") String especializacion);
 }

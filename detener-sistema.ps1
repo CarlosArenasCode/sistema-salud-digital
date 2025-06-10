@@ -1,15 +1,41 @@
-# Script mejorado para detener todos los procesos relacionados con el sistema de salud digital
-# Detiene backend (Java/Maven), frontend (Node.js) y ventanas de PowerShell abiertas por el sistema
+# Script para detener todos los servicios del Sistema de Salud Digital
+# Ejecutar como: .\detener-sistema.ps1
 
-Write-Host "Deteniendo backend (Java/Maven)..."
-Get-Process -Name java,mvn -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+# Cambiar al directorio raíz del proyecto
+Set-Location -Path 'C:\WorkSpace\Sistema de Salud Digital'
 
-Write-Host "Deteniendo frontend (Node.js)..."
-Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+# Detener backend Spring Boot (puerto 8080)
+$puertoBack = 8080
+$procBack = (Get-NetTCPConnection -LocalPort $puertoBack -ErrorAction SilentlyContinue).OwningProcess
+if ($procBack) {
+    Write-Host "Deteniendo backend Spring Boot (PID $procBack)..."
+    Stop-Process -Id $procBack -Force -ErrorAction SilentlyContinue
+} else {
+    Write-Host "No se encontró ningún servicio escuchando en el puerto $puertoBack."
+}
 
-Write-Host "Deteniendo ventanas de PowerShell abiertas por el sistema..."
-# Cierra todas las ventanas de pwsh excepto la actual
-$myId = $PID
-Get-Process -Name pwsh -ErrorAction SilentlyContinue | Where-Object { $_.Id -ne $myId } | Stop-Process -Force -ErrorAction SilentlyContinue
+# Detener servidor frontend Node.js (puerto 8081)
+$puertoFront = 8081
+$procFront = (Get-NetTCPConnection -LocalPort $puertoFront -ErrorAction SilentlyContinue).OwningProcess
+if ($procFront) {
+    Write-Host "Deteniendo servidor frontend Node.js (PID $procFront)..."
+    Stop-Process -Id $procFront -Force -ErrorAction SilentlyContinue
+} else {
+    Write-Host "No se encontró ningún servicio escuchando en el puerto $puertoFront."
+}
 
-Write-Host "Todos los procesos del Sistema de Salud Digital han sido detenidos."
+# Detener contenedores Docker si existe docker-compose
+if (Test-Path '.\docker\docker-compose.yml') {
+    Write-Host "Deteniendo contenedores Docker..."
+    docker-compose -f .\docker\docker-compose.yml down
+}
+
+# Cerrar las ventanas de PowerShell secundarias abiertas
+$me = $PID
+$pwshProcesos = Get-Process -Name pwsh -ErrorAction SilentlyContinue | Where-Object { $_.Id -ne $me }
+if ($pwshProcesos) {
+    Write-Host "Cerrando ventanas adicionales de PowerShell..."
+    $pwshProcesos | Stop-Process -Force -ErrorAction SilentlyContinue
+}
+
+Write-Host "Sistema detenido completamente." -ForegroundColor Green

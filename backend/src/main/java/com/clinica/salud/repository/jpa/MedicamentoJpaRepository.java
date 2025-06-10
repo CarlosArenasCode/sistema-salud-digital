@@ -38,9 +38,9 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
     List<MedicamentoEntity> findByFabricanteContainingIgnoreCase(@Param("fabricante") String fabricante);
 
     /**
-     * Busca medicamentos por forma farmacéutica exacta
+     * Busca medicamentos por forma de dosificación exacta
      */
-    List<MedicamentoEntity> findByForma(String forma);
+    List<MedicamentoEntity> findByFormaDosificacion(String formaDosificacion);
 
     /**
      * Busca medicamentos por nombre exacto
@@ -68,7 +68,9 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
      * Busca medicamentos que requieren receta
      */
     @Query("SELECT m FROM MedicamentoEntity m WHERE m.requiereReceta = true")
-    List<MedicamentoEntity> findMedicamentosConReceta();    // ===============================
+    List<MedicamentoEntity> findMedicamentosConReceta();
+
+    // ===============================
     // GESTIÓN DE INVENTARIO
     // ===============================
 
@@ -99,8 +101,8 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
     /**
      * Obtiene el total de medicamentos en stock
      */
-    @Query("SELECT SUM(m.stock) FROM MedicamentoEntity m WHERE m.stock > 0")
-    Long getTotalMedicationsInStock();
+    @Query("SELECT SUM(m.stock) FROM MedicamentoEntity m WHERE m.stock IS NOT NULL")
+    Long getTotalStock();
 
     /**
      * Cuenta medicamentos con stock bajo
@@ -118,40 +120,29 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
      * Encuentra medicamentos por stock igual o mayor a una cantidad
      */
     @Query("SELECT m FROM MedicamentoEntity m WHERE m.stock >= :minStock")
-    List<MedicamentoEntity> findByStockGreaterThanEqual(@Param("minStock") Integer minStock);    // ===============================
+    List<MedicamentoEntity> findByStockGreaterThanEqual(@Param("minStock") Integer minStock);
+
+    // ===============================
     // GESTIÓN DE VENCIMIENTOS
     // ===============================
 
     /**
      * Encuentra medicamentos vencidos
      */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento < CURRENT_TIMESTAMP")
+    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento < CURRENT_DATE")
     List<MedicamentoEntity> findExpiredMedications();
 
     /**
-     * Encuentra medicamentos que vencen pronto
+     * Encuentra medicamentos que vencen en un rango de fechas
      */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento BETWEEN CURRENT_TIMESTAMP AND :futureDate")
+    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento BETWEEN CURRENT_DATE AND :futureDate")
     List<MedicamentoEntity> findMedicationsExpiringSoon(@Param("futureDate") LocalDateTime futureDate);
-
-    /**
-     * Encuentra medicamentos por rango de fechas de vencimiento
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento BETWEEN :startDate AND :endDate")
-    List<MedicamentoEntity> findByExpirationDateBetween(@Param("startDate") LocalDateTime startDate, 
-                                                        @Param("endDate") LocalDateTime endDate);
 
     /**
      * Cuenta medicamentos vencidos
      */
-    @Query("SELECT COUNT(m) FROM MedicamentoEntity m WHERE m.fechaVencimiento < CURRENT_TIMESTAMP")
+    @Query("SELECT COUNT(m) FROM MedicamentoEntity m WHERE m.fechaVencimiento < CURRENT_DATE")
     Long countExpiredMedications();
-
-    /**
-     * Encuentra medicamentos sin fecha de vencimiento
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.fechaVencimiento IS NULL")
-    List<MedicamentoEntity> findMedicationsWithoutExpirationDate();
 
     // ===============================
     // BÚSQUEDAS POR PRECIO
@@ -165,28 +156,12 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
                                               @Param("maxPrice") BigDecimal maxPrice);
 
     /**
-     * Encuentra medicamentos más baratos que un precio específico
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.precio <= :maxPrice ORDER BY m.precio ASC")
-    List<MedicamentoEntity> findByPriceLessThanEqualOrderByPriceAsc(@Param("maxPrice") BigDecimal maxPrice);
-
-    /**
-     * Encuentra medicamentos más caros que un precio específico
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.precio >= :minPrice ORDER BY m.precio DESC")
-    List<MedicamentoEntity> findByPriceGreaterThanEqualOrderByPriceDesc(@Param("minPrice") BigDecimal minPrice);
-
-    /**
      * Obtiene el precio promedio de los medicamentos
      */
     @Query("SELECT AVG(m.precio) FROM MedicamentoEntity m WHERE m.precio IS NOT NULL")
     Double getAveragePrice();
 
-    /**
-     * Encuentra medicamentos sin precio definido
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.precio IS NULL")
-    List<MedicamentoEntity> findMedicationsWithoutPrice();    // ===============================
+    // ===============================
     // BÚSQUEDAS AVANZADAS Y COMBINADAS
     // ===============================
 
@@ -196,13 +171,13 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
     @Query("SELECT m FROM MedicamentoEntity m WHERE " +
            "(:nombre IS NULL OR LOWER(m.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) AND " +
            "(:fabricante IS NULL OR LOWER(m.fabricante) LIKE LOWER(CONCAT('%', :fabricante, '%'))) AND " +
-           "(:forma IS NULL OR m.forma = :forma) AND " +
+           "(:formaDosificacion IS NULL OR m.formaDosificacion = :formaDosificacion) AND " +
            "(:minPrice IS NULL OR m.precio >= :minPrice) AND " +
            "(:maxPrice IS NULL OR m.precio <= :maxPrice) AND " +
            "(:minStock IS NULL OR m.stock >= :minStock)")
     List<MedicamentoEntity> findByCriteria(@Param("nombre") String nombre,
                                           @Param("fabricante") String fabricante,
-                                          @Param("forma") String forma,
+                                          @Param("formaDosificacion") String formaDosificacion,
                                           @Param("minPrice") BigDecimal minPrice,
                                           @Param("maxPrice") BigDecimal maxPrice,
                                           @Param("minStock") Integer minStock);
@@ -220,21 +195,18 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
      * Encuentra medicamentos disponibles con suficiente stock
      */
     @Query("SELECT m FROM MedicamentoEntity m WHERE m.stock >= :requiredStock AND " +
-           "(m.fechaVencimiento IS NULL OR m.fechaVencimiento > CURRENT_TIMESTAMP)")
-    List<MedicamentoEntity> findAvailableWithStock(@Param("requiredStock") Integer requiredStock);    // ===============================
+           "(m.fechaVencimiento IS NULL OR m.fechaVencimiento > CURRENT_DATE)")
+    List<MedicamentoEntity> findAvailableWithStock(@Param("requiredStock") Integer requiredStock);
+
+    // ===============================
     // ESTADÍSTICAS Y REPORTES
     // ===============================
 
     /**
-     * Obtiene estadísticas generales de medicamentos
+     * Obtiene el valor total del inventario
      */
-    @Query("SELECT " +
-           "COUNT(m) as total, " +
-           "COUNT(CASE WHEN m.stock > 0 THEN 1 END) as available, " +
-           "COUNT(CASE WHEN m.stock = 0 OR m.stock IS NULL THEN 1 END) as outOfStock, " +
-           "COUNT(CASE WHEN m.fechaVencimiento < CURRENT_TIMESTAMP THEN 1 END) as expired " +
-           "FROM MedicamentoEntity m")
-    Object[] getMedicationStatistics();
+    @Query("SELECT SUM(m.precio * m.stock) FROM MedicamentoEntity m WHERE m.precio IS NOT NULL AND m.stock > 0")
+    BigDecimal getTotalInventoryValue();
 
     /**
      * Encuentra los medicamentos con más stock
@@ -251,19 +223,15 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
     List<MedicamentoEntity> findAvailableByManufacturer(@Param("fabricante") String fabricante);
 
     /**
-     * Obtiene el valor total del inventario
-     */
-    @Query("SELECT SUM(m.precio * m.stock) FROM MedicamentoEntity m WHERE m.precio IS NOT NULL AND m.stock > 0")
-    BigDecimal getTotalInventoryValue();
-
-    /**
      * Encuentra medicamentos que necesitan reposición urgente
      */
     @Query("SELECT m FROM MedicamentoEntity m WHERE " +
            "(m.stock <= :criticalThreshold) OR " +
-           "(m.fechaVencimiento BETWEEN CURRENT_TIMESTAMP AND :nearExpirationDate)")
+           "(m.fechaVencimiento BETWEEN CURRENT_DATE AND :nearExpirationDate)")
     List<MedicamentoEntity> findCriticalMedications(@Param("criticalThreshold") Integer criticalThreshold,
-                                                   @Param("nearExpirationDate") LocalDateTime nearExpirationDate);    // ===============================
+                                                   @Param("nearExpirationDate") LocalDateTime nearExpirationDate);
+
+    // ===============================
     // OPERACIONES DE MANTENIMIENTO
     // ===============================
 
@@ -287,8 +255,10 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
            "LOWER(m.nombre) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
            "LOWER(m.descripcion) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
            "LOWER(m.fabricante) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
-           "LOWER(m.forma) LIKE LOWER(CONCAT('%', :searchText, '%'))")
-    List<MedicamentoEntity> fullTextSearch(@Param("searchText") String searchText);    // ===============================
+           "LOWER(m.formaDosificacion) LIKE LOWER(CONCAT('%', :searchText, '%'))")
+    List<MedicamentoEntity> fullTextSearch(@Param("searchText") String searchText);
+
+    // ===============================
     // MÉTODOS PERSONALIZADOS PARA FARMACIA
     // ===============================
 
@@ -309,16 +279,4 @@ public interface MedicamentoJpaRepository extends JpaRepository<MedicamentoEntit
            "m.stock > 0")
     List<MedicamentoEntity> findAlternatives(@Param("originalId") Long originalId,
                                            @Param("activeIngredient") String activeIngredient);
-
-    /**
-     * Encuentra medicamentos por lote
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE m.lote = :lote")
-    List<MedicamentoEntity> findByLote(@Param("lote") String lote);
-
-    /**
-     * Encuentra medicamentos por presentación
-     */
-    @Query("SELECT m FROM MedicamentoEntity m WHERE LOWER(m.presentacion) LIKE LOWER(CONCAT('%', :presentacion, '%'))")
-    List<MedicamentoEntity> findByPresentacionContainingIgnoreCase(@Param("presentacion") String presentacion);
 }

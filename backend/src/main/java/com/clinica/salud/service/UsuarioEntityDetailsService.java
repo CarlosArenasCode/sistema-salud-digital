@@ -2,6 +2,7 @@ package com.clinica.salud.service;
 
 import com.clinica.salud.entity.UsuarioEntity;
 import com.clinica.salud.repository.jpa.UsuarioJpaRepository;
+import com.clinica.salud.security.UsuarioEntityUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,17 +16,15 @@ import org.springframework.stereotype.Service;
 public class UsuarioEntityDetailsService implements UserDetailsService {
 
     @Autowired
-    private UsuarioJpaRepository usuarioRepository;
-
-    @Override
+    private UsuarioJpaRepository usuarioRepository;    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsuarioEntity usuario = usuarioRepository.findByUsername(username)
+        UsuarioEntity usuario = usuarioRepository.findByNombreUsuario(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
         
         if (!usuario.getActivo()) {
             throw new UsernameNotFoundException("Usuario desactivado: " + username);
         }
         
-        return usuario;
+        return new UsuarioEntityUserDetails(usuario);
     }
 }

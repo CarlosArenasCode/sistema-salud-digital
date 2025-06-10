@@ -70,17 +70,16 @@
                 <div class="modal-body">
                     <form id="citaForm">
                         <input type="hidden" id="citaId">
-                        
-                        <div class="mb-3">
-                            <label for="pacienteId" class="form-label">Paciente *</label>
-                            <select class="form-select" id="pacienteId" required>
+                          <div class="mb-3">
+                            <label for="idPaciente" class="form-label">Paciente *</label>
+                            <select class="form-select" id="idPaciente" required>
                                 <option value="">Seleccione un paciente</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="medicoId" class="form-label">Médico *</label>
-                            <select class="form-select" id="medicoId" required>
+                            <label for="idMedico" class="form-label">Médico *</label>
+                            <select class="form-select" id="idMedico" required>
                                 <option value="">Seleccione un médico</option>
                             </select>
                         </div>
@@ -133,8 +132,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/crud-manager.js"></script>
-    <script>
+    <script src="js/crud-manager.js"></script>    <script>
+        // Variables globales para almacenar pacientes y médicos
+        let pacientesData = [];
+        let medicosData = [];
+
         // Configuración específica para citas
         const citaConfig = {
             entityName: 'cita',
@@ -143,17 +145,15 @@
             modalId: 'citaModal',
             formId: 'citaForm',
             tableBodyId: 'citasTableBody',
-            
             fields: [
-                { name: 'pacienteId', type: 'select', required: true },
-                { name: 'medicoId', type: 'select', required: true },
+                { name: 'idPaciente', type: 'select', required: true },
+                { name: 'idMedico', type: 'select', required: true },
                 { name: 'fechaCita', type: 'date', required: true },
                 { name: 'horaCita', type: 'time', required: true },
                 { name: 'motivoConsulta', type: 'textarea' },
                 { name: 'estado', type: 'select' },
                 { name: 'observaciones', type: 'textarea' }
             ],
-
             formatTableRow: function(cita) {
                 const estadoClass = {
                     'PROGRAMADA': 'bg-warning',
@@ -164,13 +164,30 @@
                     'NO_ASISTIO': 'bg-secondary'
                 };
 
+                // Buscar nombre del paciente
+                const paciente = pacientesData.find(p => p.id === cita.idPaciente);
+                const nombrePaciente = paciente ? `${paciente.nombres} ${paciente.apellidos}` : `ID: ${cita.idPaciente}`;
+
+                // Buscar nombre del médico
+                const medico = medicosData.find(m => m.id === cita.idMedico);
+                const nombreMedico = medico ? `${medico.nombres} ${medico.apellidos}` : `ID: ${cita.idMedico}`;
+
+                // Separar fecha y hora del fechaCita
+                let fecha = 'N/A';
+                let hora = 'N/A';
+                if (cita.fechaCita) {
+                    const fechaHora = new Date(cita.fechaCita);
+                    fecha = fechaHora.toLocaleDateString('es-ES');
+                    hora = fechaHora.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+                }
+
                 return `
                     <tr>
                         <td>${cita.id}</td>
-                        <td>${cita.pacienteNombre || 'N/A'}</td>
-                        <td>${cita.medicoNombre || 'N/A'}</td>
-                        <td>${AppUtils.formatDate(cita.fechaCita)}</td>
-                        <td>${cita.horaCita || 'N/A'}</td>
+                        <td>${nombrePaciente}</td>
+                        <td>${nombreMedico}</td>
+                        <td>${fecha}</td>
+                        <td>${hora}</td>
                         <td><span class="badge ${estadoClass[cita.estado] || 'bg-secondary'}">${cita.estado || 'N/A'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" onclick="citaManager.edit(${cita.id})">
@@ -183,44 +200,171 @@
                     </tr>
                 `;
             }
+        };        // Inicializar el manager de citas
+        const citaManager = new CRUDManager(citaConfig);        // Sobrescribir el método save para manejar la fecha y hora
+        const originalSave = citaManager.save.bind(citaManager);
+        citaManager.save = async function(event) {
+            event.preventDefault();
+            
+            const formData = {};
+            this.fields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) {
+                    formData[field.name] = element.value;
+                }
+            });
+            
+            // Validar campos obligatorios
+            if (!formData.idPaciente || !formData.idMedico || !formData.fechaCita || !formData.horaCita) {
+                AppUtils.showMessage('Por favor complete todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            // Convertir IDs a números enteros
+            formData.idPaciente = parseInt(formData.idPaciente);
+            formData.idMedico = parseInt(formData.idMedico);
+            
+            // Combinar fecha y hora en fechaCita como LocalDateTime
+            if (formData.fechaCita && formData.horaCita) {
+                formData.fechaCita = `${formData.fechaCita}T${formData.horaCita}:00`;
+                delete formData.horaCita; // Eliminar horaCita del payload
+            }
+            
+            // Limpiar campos vacíos
+            if (!formData.motivoConsulta) formData.motivoConsulta = null;
+            if (!formData.observaciones) formData.observaciones = null;
+            
+            console.log('💾 Guardando cita con datos:', formData);
+              try {
+                const result = this.currentId 
+                    ? await AppUtils.update(this.entityNamePlural.toLowerCase(), this.currentId, formData)
+                    : await AppUtils.create(this.entityNamePlural.toLowerCase(), formData);
+                
+                this.closeModal();
+                this.loadData();
+                AppUtils.showMessage(`${this.entityName} guardado exitosamente`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
+            }
+        };// Sobrescribir openModal para separar fecha y hora al editar
+        const originalOpenModal = citaManager.openModal.bind(citaManager);
+        citaManager.openModal = function(id = null) {
+            this.currentId = id;
+            const form = document.getElementById(this.formId);
+            const title = document.querySelector(`#${this.modalId} .modal-title`);
+            
+            if (id) {
+                // Cargar datos para edición
+                const item = this.data.find(d => d.id === id);
+                if (item) {
+                    // Separar fechaCita en fecha y hora antes de llenar el formulario
+                    const editData = { ...item };
+                    if (editData.fechaCita) {
+                        const fechaHora = new Date(editData.fechaCita);
+                        editData.fechaCita = fechaHora.toISOString().split('T')[0];
+                        editData.horaCita = fechaHora.toTimeString().split(' ')[0].substring(0, 5);
+                    }
+                    
+                    this.fields.forEach(field => {
+                        const element = document.getElementById(field.name);
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = editData[field.name] || false;
+                            } else {
+                                element.value = editData[field.name] || '';
+                            }
+                        }
+                    });
+                }
+                if (title) title.textContent = `Editar ${this.entityName}`;
+                if (form.querySelector('[type="submit"]')) {
+                    form.querySelector('[type="submit"]').textContent = 'Actualizar';
+                }
+            } else {
+                // Limpiar formulario para nuevo registro
+                form.reset();
+                // Establecer estado por defecto
+                const estadoSelect = document.getElementById('estado');
+                if (estadoSelect) {
+                    estadoSelect.value = 'PROGRAMADA';
+                }
+                if (title) title.textContent = `Nueva ${this.entityName}`;
+                if (form.querySelector('[type="submit"]')) {
+                    form.querySelector('[type="submit"]').textContent = 'Guardar';
+                }
+            }
+            
+            AppUtils.showModal(this.modalId);
         };
 
-        // Inicializar el manager de citas
-        const citaManager = new CRUDManager(citaConfig);
-
-        // Cargar datos al inicializar la página
-        document.addEventListener('DOMContentLoaded', async function() {
-            await loadSelectOptions();
-            await citaManager.loadData();
-        });
-
-        // Función para cargar opciones de selects
+        // Sobrescribir loadData para también actualizar datos de pacientes y médicos
+        const originalLoadData = citaManager.loadData.bind(citaManager);
+        citaManager.loadData = async function() {
+            await loadSelectOptions(); // Cargar pacientes y médicos primero
+            await originalLoadData(); // Luego cargar las citas
+        };        // Función para cargar opciones de selects
         async function loadSelectOptions() {
             try {
+                console.log('🔄 Cargando opciones de pacientes y médicos...');
+                
                 // Cargar pacientes
-                const pacientes = await AppUtils.get('/api/pacientes');
-                const pacienteSelect = document.getElementById('pacienteId');
-                pacientes.forEach(paciente => {
+                pacientesData = await AppUtils.getAll('pacientes');
+                console.log('✅ Pacientes cargados:', pacientesData.length);
+                const pacienteSelect = document.getElementById('idPaciente');
+                // Limpiar opciones existentes excepto la primera
+                pacienteSelect.innerHTML = '<option value="">Seleccione un paciente</option>';
+                pacientesData.forEach(paciente => {
                     const option = document.createElement('option');
                     option.value = paciente.id;
-                    option.textContent = `${paciente.fullName}`;
+                    option.textContent = `${paciente.nombres} ${paciente.apellidos}`;
                     pacienteSelect.appendChild(option);
                 });
 
                 // Cargar médicos
-                const medicos = await AppUtils.get('/api/medicos');
-                const medicoSelect = document.getElementById('medicoId');
-                medicos.forEach(medico => {
+                medicosData = await AppUtils.getAll('medicos');
+                console.log('✅ Médicos cargados:', medicosData.length);
+                const medicoSelect = document.getElementById('idMedico');
+                // Limpiar opciones existentes excepto la primera
+                medicoSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+                medicosData.forEach(medico => {
                     const option = document.createElement('option');
                     option.value = medico.id;
-                    option.textContent = `${medico.fullName} - ${medico.specialization}`;
+                    option.textContent = `${medico.nombres} ${medico.apellidos} - ${medico.especializacion}`;
                     medicoSelect.appendChild(option);
                 });
+                
+                console.log('✅ Opciones de selects cargadas exitosamente');
             } catch (error) {
-                console.error('Error loading select options:', error);
-                AppUtils.showAlert('Error al cargar las opciones', 'danger');
+                console.error('❌ Error loading select options:', error);
+                AppUtils.showMessage(`Error al cargar las opciones: ${error.message}`, 'error');
             }
-        }
+        }// Cargar opciones cuando se abra el modal
+        document.getElementById('citaModal').addEventListener('show.bs.modal', async function() {
+            await loadSelectOptions();
+        });        // Cargar datos al inicializar la página
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Iniciando módulo de citas...');
+            
+            // Configurar evento del botón guardar ANTES de que el CRUDManager enlace eventos
+            document.getElementById('saveCitaBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🖱️ Click en botón Guardar - ejecutando método personalizado');
+                citaManager.save(e);
+            });
+            
+            // También prevenir el submit del formulario para evitar conflictos
+            document.getElementById('citaForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('📋 Submit del formulario interceptado - redirigiendo al método personalizado');
+                citaManager.save(e);
+            });
+            
+            await loadSelectOptions(); // Cargar pacientes y médicos primero
+            await citaManager.loadData(); // Luego cargar las citas
+            
+            console.log('✅ Módulo de citas inicializado correctamente');
+        });
     </script>
 </body>
 </html>

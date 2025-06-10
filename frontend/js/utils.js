@@ -23,27 +23,58 @@ class AppUtils {
             console.error('Error en petición:', error);
             throw error;
         }
-    }
-    
-    // Operaciones CRUD genéricas
+    }      // Operaciones CRUD genéricas
     static async getAll(entity) {
-        return await this.apiRequest(`/${entity}`);
+        const response = await this.apiRequest(`/${entity}`);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
     }
     
-    static async getById(entity, id) {
-        return await this.apiRequest(`/${entity}/${id}`);
+    static async get(endpoint) {
+        const response = await this.apiRequest(endpoint);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
+    }
+      static async getById(entity, id) {
+        const response = await this.apiRequest(`/${entity}/${id}`);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Error fetching data: ${response.status}`);
+        }
     }
     
     static async create(entity, data) {
-        return await this.apiRequest(`/${entity}`, 'POST', data);
+        const response = await this.apiRequest(`/${entity}`, 'POST', data);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Error creating data: ${response.status}`);
+        }
     }
     
     static async update(entity, id, data) {
-        return await this.apiRequest(`/${entity}/${id}`, 'PUT', data);
+        const response = await this.apiRequest(`/${entity}/${id}`, 'PUT', data);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Error updating data: ${response.status}`);
+        }
     }
     
     static async delete(entity, id) {
-        return await this.apiRequest(`/${entity}/${id}`, 'DELETE');
+        const response = await this.apiRequest(`/${entity}/${id}`, 'DELETE');
+        if (response.ok) {
+            return response.status === 204 ? null : await response.json();
+        } else {
+            throw new Error(`Error deleting data: ${response.status}`);
+        }
     }
     
     // Mostrar/ocultar modal genérico
@@ -85,9 +116,52 @@ class AppUtils {
             row.style.display = matches ? '' : 'none';
         });
     }
-    
-    // Mostrar mensajes de éxito/error
+      // Mostrar mensajes de éxito/error
     static showMessage(message, type = 'info') {
-        alert(message); // Puedes reemplazar con una librería de notificaciones
+        // Crear un toast Bootstrap
+        const toastContainer = this.getOrCreateToastContainer();
+        
+        const toastId = 'toast-' + Date.now();
+        const bgClass = {
+            'success': 'bg-success',
+            'error': 'bg-danger',
+            'warning': 'bg-warning',
+            'info': 'bg-info'
+        }[type] || 'bg-info';
+        
+        const toastHtml = `
+            <div id="${toastId}" class="toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header ${bgClass} text-white border-0">
+                    <strong class="me-auto">Sistema de Salud</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            </div>
+        `;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+        
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+        toast.show();
+        
+        // Limpiar el toast después de que se cierre
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+    
+    static getOrCreateToastContainer() {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1055';
+            document.body.appendChild(container);
+        }
+        return container;
     }
 }

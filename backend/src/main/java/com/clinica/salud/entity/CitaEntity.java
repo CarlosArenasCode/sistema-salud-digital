@@ -4,24 +4,25 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 /**
  * Entidad que representa una cita médica en el sistema de salud digital.
  * Mapea con la tabla 'citas' en PostgreSQL.
- * OPTIMIZADA: Reducido de 340 líneas a ~90 líneas usando Lombok y BaseEntity
+ * Unificada y estandarizada en español.
  */
 @Entity
-@Table(name = "citas", 
-       uniqueConstraints = @UniqueConstraint(columnNames = {"id_medico", "fecha_cita", "hora_cita"}))
+@Table(name = "citas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = true)
-public class CitaEntity extends BaseEntity {
+@EqualsAndHashCode(callSuper = false)
+public class CitaEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @NotNull(message = "El ID del paciente es obligatorio")
     @Column(name = "id_paciente", nullable = false)
@@ -33,33 +34,24 @@ public class CitaEntity extends BaseEntity {
     
     @NotNull(message = "La fecha de la cita es obligatoria")
     @Column(name = "fecha_cita", nullable = false)
-    private LocalDate fechaCita;
+    private LocalDateTime fechaCita;
     
-    @NotNull(message = "La hora de la cita es obligatoria")
-    @Column(name = "hora_cita", nullable = false)
-    private LocalTime horaCita;
+    @Column(name = "motivo_consulta", columnDefinition = "TEXT")
+    private String motivoConsulta;
     
     @Size(max = 20, message = "El estado no puede exceder 20 caracteres")
     @Builder.Default
     @Column(name = "estado", length = 20)
     private String estado = "PROGRAMADA";
     
-    @Column(name = "motivo", columnDefinition = "TEXT")
-    private String motivo;
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
     
-    @Column(name = "notas", columnDefinition = "TEXT")
-    private String notas;
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
     
-    @Min(value = 15, message = "La duración mínima es 15 minutos")
-    @Builder.Default
-    @Column(name = "duracion_minutos")
-    private Integer duracionMinutos = 30;
-    
-    @Size(max = 50, message = "El tipo de consulta no puede exceder 50 caracteres")
-    @Builder.Default
-    @Column(name = "tipo_consulta", length = 50)
-    private String tipoConsulta = "GENERAL";
-    
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;    
     // Relaciones JPA
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", insertable = false, updatable = false)
@@ -71,24 +63,14 @@ public class CitaEntity extends BaseEntity {
     @JsonIgnore
     private MedicoEntity medico;
     
-    // Métodos de compatibilidad (deprecados para transición gradual)
-    @Deprecated
-    public Long getPatientId() {
-        return this.idPaciente;
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+        fechaActualizacion = LocalDateTime.now();
     }
     
-    @Deprecated
-    public void setPatientId(Long patientId) {
-        this.idPaciente = patientId;
-    }
-    
-    @Deprecated
-    public Long getDoctorId() {
-        return this.idMedico;
-    }
-    
-    @Deprecated
-    public void setDoctorId(Long doctorId) {
-        this.idMedico = doctorId;
+    @PreUpdate
+    protected void onUpdate() {
+        fechaActualizacion = LocalDateTime.now();
     }
 }

@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CitaDAO {public void insertar(Cita cita) {
-        String sql = "INSERT INTO citas (id_paciente, id_medico, fecha_cita, hora_cita, motivo) VALUES (?, ?, ?, ?, ?)";
+public class CitaDAO {    public void insertar(Cita cita) {
+        String sql = "INSERT INTO citas (id_paciente, id_medico, fecha_cita, motivo_consulta) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexion.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, cita.getIdPaciente());
-            ps.setInt(2, cita.getIdMedico());
-            ps.setDate(3, java.sql.Date.valueOf(cita.getFecha())); // Assuming fecha is in YYYY-MM-DD format
-            ps.setTime(4, java.sql.Time.valueOf(cita.getHora())); // Assuming hora is in HH:MM:SS format
-            ps.setString(5, cita.getMotivo());
+             PreparedStatement ps = conn.prepareStatement(sql)) {            ps.setLong(1, cita.getIdPaciente());
+            ps.setLong(2, cita.getIdMedico());
+            // Combinar fecha y hora en un timestamp
+            String fechaHora = cita.getFecha() + " " + cita.getHora();
+            ps.setTimestamp(3, Timestamp.valueOf(fechaHora));
+            ps.setString(4, cita.getMotivo());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al insertar cita", e);
@@ -28,13 +28,18 @@ public class CitaDAO {public void insertar(Cita cita) {
         try (Connection conn = Conexion.getConnection();
              Statement stm = conn.createStatement();
              ResultSet rs = stm.executeQuery(sql)) {
-            while (rs.next()) {                Cita c = new Cita(
-                        rs.getInt("id_cita"),
+            while (rs.next()) {
+                Timestamp fechaCita = rs.getTimestamp("fecha_cita");
+                String fecha = fechaCita.toLocalDateTime().toLocalDate().toString();
+                String hora = fechaCita.toLocalDateTime().toLocalTime().toString();
+                
+                Cita c = new Cita(
+                        rs.getInt("id"),
                         rs.getInt("id_paciente"),
                         rs.getInt("id_medico"),
-                        rs.getDate("fecha_cita").toString(),
-                        rs.getTime("hora_cita").toString(),
-                        rs.getString("motivo")
+                        fecha,
+                        hora,
+                        rs.getString("motivo_consulta")
                 );
                 lista.add(c);
             }
@@ -42,21 +47,24 @@ public class CitaDAO {public void insertar(Cita cita) {
             throw new RuntimeException("Error al listar citas", e);
         }
         return lista;
-    }
-
-    public Cita buscarPorId(int id) {
-        String sql = "SELECT * FROM citas WHERE id_cita = ?";
+    }    public Cita buscarPorId(int id) {
+        String sql = "SELECT * FROM citas WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {                    return new Cita(
-                        rs.getInt("id_cita"),
+                if (rs.next()) {
+                    Timestamp fechaCita = rs.getTimestamp("fecha_cita");
+                    String fecha = fechaCita.toLocalDateTime().toLocalDate().toString();
+                    String hora = fechaCita.toLocalDateTime().toLocalTime().toString();
+                    
+                    return new Cita(
+                        rs.getInt("id"),
                         rs.getInt("id_paciente"),
                         rs.getInt("id_medico"),
-                        rs.getDate("fecha_cita").toString(),
-                        rs.getTime("hora_cita").toString(),
-                        rs.getString("motivo")
+                        fecha,
+                        hora,
+                        rs.getString("motivo_consulta")
                     );
                 }
             }
@@ -80,10 +88,8 @@ public class CitaDAO {public void insertar(Cita cita) {
         } catch (SQLException e) {
             throw new RuntimeException("Error al actualizar cita", e);
         }
-    }
-
-    public void eliminar(int id) {
-        String sql = "DELETE FROM citas WHERE id_cita = ?";
+    }    public void eliminar(int id) {
+        String sql = "DELETE FROM citas WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);

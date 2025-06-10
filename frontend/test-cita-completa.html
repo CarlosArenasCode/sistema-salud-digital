@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Crear Cita Completa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Test - Crear Cita Médica Completa</h2>
+        <div id="status" class="alert alert-info">Preparando prueba...</div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Formulario de Nueva Cita</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="testCitaForm">
+                            <div class="mb-3">
+                                <label for="idPaciente" class="form-label">Paciente *</label>
+                                <select class="form-select" id="idPaciente" required>
+                                    <option value="">Cargando pacientes...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="idMedico" class="form-label">Médico *</label>
+                                <select class="form-select" id="idMedico" required>
+                                    <option value="">Cargando médicos...</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fechaCita" class="form-label">Fecha *</label>
+                                        <input type="date" class="form-control" id="fechaCita" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="horaCita" class="form-label">Hora *</label>
+                                        <input type="time" class="form-control" id="horaCita" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="motivoConsulta" class="form-label">Motivo de la Consulta</label>
+                                <textarea class="form-control" id="motivoConsulta" rows="3" placeholder="Describe el motivo de la consulta">Consulta de control</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado">
+                                    <option value="PROGRAMADA" selected>Programada</option>
+                                    <option value="CONFIRMADA">Confirmada</option>
+                                    <option value="EN_CURSO">En Curso</option>
+                                    <option value="COMPLETADA">Completada</option>
+                                    <option value="CANCELADA">Cancelada</option>
+                                    <option value="NO_ASISTIO">No Asistió</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="observaciones" class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="observaciones" rows="2" placeholder="Observaciones adicionales"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Crear Cita</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Estado de la Carga</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="loadingStatus">
+                            <p><i class="fas fa-spinner fa-spin"></i> Inicializando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="resultado" class="mt-4"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        let pacientesData = [];
+        let medicosData = [];
+        
+        function updateLoadingStatus(message) {
+            document.getElementById('loadingStatus').innerHTML = `<p>${message}</p>`;
+        }
+        
+        async function loadSelectOptions() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                updateLoadingStatus('📞 Cargando pacientes...');
+                statusDiv.textContent = 'Cargando opciones...';
+                
+                // Cargar pacientes
+                pacientesData = await AppUtils.get('/api/pacientes');
+                console.log('Pacientes cargados:', pacientesData);
+                
+                const pacienteSelect = document.getElementById('idPaciente');
+                pacienteSelect.innerHTML = '<option value="">Seleccione un paciente</option>';
+                
+                pacientesData.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.nombres} ${paciente.apellidos}`;
+                    pacienteSelect.appendChild(option);
+                });
+                
+                updateLoadingStatus(`✅ ${pacientesData.length} pacientes cargados<br>📞 Cargando médicos...`);
+                
+                // Cargar médicos
+                medicosData = await AppUtils.get('/api/medicos');
+                console.log('Médicos cargados:', medicosData);
+                
+                const medicoSelect = document.getElementById('idMedico');
+                medicoSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+                
+                medicosData.forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.nombres} ${medico.apellidos} - ${medico.especializacion}`;
+                    medicoSelect.appendChild(option);
+                });
+                
+                updateLoadingStatus(`✅ ${pacientesData.length} pacientes cargados<br>✅ ${medicosData.length} médicos cargados<br>🎉 ¡Listo para usar!`);
+                
+                statusDiv.className = 'alert alert-success';
+                statusDiv.textContent = '✅ Opciones cargadas - Formulario listo';
+                
+                // Establecer fecha de mañana por defecto
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.getElementById('fechaCita').value = tomorrow.toISOString().split('T')[0];
+                document.getElementById('horaCita').value = '09:00';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                updateLoadingStatus(`❌ Error: ${error.message}`);
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        // Manejar envío del formulario
+        document.getElementById('testCitaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const statusDiv = document.getElementById('status');
+            const resultadoDiv = document.getElementById('resultado');
+            
+            statusDiv.className = 'alert alert-warning';
+            statusDiv.textContent = 'Creando cita...';
+            
+            try {
+                // Recopilar datos del formulario
+                const fechaCita = document.getElementById('fechaCita').value;
+                const horaCita = document.getElementById('horaCita').value;
+                
+                const formData = {
+                    idPaciente: parseInt(document.getElementById('idPaciente').value),
+                    idMedico: parseInt(document.getElementById('idMedico').value),
+                    fechaCita: `${fechaCita}T${horaCita}:00`, // Combinar fecha y hora
+                    motivoConsulta: document.getElementById('motivoConsulta').value,
+                    estado: document.getElementById('estado').value,
+                    observaciones: document.getElementById('observaciones').value
+                };
+                
+                console.log('Datos a enviar:', formData);
+                
+                // Validar datos requeridos
+                if (!formData.idPaciente || !formData.idMedico || !fechaCita || !horaCita) {
+                    throw new Error('Faltan campos requeridos: Paciente, Médico, Fecha y Hora son obligatorios');
+                }
+                
+                // Crear cita usando AppUtils
+                const response = await AppUtils.create('citas', formData);
+                
+                if (response.ok) {
+                    const cita = await response.json();
+                    statusDiv.className = 'alert alert-success';
+                    statusDiv.textContent = '✅ Cita creada exitosamente!';
+                    
+                    // Buscar nombres de paciente y médico
+                    const paciente = pacientesData.find(p => p.id == formData.idPaciente);
+                    const medico = medicosData.find(m => m.id == formData.idMedico);
+                    
+                    resultadoDiv.innerHTML = `
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h6>✅ Cita Médica Creada Exitosamente</h6>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row">
+                                    <dt class="col-sm-3">ID Cita:</dt>
+                                    <dd class="col-sm-9">${cita.id}</dd>
+                                    <dt class="col-sm-3">Paciente:</dt>
+                                    <dd class="col-sm-9">${paciente ? paciente.nombres + ' ' + paciente.apellidos : 'ID: ' + formData.idPaciente}</dd>
+                                    <dt class="col-sm-3">Médico:</dt>
+                                    <dd class="col-sm-9">${medico ? medico.nombres + ' ' + medico.apellidos + ' - ' + medico.especializacion : 'ID: ' + formData.idMedico}</dd>
+                                    <dt class="col-sm-3">Fecha y Hora:</dt>
+                                    <dd class="col-sm-9">${new Date(cita.fechaCita).toLocaleString()}</dd>
+                                    <dt class="col-sm-3">Motivo:</dt>
+                                    <dd class="col-sm-9">${cita.motivoConsulta || 'N/A'}</dd>
+                                    <dt class="col-sm-3">Estado:</dt>
+                                    <dd class="col-sm-9"><span class="badge bg-primary">${cita.estado}</span></dd>
+                                </dl>
+                                <hr>
+                                <p class="text-muted"><small>Cita creada el: ${new Date(cita.fechaCreacion).toLocaleString()}</small></p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Limpiar formulario
+                    document.getElementById('testCitaForm').reset();
+                    // Reestablecer fecha de mañana
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    document.getElementById('fechaCita').value = tomorrow.toISOString().split('T')[0];
+                    document.getElementById('horaCita').value = '09:00';
+                    
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(`Error HTTP ${response.status}: ${errorData.message || 'Error desconocido'}`);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                
+                resultadoDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>❌ Error al crear cita</h6>
+                        <p><strong>Mensaje:</strong> ${error.message}</p>
+                        <details>
+                            <summary>Detalles técnicos</summary>
+                            <pre>${JSON.stringify(error, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            }
+        });
+        
+        // Inicializar cuando carga la página
+        document.addEventListener('DOMContentLoaded', async function() {
+            updateLoadingStatus('🚀 Inicializando sistema...');
+            await loadSelectOptions();
+        });
+    </script>
+</body>
+</html>

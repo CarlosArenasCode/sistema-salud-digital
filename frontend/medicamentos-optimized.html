@@ -43,13 +43,16 @@
                                     <input type="text" class="form-control" id="searchInput" placeholder="Buscar medicamentos...">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <select class="form-select" id="categoryFilter">
+                            <div class="col-md-6">                                <select class="form-select" id="categoryFilter">
                                     <option value="">Todas las categorías</option>
-                                    <option value="Analgésico">Analgésicos</option>
-                                    <option value="Antibiótico">Antibióticos</option>
-                                    <option value="Antiinflamatorio">Antiinflamatorios</option>
-                                    <option value="Gastrointestinal">Gastrointestinales</option>
+                                    <option value="Analgésicos">Analgésicos</option>
+                                    <option value="Antiinflamatorios">Antiinflamatorios</option>
+                                    <option value="Antibióticos">Antibióticos</option>
+                                    <option value="Antialérgicos">Antialérgicos</option>
+                                    <option value="Gastrointestinales">Gastrointestinales</option>
+                                    <option value="Cardiovascular">Cardiovascular</option>
+                                    <option value="Neurológico">Neurológico</option>
+                                    <option value="Endocrino">Endocrino</option>
                                     <option value="Suplementos">Suplementos</option>
                                 </select>
                             </div>
@@ -113,17 +116,17 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="categoria" class="form-label">Categoría</label>
-                                    <select class="form-select" id="categoria">
+                                    <label for="categoria" class="form-label">Categoría</label>                                    <select class="form-select" id="categoria">
                                         <option value="">Seleccione una categoría</option>
-                                        <option value="Analgésico">Analgésicos</option>
-                                        <option value="Antibiótico">Antibióticos</option>
-                                        <option value="Antiinflamatorio">Antiinflamatorios</option>
-                                        <option value="Gastrointestinal">Gastrointestinales</option>
-                                        <option value="Suplementos">Suplementos</option>
+                                        <option value="Analgésicos">Analgésicos</option>
+                                        <option value="Antibióticos">Antibióticos</option>
+                                        <option value="Antiinflamatorios">Antiinflamatorios</option>
+                                        <option value="Antialérgicos">Antialérgicos</option>
+                                        <option value="Gastrointestinales">Gastrointestinales</option>
                                         <option value="Cardiovascular">Cardiovascular</option>
                                         <option value="Neurológico">Neurológico</option>
                                         <option value="Endocrino">Endocrino</option>
+                                        <option value="Suplementos">Suplementos</option>
                                     </select>
                                 </div>
                             </div>
@@ -199,8 +202,7 @@
             modalId: 'medicamentoModal',
             formId: 'medicamentoForm',
             tableBodyId: 'medicamentosTableBody',
-            
-            fields: [
+              fields: [
                 { name: 'codigo', type: 'text', required: true },
                 { name: 'nombre', type: 'text', required: true },
                 { name: 'descripcion', type: 'textarea' },
@@ -211,32 +213,7 @@
                 { name: 'stockMinimo', type: 'number' },
                 { name: 'requiereReceta', type: 'checkbox' },
                 { name: 'activo', type: 'checkbox' }
-            ],
-
-            formatTableRow: function(medicamento) {
-                const stockClass = medicamento.stock <= (medicamento.stockMinimo || 10) ? 'text-danger fw-bold' : '';
-                const estadoClass = medicamento.activo ? 'bg-success' : 'bg-secondary';
-                const estadoText = medicamento.activo ? 'Activo' : 'Inactivo';
-
-                return `
-                    <tr>
-                        <td>${medicamento.codigo || 'N/A'}</td>
-                        <td>${medicamento.nombre}</td>
-                        <td>${medicamento.categoria || 'N/A'}</td>
-                        <td>$${parseFloat(medicamento.precio || 0).toFixed(2)}</td>
-                        <td class="${stockClass}">${medicamento.stock || 0}</td>
-                        <td><span class="badge ${estadoClass}">${estadoText}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="medicamentoManager.edit(${medicamento.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="medicamentoManager.delete(${medicamento.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
+            ]
         };
 
         // Inicializar el manager de medicamentos
@@ -245,19 +222,43 @@
         // Variables para filtros
         let allMedicamentos = [];
 
-        // Sobrescribir el método loadData para implementar filtros
-        const originalLoadData = medicamentoManager.loadData;
+        // Función personalizada para formatear filas de la tabla
+        medicamentoManager.formatTableRow = function(medicamento) {
+            const stockClass = medicamento.stock <= (medicamento.stockMinimo || 10) ? 'text-danger fw-bold' : '';
+            const estadoClass = medicamento.activo ? 'bg-success' : 'bg-secondary';
+            const estadoText = medicamento.activo ? 'Activo' : 'Inactivo';
+
+            return `
+                <tr>
+                    <td>${medicamento.codigo || 'N/A'}</td>
+                    <td>${medicamento.nombre}</td>
+                    <td>${medicamento.categoria || 'N/A'}</td>
+                    <td>$${parseFloat(medicamento.precio || 0).toFixed(2)}</td>
+                    <td class="${stockClass}">${medicamento.stock || 0}</td>
+                    <td><span class="badge ${estadoClass}">${estadoText}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="medicamentoManager.edit(${medicamento.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="medicamentoManager.delete(${medicamento.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        };        // Sobrescribir el método loadData para implementar filtros
+        const originalLoadData = medicamentoManager.loadData.bind(medicamentoManager);
         medicamentoManager.loadData = async function() {
             try {
-                allMedicamentos = await AppUtils.get(this.config.apiEndpoint);
+                allMedicamentos = await AppUtils.getAll('medicamentos');
+                this.data = allMedicamentos;
                 this.applyFilters();
+                this.updateCount();
             } catch (error) {
                 console.error('Error loading data:', error);
-                AppUtils.showAlert('Error al cargar los datos', 'danger');
+                AppUtils.showMessage('Error al cargar los datos', 'error');
             }
-        };
-
-        // Método para aplicar filtros
+        };// Método para aplicar filtros con normalización de texto
         medicamentoManager.applyFilters = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const categoryFilter = document.getElementById('categoryFilter').value;
@@ -268,12 +269,23 @@
                     (item.codigo && item.codigo.toLowerCase().includes(searchTerm)) ||
                     (item.descripcion && item.descripcion.toLowerCase().includes(searchTerm));
                 
-                const matchesCategory = !categoryFilter || item.categoria === categoryFilter;
+                // Normalizar categorías para comparación (eliminar acentos)
+                const normalizeString = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const normalizedItemCategory = item.categoria ? normalizeString(item.categoria) : '';
+                const normalizedFilterCategory = categoryFilter ? normalizeString(categoryFilter) : '';
+                
+                const matchesCategory = !categoryFilter || 
+                    normalizedItemCategory === normalizedFilterCategory ||
+                    item.categoria === categoryFilter;
                 
                 return matchesSearch && matchesCategory;
             });
 
-            this.renderTable(filteredData);
+            this.data = filteredData;
+            this.renderTable();
+        };// Sobrescribir el método renderTableRow para usar formatTableRow personalizado
+        medicamentoManager.renderTableRow = function(item) {
+            return this.formatTableRow(item);
         };
 
         // Event listeners para filtros

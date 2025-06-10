@@ -35,18 +35,19 @@ public class AuthService {    private final AuthenticationManager authentication
 
     /**
      * Autenticar un usuario y generar token JWT
-     */
-    public AuthResponse authenticate(AuthRequest authRequest) {
+     */    public AuthResponse authenticate(AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-        );        String token = tokenProvider.generateToken(authentication);
+        );
+        
+        String token = tokenProvider.generateToken(authentication);
 
-        UsuarioEntity usuario = usuarioRepository.findByUsername(authRequest.getUsername())
+        UsuarioEntity usuario = usuarioRepository.findByNombreUsuario(authRequest.getUsername())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         Map<String, Object> userData = new HashMap<>();
         userData.put("id", usuario.getId());
-        userData.put("username", usuario.getUsername());
+        userData.put("username", usuario.getNombreUsuario());
         userData.put("role", usuario.getRol());
 
         return new AuthResponse(token, userData);
@@ -54,18 +55,19 @@ public class AuthService {    private final AuthenticationManager authentication
 
     /**
      * Registrar un nuevo usuario
-     */    public AuthResponse register(RegistroRequest request) {
+     */
+    public AuthResponse register(RegistroRequest request) {
         // Verificar si el usuario ya existe
-        if (usuarioRepository.existsByUsername(request.getNombreUsuario())) {
+        if (usuarioRepository.existsByNombreUsuario(request.getNombreUsuario())) {
             throw new RuntimeException("El nombre de usuario ya existe");
-        }        // Crear nuevo usuario
+        }
+        
+        // Crear nuevo usuario
         UsuarioEntity usuario = new UsuarioEntity();
-        usuario.setUsername(request.getNombreUsuario());
-        usuario.setPassword(request.getPassword());
+        usuario.setNombreUsuario(request.getNombreUsuario());
+        usuario.setContrasena(request.getPassword());
         usuario.setEmail(request.getEmail());
-        // Convert from old Rol enum to new RolUsuario enum
-        RolUsuario rolUsuario = RolUsuario.valueOf(request.getRol().getNombreRol());
-        usuario.setRol(rolUsuario);
+        usuario.setRol("PACIENTE");
         
         usuarioRepository.save(usuario);
 
@@ -78,7 +80,7 @@ public class AuthService {    private final AuthenticationManager authentication
 
         Map<String, Object> userData = new HashMap<>();
         userData.put("id", usuario.getId());
-        userData.put("username", usuario.getUsername());
+        userData.put("username", usuario.getNombreUsuario());
         userData.put("role", usuario.getRol());
 
         return new AuthResponse(token, userData, "Usuario registrado exitosamente");
@@ -91,3 +93,4 @@ public class AuthService {    private final AuthenticationManager authentication
         return tokenProvider.validateToken(token);
     }
 }
+

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,27 +46,17 @@ public interface CitaJpaRepository extends JpaRepository<CitaEntity, Long> {
     // Verificación de disponibilidad
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CitaEntity c WHERE " +
            "c.idMedico = :idMedico AND " +
-           "c.fechaCita = :fecha AND " +
-           "c.horaCita = :hora AND " +
+           "c.fechaCita = :fechaCita AND " +
            "c.estado = 'PROGRAMADA'")
     boolean existsScheduledAppointment(@Param("idMedico") Long idMedico, 
-                                      @Param("fecha") LocalDate fecha, 
-                                      @Param("hora") LocalTime hora);
-    
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.idMedico = :idMedico AND " +
-           "c.fechaCita = :fecha AND " +
-           "c.estado = 'PROGRAMADA' " +
-           "ORDER BY c.horaCita")
-    List<CitaEntity> findScheduledAppointmentsByDoctorAndDate(@Param("idMedico") Long idMedico, 
-                                                              @Param("fecha") LocalDate fecha);
-    
+                                      @Param("fechaCita") LocalDateTime fechaCita);
+
     // Consultas avanzadas
     @Query("SELECT c FROM CitaEntity c WHERE " +
            "c.fechaCita >= :fechaInicio AND " +
            "c.fechaCita <= :fechaFin AND " +
            "c.estado = :estado " +
-           "ORDER BY c.fechaCita, c.horaCita")
+           "ORDER BY c.fechaCita")
     List<CitaEntity> findAppointmentsByDateRangeAndStatus(@Param("fechaInicio") LocalDate fechaInicio,
                                                           @Param("fechaFin") LocalDate fechaFin,
                                                           @Param("estado") EstadoCita estado);
@@ -75,22 +65,21 @@ public interface CitaJpaRepository extends JpaRepository<CitaEntity, Long> {
            "c.idMedico = :idMedico AND " +
            "c.fechaCita >= :fechaInicio AND " +
            "c.fechaCita <= :fechaFin " +
-           "ORDER BY c.fechaCita, c.horaCita")
+           "ORDER BY c.fechaCita")
     List<CitaEntity> findDoctorAppointmentsByDateRange(@Param("idMedico") Long idMedico,
                                                        @Param("fechaInicio") LocalDate fechaInicio,
-                                                       @Param("fechaFin") LocalDate fechaFin);
-      // Búsquedas con texto
+                                                       @Param("fechaFin") LocalDate fechaFin);    // Búsquedas con texto
     @Query("SELECT c FROM CitaEntity c WHERE " +
-           "LOWER(c.motivo) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(CONCAT(c.paciente.firstName, ' ', c.paciente.lastName)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(CONCAT(c.medico.firstName, ' ', c.medico.lastName)) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+           "LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<CitaEntity> searchAppointments(@Param("searchTerm") String searchTerm);
 
     @Query("SELECT c FROM CitaEntity c WHERE " +
            "c.fechaCita >= :fecha AND " +
-           "(LOWER(c.motivo) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(CONCAT(c.paciente.firstName, ' ', c.paciente.lastName)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(CONCAT(c.medico.firstName, ' ', c.medico.lastName)) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+           "(LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     Page<CitaEntity> searchUpcomingAppointments(@Param("searchTerm") String searchTerm, 
                                                @Param("fecha") LocalDate fecha, 
                                                Pageable pageable);
@@ -114,13 +103,13 @@ public interface CitaJpaRepository extends JpaRepository<CitaEntity, Long> {
     @Query("SELECT c FROM CitaEntity c WHERE " +
            "c.fechaCita = :fecha AND " +
            "c.estado = 'PROGRAMADA' " +
-           "ORDER BY c.horaCita")
+           "ORDER BY c.fechaCita")
     List<CitaEntity> findTodayScheduledAppointments(@Param("fecha") LocalDate fecha);
-    
+
     @Query("SELECT c FROM CitaEntity c WHERE " +
            "c.fechaCita BETWEEN :hoy AND :fechaFin AND " +
            "c.estado = 'PROGRAMADA' " +
-           "ORDER BY c.fechaCita, c.horaCita")
+           "ORDER BY c.fechaCita")
     List<CitaEntity> findUpcomingAppointments(@Param("hoy") LocalDate hoy, 
                                              @Param("fechaFin") LocalDate fechaFin);
     

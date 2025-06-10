@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Específico - Error Guardar Cita</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="alert alert-warning">
+            <h4><i class="fas fa-exclamation-triangle"></i> Test Error Guardar Cita</h4>
+            <p>Esta página reproduce exactamente el mismo flujo que la página principal para identificar el error específico.</p>
+        </div>
+
+        <!-- Modal para crear cita -->
+        <div class="modal fade" id="citaModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nueva Cita</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="citaForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="idPaciente" class="form-label">Paciente *</label>
+                                        <select class="form-select" id="idPaciente" required>
+                                            <option value="">Seleccione un paciente</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="idMedico" class="form-label">Médico *</label>
+                                        <select class="form-select" id="idMedico" required>
+                                            <option value="">Seleccione un médico</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fechaCita" class="form-label">Fecha *</label>
+                                        <input type="date" class="form-control" id="fechaCita" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="horaCita" class="form-label">Hora *</label>
+                                        <input type="time" class="form-control" id="horaCita" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="motivoConsulta" class="form-label">Motivo de la Consulta</label>
+                                <textarea class="form-control" id="motivoConsulta" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado">
+                                    <option value="PROGRAMADA" selected>Programada</option>
+                                    <option value="CONFIRMADA">Confirmada</option>
+                                    <option value="EN_CURSO">En Curso</option>
+                                    <option value="COMPLETADA">Completada</option>
+                                    <option value="CANCELADA">Cancelada</option>
+                                    <option value="NO_ASISTIO">No Asistió</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="observaciones" class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="observaciones" rows="2"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="saveCitaBtn">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para abrir modal -->
+        <div class="card">
+            <div class="card-body text-center">
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#citaModal">
+                    <i class="fas fa-plus"></i> Crear Nueva Cita
+                </button>
+            </div>
+        </div>
+
+        <!-- Log de eventos -->
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Log de Eventos</h6>
+                    <button class="btn btn-sm btn-outline-secondary float-end" onclick="clearLog()">Limpiar</button>
+                </div>
+                <div class="card-body">
+                    <div id="eventLog" style="height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; background-color: #f8f9fa; padding: 10px; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/crud-manager.js"></script>
+    <script>
+        // Variables globales
+        let pacientesData = [];
+        let medicosData = [];
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            }[type] || 'ℹ️';
+            
+            logDiv.innerHTML += `<div>[${timestamp}] ${icon} ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+        
+        function clearLog() {
+            document.getElementById('eventLog').innerHTML = '';
+        }
+        
+        // Configuración de citas idéntica a la original
+        const citaConfig = {
+            entityName: 'cita',
+            entityNamePlural: 'citas',
+            apiEndpoint: '/api/citas',
+            modalId: 'citaModal',
+            formId: 'citaForm',
+            tableBodyId: 'citasTableBody',
+            fields: [
+                { name: 'idPaciente', type: 'select', required: true },
+                { name: 'idMedico', type: 'select', required: true },
+                { name: 'fechaCita', type: 'date', required: true },
+                { name: 'horaCita', type: 'time', required: true },
+                { name: 'motivoConsulta', type: 'textarea' },
+                { name: 'estado', type: 'select' },
+                { name: 'observaciones', type: 'textarea' }
+            ]
+        };
+        
+        // Crear manager de citas
+        const citaManager = new CRUDManager(citaConfig);
+        
+        // Sobrescribir el método save (idéntico al original)
+        const originalSave = citaManager.save.bind(citaManager);
+        citaManager.save = async function(event) {
+            event.preventDefault();
+            log('🔄 Iniciando proceso de guardado...', 'info');
+            
+            const formData = {};
+            this.fields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) {
+                    formData[field.name] = element.value;
+                }
+            });
+            
+            log(`📋 Datos recopilados: ${JSON.stringify(formData)}`, 'info');
+            
+            // Validar campos obligatorios
+            if (!formData.idPaciente || !formData.idMedico || !formData.fechaCita || !formData.horaCita) {
+                log('❌ Error: Campos obligatorios faltantes', 'error');
+                AppUtils.showMessage('Por favor complete todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            log('✅ Validación de campos obligatorios pasada', 'success');
+            
+            // Convertir IDs a números enteros
+            formData.idPaciente = parseInt(formData.idPaciente);
+            formData.idMedico = parseInt(formData.idMedico);
+            
+            log(`🔢 IDs convertidos: Paciente=${formData.idPaciente}, Médico=${formData.idMedico}`, 'info');
+            
+            // Combinar fecha y hora en fechaCita como LocalDateTime
+            if (formData.fechaCita && formData.horaCita) {
+                formData.fechaCita = `${formData.fechaCita}T${formData.horaCita}:00`;
+                delete formData.horaCita; // Eliminar horaCita del payload
+            }
+            
+            log(`⏰ FechaCita combinada: ${formData.fechaCita}`, 'info');
+            
+            // Limpiar campos vacíos
+            if (!formData.motivoConsulta) formData.motivoConsulta = null;
+            if (!formData.observaciones) formData.observaciones = null;
+            
+            log(`💾 Datos finales a enviar: ${JSON.stringify(formData)}`, 'info');
+            
+            try {
+                log('🚀 Enviando petición al servidor...', 'info');
+                const result = this.currentId 
+                    ? await AppUtils.update(this.entityNamePlural.toLowerCase(), this.currentId, formData)
+                    : await AppUtils.create(this.entityNamePlural.toLowerCase(), formData);
+                
+                log(`✅ Respuesta del servidor: ${JSON.stringify(result)}`, 'success');
+                
+                this.closeModal();
+                AppUtils.showMessage(`${this.entityName} guardado exitosamente`, 'success');
+                log('✅ Proceso de guardado completado exitosamente', 'success');
+                
+            } catch (error) {
+                log(`❌ Error al guardar: ${error.message}`, 'error');
+                log(`❌ Detalles del error: ${JSON.stringify(error)}`, 'error');
+                console.error('Error completo:', error);
+                AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
+            }
+        };
+        
+        // Función para cargar opciones de selects
+        async function loadSelectOptions() {
+            try {
+                log('🔄 Cargando opciones de pacientes y médicos...', 'info');
+                
+                // Cargar pacientes
+                pacientesData = await AppUtils.getAll('pacientes');
+                log(`✅ Pacientes cargados: ${pacientesData.length}`, 'success');
+                const pacienteSelect = document.getElementById('idPaciente');
+                pacienteSelect.innerHTML = '<option value="">Seleccione un paciente</option>';
+                pacientesData.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.nombres} ${paciente.apellidos}`;
+                    pacienteSelect.appendChild(option);
+                });
+
+                // Cargar médicos
+                medicosData = await AppUtils.getAll('medicos');
+                log(`✅ Médicos cargados: ${medicosData.length}`, 'success');
+                const medicoSelect = document.getElementById('idMedico');
+                medicoSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+                medicosData.forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.nombres} ${medico.apellidos} - ${medico.especializacion}`;
+                    medicoSelect.appendChild(option);
+                });
+                
+                log('✅ Opciones de selects cargadas exitosamente', 'success');
+                
+            } catch (error) {
+                log(`❌ Error loading select options: ${error.message}`, 'error');
+                AppUtils.showMessage(`Error al cargar las opciones: ${error.message}`, 'error');
+            }
+        }
+        
+        // Configurar evento del botón guardar
+        document.getElementById('saveCitaBtn').addEventListener('click', function(e) {
+            log('🖱️ Click en botón Guardar detectado', 'info');
+            citaManager.save(e);
+        });
+        
+        // Cargar opciones cuando se abra el modal
+        document.getElementById('citaModal').addEventListener('show.bs.modal', async function() {
+            log('📋 Modal de cita abierto', 'info');
+            await loadSelectOptions();
+        });
+        
+        // Establecer fecha mínima (hoy)
+        function setDefaultValues() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaCita').min = today;
+            document.getElementById('fechaCita').value = today;
+            document.getElementById('horaCita').value = '09:00';
+            log(`📅 Valores por defecto establecidos: ${today} 09:00`, 'info');
+        }
+        
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Página cargada - Iniciando test...', 'info');
+            setDefaultValues();
+        });
+    </script>
+</body>
+</html>

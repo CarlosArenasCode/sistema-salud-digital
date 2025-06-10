@@ -1,176 +1,64 @@
 package com.clinica.salud.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import jakarta.validation.constraints.*;
+import lombok.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
- * Entidad JPA para usuarios del sistema
+ * Entidad que representa a un usuario en el sistema de salud digital.
+ * Mapea con la tabla 'usuarios' en PostgreSQL.
+ * Unificada y estandarizada en español.
  */
 @Entity
 @Table(name = "usuarios")
-public class UsuarioEntity implements UserDetails {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UsuarioEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-      @Column(name = "nombre_usuario", unique = true, nullable = false, length = 50)
+    
     @NotBlank(message = "El nombre de usuario es obligatorio")
-    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres")
-    private String username;
-    
-    @Column(name = "contrasena", nullable = false)
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    private String password;
-    
-    @Column(name = "correo_electronico", unique = true, nullable = false, length = 100)
+    @Size(max = 50, message = "El nombre de usuario no puede exceder 50 caracteres")
+    @Column(name = "nombre_usuario", unique = true, nullable = false, length = 50)
+    private String nombreUsuario;
+      @Email(message = "Formato de email inválido")
     @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El formato del email no es válido")
+    @Size(max = 100, message = "El email no puede exceder 100 caracteres")
+    @Column(name = "correo_electronico", unique = true, nullable = false, length = 100)
     private String email;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "rol", nullable = false)
-    private RolUsuario rol;
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(max = 255, message = "La contraseña no puede exceder 255 caracteres")
+    @Column(name = "contrasena", nullable = false)
+    private String contrasena;
+      @NotBlank(message = "El rol es obligatorio")
+    @Pattern(regexp = "ADMINISTRADOR|MEDICO|PACIENTE|ENFERMERO", message = "El rol debe ser uno de: ADMINISTRADOR, MEDICO, PACIENTE, ENFERMERO")
+    @Column(name = "rol", nullable = false, length = 20)
+    private String rol;
     
-    @Column(name = "activo", nullable = false)
+    @Builder.Default
+    @Column(name = "activo")
     private Boolean activo = true;
     
-    @Column(name = "fecha_creacion")
-    private LocalDateTime createdAt;
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
     
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime updatedAt;
-    
-    // Constructores
-    public UsuarioEntity() {}
-    
-    public UsuarioEntity(String username, String password, String email, RolUsuario rol) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.rol = rol;
-        this.activo = true;
-    }
-    
-    // Métodos de UserDetails
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol.name()));
-    }
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return activo;
-    }
-    
-    @Override
-    public boolean isAccountNonLocked() {
-        return activo;
-    }
-    
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return activo;
-    }
-    
-    @Override
-    public boolean isEnabled() {
-        return activo;
-    }
-    
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public String getUsername() {
-        return username;
-    }
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public RolUsuario getRol() {
-        return rol;
-    }
-    
-    public void setRol(RolUsuario rol) {
-        this.rol = rol;
-    }
-    
-    public Boolean getActivo() {
-        return activo;
-    }
-    
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-    
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-    
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    private LocalDateTime fechaActualizacion;
     
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        fechaCreacion = LocalDateTime.now();
+        fechaActualizacion = LocalDateTime.now();
     }
     
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-    
-    @Override
-    public String toString() {
-        return "UsuarioEntity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", rol=" + rol +
-                ", activo=" + activo +
-                '}';
+        fechaActualizacion = LocalDateTime.now();
     }
 }
