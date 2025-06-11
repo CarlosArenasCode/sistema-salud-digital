@@ -4,7 +4,6 @@ import com.clinica.salud.dto.AuthRequest;
 import com.clinica.salud.dto.AuthResponse;
 import com.clinica.salud.dto.RegistroRequest;
 import com.clinica.salud.entity.UsuarioEntity;
-import com.clinica.salud.entity.RolUsuario;
 import com.clinica.salud.exception.RecursoNoEncontradoException;
 import com.clinica.salud.repository.jpa.UsuarioJpaRepository;
 import com.clinica.salud.security.JwtTokenProvider;
@@ -93,4 +92,3 @@ public class AuthService {    private final AuthenticationManager authentication
         return tokenProvider.validateToken(token);
     }
 }
-
