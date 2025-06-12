@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Salud Digital - Optimizado</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/icons.css" rel="stylesheet">
     <style>
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -46,13 +45,16 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">        <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-heartbeat me-2"></i>Sistema de Salud Digital
+                <svg class="svg-icon icon-md me-2" viewBox="0 0 24 24">
+                    <path d="M12 2L13.09 6.26L18 7L13.09 7.74L12 12L10.91 7.74L6 7L10.91 6.26L12 2ZM12 15C13.66 15 15 16.34 15 18S13.66 21 12 21 9 19.66 9 18 10.34 15 12 15M12 13C9.79 13 8 14.79 8 17S9.79 21 12 21 16 19.21 16 17 14.21 13 12 13Z" fill="currentColor"/>
+                </svg>Sistema de Salud Digital
             </a>
             <span class="optimization-badge">
-                <i class="fas fa-rocket me-2"></i>Optimizado
+                <svg class="svg-icon icon-sm me-2" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.33L10.5 11L16 12.5L11.5 17L13 18.5L21 10.5V9ZM9.83 12.88L8 14.71L5.71 12.42C5.32 12.03 4.69 12.03 4.3 12.42S3.91 13.58 4.3 13.97L7.59 17.26C7.98 17.65 8.61 17.65 9 17.26L12.17 14.09L9.83 12.88Z" fill="currentColor"/>
+                </svg>Optimizado
             </span>
         </div>
     </nav>
@@ -78,9 +80,10 @@
                             <small>Funcionalidad</small>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 text-center">
-                    <i class="fas fa-hospital-user" style="font-size: 12rem; opacity: 0.8;"></i>
+                </div>                <div class="col-lg-6 text-center">
+                    <svg class="svg-icon" style="width: 12rem; height: 12rem; opacity: 0.8;" viewBox="0 0 24 24">
+                        <path d="M12 3C13.1 3 14 3.9 14 5S13.1 7 12 7 10 6.1 10 5 10.9 3 12 3M21 9V7L15 1L13.5 2.5L16.17 5.33L10.5 11L16 12.5L11.5 17L13 18.5L21 10.5V9M9.83 12.88L8 14.71L5.71 12.42C5.32 12.03 4.69 12.03 4.3 12.42S3.91 13.58 4.3 13.97L7.59 17.26C7.98 17.65 8.61 17.65 9 17.26L12.17 14.09L9.83 12.88Z" fill="currentColor"/>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -97,57 +100,66 @@
             </div>
 
             <div class="row g-4">
-                <!-- Pacientes -->
-                <div class="col-lg-3 col-md-6">
+                <!-- Pacientes -->                <div class="col-lg-3 col-md-6">
                     <div class="card feature-card border-0 shadow-sm h-100">
                         <div class="card-body text-center p-4">
-                            <i class="fas fa-user-injured feature-icon"></i>
+                            <svg class="svg-icon feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.33L10.5 11L16 12.5L11.5 17L13 18.5L21 10.5V9ZM9.83 12.88L8 14.71L5.71 12.42C5.32 12.03 4.69 12.03 4.3 12.42S3.91 13.58 4.3 13.97L7.59 17.26C7.98 17.65 8.61 17.65 9 17.26L12.17 14.09L9.83 12.88Z" fill="currentColor"/>
+                            </svg>
                             <h5 class="card-title">Gestión de Pacientes</h5>
                             <p class="card-text text-muted">Registro completo de pacientes con historial médico, datos personales y de emergencia.</p>
                             <a href="pacientes-optimized.html" class="btn btn-primary">
-                                Acceder <i class="fas fa-arrow-right ms-2"></i>
+                                Acceder <svg class="svg-icon icon-sm ms-2" viewBox="0 0 24 24">
+                                    <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" fill="currentColor"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Médicos -->
+                </div>                <!-- Médicos -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card feature-card border-0 shadow-sm h-100">
                         <div class="card-body text-center p-4">
-                            <i class="fas fa-user-md feature-icon"></i>
+                            <svg class="svg-icon feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.33L10.5 11L16 12.5L11.5 17L13 18.5L21 10.5V9ZM9.83 12.88L8 14.71L5.71 12.42C5.32 12.03 4.69 12.03 4.3 12.42S3.91 13.58 4.3 13.97L7.59 17.26C7.98 17.65 8.61 17.65 9 17.26L12.17 14.09L9.83 12.88Z" fill="currentColor"/>
+                            </svg>
                             <h5 class="card-title">Gestión de Médicos</h5>
                             <p class="card-text text-muted">Administración de personal médico, especialidades, horarios y disponibilidad.</p>
                             <a href="medicos-optimized.html" class="btn btn-primary">
-                                Acceder <i class="fas fa-arrow-right ms-2"></i>
+                                Acceder <svg class="svg-icon icon-sm ms-2" viewBox="0 0 24 24">
+                                    <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" fill="currentColor"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Citas -->
+                </div>                <!-- Citas -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card feature-card border-0 shadow-sm h-100">
                         <div class="card-body text-center p-4">
-                            <i class="fas fa-calendar-alt feature-icon"></i>
+                            <svg class="svg-icon feature-icon" viewBox="0 0 24 24">
+                                <path d="M19,3H18V1H16V3H8V1H6V3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z" fill="currentColor"/>
+                            </svg>
                             <h5 class="card-title">Gestión de Citas</h5>
                             <p class="card-text text-muted">Programación y seguimiento de citas médicas con estado y observaciones.</p>
                             <a href="citas-optimized.html" class="btn btn-primary">
-                                Acceder <i class="fas fa-arrow-right ms-2"></i>
+                                Acceder <svg class="svg-icon icon-sm ms-2" viewBox="0 0 24 24">
+                                    <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" fill="currentColor"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Medicamentos -->
+                </div>                <!-- Medicamentos -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card feature-card border-0 shadow-sm h-100">
                         <div class="card-body text-center p-4">
-                            <i class="fas fa-pills feature-icon"></i>
+                            <svg class="svg-icon feature-icon" viewBox="0 0 24 24">
+                                <path d="M6,3H18A3,3 0 0,1 21,6V18A3,3 0 0,1 18,21H6A3,3 0 0,1 3,18V6A3,3 0 0,1 6,3M6,5A1,1 0 0,0 5,6V18A1,1 0 0,0 6,19H18A1,1 0 0,0 19,18V6A1,1 0 0,0 18,5H6M6,7H18V9H16V11H14V9H10V11H8V9H6V7M8,13H10V15H8V13M14,13H16V15H14V13M8,17H10V19H8V17M14,17H16V19H14V17Z" fill="currentColor"/>
+                            </svg>
                             <h5 class="card-title">Gestión de Medicamentos</h5>
                             <p class="card-text text-muted">Inventario de medicamentos con control de stock, precios y categorías.</p>
                             <a href="medicamentos-optimized.html" class="btn btn-primary">
-                                Acceder <i class="fas fa-arrow-right ms-2"></i>
+                                Acceder <svg class="svg-icon icon-sm ms-2" viewBox="0 0 24 24">
+                                    <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" fill="currentColor"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -285,18 +297,18 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <p class="mb-0">&copy; 2024 Sistema de Salud Digital - Versión Optimizada</p>
-                </div>
-                <div class="col-md-6 text-md-end">
+                </div>                <div class="col-md-6 text-md-end">
                     <p class="mb-0">
-                        <i class="fas fa-code me-2"></i>
+                        <svg class="svg-icon icon-sm me-2" viewBox="0 0 24 24">
+                            <path d="M14.6,16.6L19.2,12L14.6,7.4L16,6L22,12L16,18L14.6,16.6M9.4,16.6L4.8,12L9.4,7.4L8,6L2,12L8,18L9.4,16.6Z" fill="currentColor"/>
+                        </svg>
                         Optimización: 9,311 → 5,933 líneas (-36%)
                     </p>
                 </div>
             </div>
         </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </footer>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/icons.js"></script>
     <script src="js/utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
