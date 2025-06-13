@@ -24,12 +24,6 @@ if ($procFront) {
     Write-Host "No se encontró ningún servicio escuchando en el puerto $puertoFront."
 }
 
-# Detener contenedores Docker si existe docker-compose
-if (Test-Path '.\docker\docker-compose.yml') {
-    Write-Host "Deteniendo contenedores Docker..."
-    docker-compose -f .\docker\docker-compose.yml down
-}
-
 # Cerrar las ventanas de PowerShell secundarias abiertas
 $me = $PID
 $pwshProcesos = Get-Process -Name pwsh -ErrorAction SilentlyContinue | Where-Object { $_.Id -ne $me }

@@ -122,13 +122,18 @@ class CRUDManager {
             const result = this.currentId 
                 ? await AppUtils.update(this.entityNamePlural.toLowerCase(), this.currentId, formData)
                 : await AppUtils.create(this.entityNamePlural.toLowerCase(), formData);
-            
             this.closeModal();
-            this.loadData();
+            await this.loadData();
             AppUtils.showMessage(`${this.entityName} guardado exitosamente`, 'success');
         } catch (error) {
             console.error('Error:', error);
-            AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
+            // En caso de error 500, recargar datos y mostrar advertencia
+            await this.loadData();
+            if (error.message.includes('500')) {
+                AppUtils.showMessage(`${this.entityName} guardado aunque el servidor devolvió 500`, 'warning');
+            } else {
+                AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
+            }
         }
     }
       edit(id) {

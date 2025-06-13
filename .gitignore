@@ -36,9 +36,6 @@ desktop.ini
 node_modules/
 npm-debug.log*
 
-# Docker (opcional - puedes comentar si quieres incluir los volúmenes)
-postgres_data/
-
 # Archivos temporales
 *.tmp
 *.temp
