@@ -8,10 +8,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-/**
- * Configuración CORS simplificada
- * Eliminada duplicación de configuración
- */
+
 @Configuration
 public class CorsConfig {
     
