@@ -4,54 +4,45 @@ import com.clinica.salud.entity.UsuarioEntity;
 import com.clinica.salud.repository.jpa.UsuarioJpaRepository;
 import com.clinica.salud.exception.RecursoNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class UsuarioService {
+public class UsuarioService extends BaseService<UsuarioEntity, Long> {
 
     private final UsuarioJpaRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UsuarioService(UsuarioJpaRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public List<UsuarioEntity> listarTodos() {
-        return usuarioRepository.findAll();
+    @Override
+    protected JpaRepository<UsuarioEntity, Long> getRepository() {
+        return usuarioRepository;
     }
 
+    // Método con manejo de excepciones personalizado
     public UsuarioEntity buscarPorId(Long id) {
-        return usuarioRepository.findById(id)
+        return findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado"));
     }
 
-    public UsuarioEntity insertar(UsuarioEntity usuario) {
-        return usuarioRepository.save(usuario);
-    }
-
+    // Método de actualización con validación
     public UsuarioEntity actualizar(Long id, UsuarioEntity usuario) {
-        if (!usuarioRepository.existsById(id)) {
+        if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
         }
         usuario.setId(id);
-        return usuarioRepository.save(usuario);
+        return save(usuario);
     }
 
+    // Método de eliminación con validación
     public void eliminar(Long id) {
-        if (!usuarioRepository.existsById(id)) {
+        if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
         }
-        usuarioRepository.deleteById(id);
-    }
-
-    public UsuarioEntity registrarUsuario(UsuarioEntity usuario) {
-        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        return usuarioRepository.save(usuario);
-    }
+        deleteById(id);
+    }    // Métodos específicos de Usuario pueden agregarse aquí cuando estén disponibles en el repositorio
+    // Por ejemplo: buscarPorUsername, buscarPorRol, etc.
 }

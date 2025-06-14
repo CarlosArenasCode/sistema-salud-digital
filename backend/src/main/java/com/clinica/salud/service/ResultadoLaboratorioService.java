@@ -22,21 +22,13 @@ public class ResultadoLaboratorioService extends BaseService<ResultadoLaboratori
     @Override
     protected JpaRepository<ResultadoLaboratorioEntity, Long> getRepository() {
         return resultadoRepository;
-    }
-
-    public List<ResultadoLaboratorioEntity> listarTodos() {
-        return findAll();
-    }
-
+    }    // Método con manejo de excepciones personalizado
     public ResultadoLaboratorioEntity buscarPorId(Long id) {
         return findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado"));
     }
 
-    public ResultadoLaboratorioEntity insertar(ResultadoLaboratorioEntity resultado) {
-        return save(resultado);
-    }
-
+    // Método de actualización con validación
     public ResultadoLaboratorioEntity actualizar(Long id, ResultadoLaboratorioEntity resultado) {
         if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado");
@@ -45,6 +37,7 @@ public class ResultadoLaboratorioService extends BaseService<ResultadoLaboratori
         return save(resultado);
     }
 
+    // Método de eliminación con validación
     public void eliminar(Long id) {
         if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado");
