@@ -2,7 +2,6 @@ package com.clinica.salud.service;
 
 import com.clinica.salud.entity.MedicamentoEntity;
 import com.clinica.salud.repository.jpa.MedicamentoJpaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,48 +10,42 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Servicio de Medicamento
- * Usa BaseService para eliminar código duplicado
+ * Servicio de Medicamento - SIMPLIFICADO
  * Incluye métodos específicos de medicamentos
  */
 @Service
 public class MedicamentoService extends BaseService<MedicamentoEntity, Long> {
     
-    private final MedicamentoJpaRepository medicamentoRepository;
+    private final MedicamentoJpaRepository repository;
     
-    @Autowired
-    public MedicamentoService(MedicamentoJpaRepository medicamentoRepository) {
-        this.medicamentoRepository = medicamentoRepository;
+    public MedicamentoService(MedicamentoJpaRepository repository) {
+        this.repository = repository;
     }
     
     @Override
-    protected JpaRepository<MedicamentoEntity, Long> getRepository() {
-        return medicamentoRepository;
-    }
+    protected JpaRepository<MedicamentoEntity, Long> getRepository() { return repository; }
 
     @Override
-    protected String getEntityName() {
-        return "Medicamento";
-    }
+    protected String getEntityName() { return "Medicamento"; }
     
     // Métodos específicos de medicamentos
     public List<MedicamentoEntity> buscarPorNombre(String nombre) {
-        return medicamentoRepository.findByNombreContainingIgnoreCase(nombre);
+        return repository.findByNombreContainingIgnoreCase(nombre);
     }
     
     public Optional<MedicamentoEntity> buscarPorCodigo(String codigo) {
-        return medicamentoRepository.findByCodigo(codigo);
+        return repository.findByCodigo(codigo);
     }
     
     public List<MedicamentoEntity> buscarStockBajo(Integer threshold) {
-        return medicamentoRepository.findLowStockMedications(threshold);
+        return repository.findLowStockMedications(threshold);
     }
     
     public List<MedicamentoEntity> buscarVencidos() {
-        return medicamentoRepository.findExpiredMedications();
+        return repository.findExpiredMedications();
     }
     
     public List<MedicamentoEntity> buscarPorVencer(LocalDateTime fecha) {
-        return medicamentoRepository.findMedicationsExpiringSoon(fecha);
+        return repository.findMedicationsExpiringSoon(fecha);
     }
 }

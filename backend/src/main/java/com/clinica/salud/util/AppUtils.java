@@ -2,7 +2,6 @@ package com.clinica.salud.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -81,33 +80,13 @@ public class AppUtils {
             if (!palabras[i].isEmpty()) {
                 resultado.append(Character.toUpperCase(palabras[i].charAt(0)))
                          .append(palabras[i].substring(1));
-            }
-        }
+            }        }
         
         return resultado.toString();
     }
     
-    /**
-     * Verifica si una lista está vacía o nula
-     */
-    public static boolean estaVacia(List<?> lista) {
-        return lista == null || lista.isEmpty();
-    }
-    
-    /**
-     * Obtiene el valor o un default si es null
-     */
-    public static <T> T obtenerODefault(T valor, T valorDefault) {
-        return valor != null ? valor : valorDefault;
-    }
-    
-    /**
-     * Limpia y normaliza un string
-     */
-    public static String limpiarString(String texto) {
-        if (texto == null) {
-            return null;
-        }
-        return texto.trim().replaceAll("\\s+", " ");
-    }
+    // MÉTODOS ELIMINADOS (usar alternativas nativas de Java):
+    // - estaVacia() -> usar directamente lista.isEmpty()
+    // - obtenerODefault() -> usar Optional.ofNullable(valor).orElse(valorDefault)
+    // - limpiarString() -> implementar donde sea específicamente necesario
 }

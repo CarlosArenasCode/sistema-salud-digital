@@ -4,26 +4,21 @@ import com.clinica.salud.entity.MedicamentoEntity;
 import com.clinica.salud.service.BaseService;
 import com.clinica.salud.service.MedicamentoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Medicamentos", description = "Operaciones relacionadas con medicamentos")
 @RestController
 @RequestMapping("/medicamentos")
+@Tag(name = "Medicamentos")
 @Validated
 public class MedicamentoController extends BaseController<MedicamentoEntity, Long> {
 
-    private final MedicamentoService medicamentoService;
+    private final MedicamentoService service;
 
-    @Autowired
-    public MedicamentoController(MedicamentoService medicamentoService) {
-        this.medicamentoService = medicamentoService;
-    }    @Override
-    protected BaseService<MedicamentoEntity, Long> getService() {
-        return medicamentoService;
+    public MedicamentoController(MedicamentoService service) {
+        this.service = service;
     }
 
-    // Métodos adicionales específicos de medicamentos pueden ir aquí
-    // Por ejemplo: buscar por nombre, buscar por categoría, verificar stock bajo, etc.
+    @Override
+    protected BaseService<MedicamentoEntity, Long> getService() { return service; }
 }

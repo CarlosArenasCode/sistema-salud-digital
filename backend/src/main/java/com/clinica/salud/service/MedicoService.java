@@ -2,33 +2,24 @@ package com.clinica.salud.service;
 
 import com.clinica.salud.entity.MedicoEntity;
 import com.clinica.salud.repository.jpa.MedicoJpaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio de Médico optimizado * Usa BaseService para eliminar código duplicado
+ * Servicio de Médico - SIMPLIFICADO
  */
 @Service
 public class MedicoService extends BaseService<MedicoEntity, Long> {
 
-    private final MedicoJpaRepository medicoRepository;
-
-    @Autowired
-    public MedicoService(MedicoJpaRepository medicoRepository) {
-        this.medicoRepository = medicoRepository;
+    private final MedicoJpaRepository repository;
+    
+    public MedicoService(MedicoJpaRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    protected JpaRepository<MedicoEntity, Long> getRepository() {
-        return medicoRepository;
-    }
+    protected JpaRepository<MedicoEntity, Long> getRepository() { return repository; }
 
     @Override
-    protected String getEntityName() {
-        return "Médico";
-    }
-
-    // Todos los métodos CRUD comunes ya están en BaseService
-    // Solo añadir métodos específicos de Médico aquí si son necesarios
+    protected String getEntityName() { return "Médico"; }
 }

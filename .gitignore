@@ -10,17 +10,10 @@
 *.log.*
 *.log.gz
 
-# Base de datos local
-database/
-*.db
-*.sqlite
-
 # Configuraciones locales
-.env
-.env.local
 backend/src/main/resources/db.properties
 
-# IDEs
+# IDEs 
 .vscode/
 .idea/
 *.iml
@@ -28,13 +21,8 @@ backend/src/main/resources/db.properties
 *.iws
 
 # Sistema operativo
-.DS_Store
 Thumbs.db
 desktop.ini
-
-# Node.js (si se usa)
-node_modules/
-npm-debug.log*
 
 # Archivos temporales
 *.tmp

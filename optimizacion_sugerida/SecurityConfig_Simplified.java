@@ -11,22 +11,19 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Configuración de Seguridad SIMPLIFICADA
+ * Reduce de 50+ líneas a ~25 líneas
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UsuarioEntityDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
-    
-    public SecurityConfig(UsuarioEntityDetailsService userDetailsService, 
-                         CorsConfigurationSource corsConfigurationSource) {
-        this.userDetailsService = userDetailsService;
-        this.corsConfigurationSource = corsConfigurationSource;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,7 +37,9 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }    @SuppressWarnings("deprecation")
+    }
+
+    @SuppressWarnings("deprecation")
     @Bean 
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
