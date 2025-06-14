@@ -19,10 +19,14 @@ class CRUDManager {
         this.loadData();
         this.bindEvents();
     }
-    
-    async loadData() {
+      async loadData() {
         try {
+            console.log(`Cargando datos de ${this.entityNamePlural}...`);
+            console.log(`URL: ${AppUtils.API_BASE}/${this.entityNamePlural.toLowerCase()}`);
+            
             this.data = await AppUtils.getAll(this.entityNamePlural.toLowerCase());
+            console.log(`Datos cargados:`, this.data);
+            
             this.renderTable();
             this.updateCount();
         } catch (error) {

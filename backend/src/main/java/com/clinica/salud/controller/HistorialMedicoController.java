@@ -23,9 +23,7 @@ public class HistorialMedicoController extends BaseController<HistorialMedicoEnt
     @Autowired
     public HistorialMedicoController(HistorialMedicoService historialMedicoService) {
         this.historialMedicoService = historialMedicoService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<HistorialMedicoEntity, Long> getService() {
         return historialMedicoService;
     }

@@ -19,11 +19,9 @@ public class PacienteController extends BaseController<PacienteEntity, Long> {
     @Autowired
     public PacienteController(PacienteService pacienteService) {
         this.pacienteService = pacienteService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<PacienteEntity, Long> getService() {
         return pacienteService;
-    }    // Solo métodos específicos que no están en BaseController van aquí
+    }// Solo métodos específicos que no están en BaseController van aquí
     // Los métodos CRUD básicos (GET, POST, PUT, DELETE) ya están implementados en BaseController
 }

@@ -19,9 +19,7 @@ public class UsuarioController extends BaseController<UsuarioEntity, Long> {
     @Autowired
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<UsuarioEntity, Long> getService() {
         return usuarioService;
     }

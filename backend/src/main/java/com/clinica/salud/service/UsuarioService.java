@@ -2,11 +2,18 @@ package com.clinica.salud.service;
 
 import com.clinica.salud.entity.UsuarioEntity;
 import com.clinica.salud.repository.jpa.UsuarioJpaRepository;
-import com.clinica.salud.exception.RecursoNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Servicio de Usuario
+ * Usa BaseService para eliminar código duplicado
+ * Incluye métodos específicos de usuarios
+ */
 @Service
 public class UsuarioService extends BaseService<UsuarioEntity, Long> {
 
@@ -22,27 +29,33 @@ public class UsuarioService extends BaseService<UsuarioEntity, Long> {
         return usuarioRepository;
     }
 
-    // Método con manejo de excepciones personalizado
-    public UsuarioEntity buscarPorId(Long id) {
-        return findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado"));
+    @Override
+    protected String getEntityName() {
+        return "Usuario";
     }
 
-    // Método de actualización con validación
-    public UsuarioEntity actualizar(Long id, UsuarioEntity usuario) {
-        if (!existsById(id)) {
-            throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
-        }
-        usuario.setId(id);
-        return save(usuario);
+    // Métodos específicos de Usuario
+    public Optional<UsuarioEntity> buscarPorNombreUsuario(String nombreUsuario) {
+        return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
-
-    // Método de eliminación con validación
-    public void eliminar(Long id) {
-        if (!existsById(id)) {
-            throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
-        }
-        deleteById(id);
-    }    // Métodos específicos de Usuario pueden agregarse aquí cuando estén disponibles en el repositorio
-    // Por ejemplo: buscarPorUsername, buscarPorRol, etc.
+    
+    public Optional<UsuarioEntity> buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+    
+    public List<UsuarioEntity> buscarPorRol(String rol) {
+        return usuarioRepository.findByRol(rol);
+    }
+    
+    public List<UsuarioEntity> buscarActivos() {
+        return usuarioRepository.findByActivo(true);
+    }
+    
+    public boolean existePorNombreUsuario(String nombreUsuario) {
+        return usuarioRepository.existsByNombreUsuario(nombreUsuario);
+    }
+    
+    public boolean existePorEmail(String email) {
+        return usuarioRepository.existsByEmail(email);
+    }
 }

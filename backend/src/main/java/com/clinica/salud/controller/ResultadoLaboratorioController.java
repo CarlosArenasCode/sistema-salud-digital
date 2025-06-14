@@ -19,9 +19,7 @@ public class ResultadoLaboratorioController extends BaseController<ResultadoLabo
     @Autowired
     public ResultadoLaboratorioController(ResultadoLaboratorioService resultadoLaboratorioService) {
         this.resultadoLaboratorioService = resultadoLaboratorioService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<ResultadoLaboratorioEntity, Long> getService() {
         return resultadoLaboratorioService;
     }

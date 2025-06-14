@@ -19,9 +19,7 @@ public class MedicamentoController extends BaseController<MedicamentoEntity, Lon
     @Autowired
     public MedicamentoController(MedicamentoService medicamentoService) {
         this.medicamentoService = medicamentoService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<MedicamentoEntity, Long> getService() {
         return medicamentoService;
     }

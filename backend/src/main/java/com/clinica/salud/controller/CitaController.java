@@ -19,9 +19,7 @@ public class CitaController extends BaseController<CitaEntity, Long> {
     @Autowired
     public CitaController(CitaService citaService) {
         this.citaService = citaService;
-    }
-
-    @Override
+    }    @Override
     protected BaseService<CitaEntity, Long> getService() {
         return citaService;
     }

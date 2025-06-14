@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Servicio de Médico optimizado * Usa BaseService para eliminar código duplicado
+ */
 @Service
 public class MedicoService extends BaseService<MedicoEntity, Long> {
 
@@ -21,6 +24,11 @@ public class MedicoService extends BaseService<MedicoEntity, Long> {
         return medicoRepository;
     }
 
-    // Métodos específicos para médicos pueden ir aquí
-    // Por ejemplo: buscarPorEspecialidad, buscarDisponibles, etc.
+    @Override
+    protected String getEntityName() {
+        return "Médico";
+    }
+
+    // Todos los métodos CRUD comunes ya están en BaseService
+    // Solo añadir métodos específicos de Médico aquí si son necesarios
 }
