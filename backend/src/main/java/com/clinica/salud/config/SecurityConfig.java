@@ -1,6 +1,5 @@
 package com.clinica.salud.config;
 
-import com.clinica.salud.service.UsuarioEntityDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,12 +18,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UsuarioEntityDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
     
-    public SecurityConfig(UsuarioEntityDetailsService userDetailsService, 
-                         CorsConfigurationSource corsConfigurationSource) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(CorsConfigurationSource corsConfigurationSource) {
         this.corsConfigurationSource = corsConfigurationSource;
     }
 
