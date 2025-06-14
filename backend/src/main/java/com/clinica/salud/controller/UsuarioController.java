@@ -1,6 +1,6 @@
 package com.clinica.salud.controller;
 
-import com.clinica.salud.modelo.Usuario;
+import com.clinica.salud.entity.UsuarioEntity;
 import com.clinica.salud.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,12 +24,10 @@ public class UsuarioController {
     @Autowired
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-    }
-
-    @Operation(summary = "Lista todos los usuarios")
+    }    @Operation(summary = "Lista todos los usuarios")
     @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida correctamente")
     @GetMapping
-    public List<Usuario> listarTodos() {
+    public List<UsuarioEntity> listarTodos() {
         return usuarioService.listarTodos();
     }
 
@@ -39,15 +37,15 @@ public class UsuarioController {
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{id}")
-    public Usuario obtenerPorId(@PathVariable int id) {
+    public UsuarioEntity obtenerPorId(@PathVariable Long id) {
         return usuarioService.buscarPorId(id);
     }
 
     @Operation(summary = "Crea un nuevo usuario")
     @ApiResponse(responseCode = "201", description = "Usuario creado correctamente")
     @PostMapping
-    public void crear(@Valid @RequestBody Usuario usuario) {
-        usuarioService.insertar(usuario);
+    public UsuarioEntity crear(@Valid @RequestBody UsuarioEntity usuario) {
+        return usuarioService.insertar(usuario);
     }
 
     @Operation(summary = "Actualiza un usuario existente")
@@ -56,8 +54,8 @@ public class UsuarioController {
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PutMapping("/{id}")
-    public void actualizar(@PathVariable int id, @Valid @RequestBody Usuario usuario) {
-        usuarioService.actualizar(id, usuario);
+    public UsuarioEntity actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioEntity usuario) {
+        return usuarioService.actualizar(id, usuario);
     }
 
     @Operation(summary = "Elimina un usuario por su ID")
@@ -66,7 +64,7 @@ public class UsuarioController {
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable int id) {
+    public void eliminar(@PathVariable Long id) {
         usuarioService.eliminar(id);
     }
 }

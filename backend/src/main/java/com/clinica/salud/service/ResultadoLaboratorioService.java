@@ -1,51 +1,59 @@
 package com.clinica.salud.service;
 
-import com.clinica.salud.dao.ResultadoLaboratorioDAO;
+import com.clinica.salud.entity.ResultadoLaboratorioEntity;
+import com.clinica.salud.repository.jpa.ResultadoLaboratorioJpaRepository;
 import com.clinica.salud.exception.RecursoNoEncontradoException;
-import com.clinica.salud.modelo.ResultadoLaboratorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ResultadoLaboratorioService {
+public class ResultadoLaboratorioService extends BaseService<ResultadoLaboratorioEntity, Long> {
 
-    private final ResultadoLaboratorioDAO resultadoLaboratorioDAO;
+    private final ResultadoLaboratorioJpaRepository resultadoRepository;
 
     @Autowired
-    public ResultadoLaboratorioService(ResultadoLaboratorioDAO resultadoLaboratorioDAO) {
-        this.resultadoLaboratorioDAO = resultadoLaboratorioDAO;
+    public ResultadoLaboratorioService(ResultadoLaboratorioJpaRepository resultadoRepository) {
+        this.resultadoRepository = resultadoRepository;
     }
 
-    public List<ResultadoLaboratorio> listarTodos() {
-        return resultadoLaboratorioDAO.listarTodos();
+    @Override
+    protected JpaRepository<ResultadoLaboratorioEntity, Long> getRepository() {
+        return resultadoRepository;
     }
 
-    public ResultadoLaboratorio buscarPorId(int id) {
-        ResultadoLaboratorio resultado = resultadoLaboratorioDAO.buscarPorId(id);
-        if (resultado == null) {
+    public List<ResultadoLaboratorioEntity> listarTodos() {
+        return findAll();
+    }
+
+    public ResultadoLaboratorioEntity buscarPorId(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado"));
+    }
+
+    public ResultadoLaboratorioEntity insertar(ResultadoLaboratorioEntity resultado) {
+        return save(resultado);
+    }
+
+    public ResultadoLaboratorioEntity actualizar(Long id, ResultadoLaboratorioEntity resultado) {
+        if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado");
         }
-        return resultado;
+        resultado.setId(id);
+        return save(resultado);
     }
 
-    public void insertar(ResultadoLaboratorio resultado) {
-        resultadoLaboratorioDAO.insertar(resultado);
-    }
-
-    public void actualizar(int id, ResultadoLaboratorio resultado) {
-        if (resultadoLaboratorioDAO.buscarPorId(id) == null) {
+    public void eliminar(Long id) {
+        if (!existsById(id)) {
             throw new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado");
         }
-        resultado.setIdResultado(id);
-        resultadoLaboratorioDAO.actualizar(resultado);
+        deleteById(id);
     }
 
-    public void eliminar(int id) {
-        if (resultadoLaboratorioDAO.buscarPorId(id) == null) {
-            throw new RecursoNoEncontradoException("Resultado laboratorio con id " + id + " no encontrado");
-        }
-        resultadoLaboratorioDAO.eliminar(id);
+    // Métodos específicos de ResultadoLaboratorio
+    public List<ResultadoLaboratorioEntity> buscarPorPaciente(Long idPaciente) {
+        return resultadoRepository.findByIdPaciente(idPaciente);
     }
 }

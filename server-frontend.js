@@ -18,9 +18,8 @@ const mimeTypes = {
 };
 
 http.createServer((req, res) => {
-  console.log(`${req.method} ${req.url}`);
-  let requestedPath = req.url.split('?')[0];
-  let filePath = path.join(publicDir, requestedPath === '/' ? 'index-optimized.html' : requestedPath);
+  console.log(`${req.method} ${req.url}`);  let requestedPath = req.url.split('?')[0];
+  let filePath = path.join(publicDir, requestedPath === '/' ? 'login.html' : requestedPath);
 
   fs.exists(filePath, exists => {
     if (!exists) {

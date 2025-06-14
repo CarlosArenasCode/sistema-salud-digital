@@ -1,6 +1,6 @@
 package com.clinica.salud.dto;
 
-import com.clinica.salud.modelo.Rol;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,14 +16,13 @@ public class RegistroRequest {    @NotBlank(message = "El nombre de usuario es o
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El formato del email no es válido")
+    @NotBlank(message = "El email es obligatorio")    @Email(message = "El formato del email no es válido")
     private String email;
 
-    private Rol rol;
+    private String rol;
 
     // Constructores
-    public RegistroRequest() {}    public RegistroRequest(String nombreUsuario, String password, String email, Rol rol) {
+    public RegistroRequest() {}    public RegistroRequest(String nombreUsuario, String password, String email, String rol) {
         this.nombreUsuario = nombreUsuario;
         this.password = password;
         this.email = email;
@@ -51,13 +50,11 @@ public class RegistroRequest {    @NotBlank(message = "El nombre de usuario es o
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Rol getRol() {
+    }    public String getRol() {
         return rol;
     }
 
-    public void setRol(Rol rol) {
+    public void setRol(String rol) {
         this.rol = rol;
     }
 }

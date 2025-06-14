@@ -1,8 +1,8 @@
 package com.clinica.salud.service;
 
-import com.clinica.salud.dao.UsuarioDAO;
+import com.clinica.salud.entity.UsuarioEntity;
+import com.clinica.salud.repository.jpa.UsuarioJpaRepository;
 import com.clinica.salud.exception.RecursoNoEncontradoException;
-import com.clinica.salud.modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,49 +12,46 @@ import java.util.List;
 @Service
 public class UsuarioService {
 
-    private final UsuarioDAO usuarioDAO;
+    private final UsuarioJpaRepository usuarioRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioDAO usuarioDAO) {
-        this.usuarioDAO = usuarioDAO;
+    public UsuarioService(UsuarioJpaRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public List<Usuario> listarTodos() {
-        return usuarioDAO.listarTodos();
+    public List<UsuarioEntity> listarTodos() {
+        return usuarioRepository.findAll();
     }
 
-    public Usuario buscarPorId(int id) {
-        Usuario usuario = usuarioDAO.buscarPorId(id);
-        if (usuario == null) {
+    public UsuarioEntity buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado"));
+    }
+
+    public UsuarioEntity insertar(UsuarioEntity usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public UsuarioEntity actualizar(Long id, UsuarioEntity usuario) {
+        if (!usuarioRepository.existsById(id)) {
             throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
         }
-        return usuario;
+        usuario.setId(id);
+        return usuarioRepository.save(usuario);
     }
 
-    public void insertar(Usuario usuario) {
-        usuarioDAO.insertar(usuario);
-    }
-
-    public void actualizar(int id, Usuario usuario) {
-        if (usuarioDAO.buscarPorId(id) == null) {
+    public void eliminar(Long id) {
+        if (!usuarioRepository.existsById(id)) {
             throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
         }
-        usuario.setIdUsuario(id);
-        usuarioDAO.actualizar(usuario);
+        usuarioRepository.deleteById(id);
     }
 
-    public void eliminar(int id) {
-        if (usuarioDAO.buscarPorId(id) == null) {
-            throw new RecursoNoEncontradoException("Usuario con id " + id + " no encontrado");
-        }
-        usuarioDAO.eliminar(id);
-    }
-
-    public void registrarUsuario(Usuario usuario) {
+    public UsuarioEntity registrarUsuario(UsuarioEntity usuario) {
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        usuarioDAO.insertar(usuario);
+        return usuarioRepository.save(usuario);
     }
 }

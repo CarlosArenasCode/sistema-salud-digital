@@ -162,4 +162,28 @@ class AppUtils {
         }
         return container;
     }
+
+    // Verificar autenticación y redirigir al login si es necesario
+    static checkAuth() {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return false;
+        }
+        return true;
+    }
+    
+    // Función de logout
+    static logout() {
+        if (confirm('¿Está seguro que desea cerrar sesión?')) {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_data');
+            window.location.href = 'login.html';
+        }
+    }
+    
+    // Obtener datos del usuario logueado
+    static getUserData() {
+        return JSON.parse(localStorage.getItem('user_data') || '{}');
+    }
 }

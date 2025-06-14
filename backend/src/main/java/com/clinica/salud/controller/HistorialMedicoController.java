@@ -1,6 +1,6 @@
 package com.clinica.salud.controller;
 
-import com.clinica.salud.modelo.HistorialMedico;
+import com.clinica.salud.entity.HistorialMedicoEntity;
 import com.clinica.salud.service.HistorialMedicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,12 +24,10 @@ public class HistorialMedicoController {
     @Autowired
     public HistorialMedicoController(HistorialMedicoService historialMedicoService) {
         this.historialMedicoService = historialMedicoService;
-    }
-
-    @Operation(summary = "Lista todos los historiales médicos")
+    }    @Operation(summary = "Lista todos los historiales médicos")
     @ApiResponse(responseCode = "200", description = "Lista de historiales obtenida correctamente")
     @GetMapping
-    public List<HistorialMedico> listarTodos() {
+    public List<HistorialMedicoEntity> listarTodos() {
         return historialMedicoService.listarTodos();
     }
 
@@ -39,15 +37,15 @@ public class HistorialMedicoController {
         @ApiResponse(responseCode = "404", description = "Historial no encontrado")
     })
     @GetMapping("/{id}")
-    public HistorialMedico obtenerPorId(@PathVariable int id) {
+    public HistorialMedicoEntity obtenerPorId(@PathVariable Long id) {
         return historialMedicoService.buscarPorId(id);
     }
 
     @Operation(summary = "Crea un nuevo historial médico")
     @ApiResponse(responseCode = "201", description = "Historial creado correctamente")
     @PostMapping
-    public void crear(@Valid @RequestBody HistorialMedico historial) {
-        historialMedicoService.insertar(historial);
+    public HistorialMedicoEntity crear(@Valid @RequestBody HistorialMedicoEntity historial) {
+        return historialMedicoService.insertar(historial);
     }
 
     @Operation(summary = "Actualiza un historial médico existente")
@@ -56,8 +54,8 @@ public class HistorialMedicoController {
         @ApiResponse(responseCode = "404", description = "Historial no encontrado")
     })
     @PutMapping("/{id}")
-    public void actualizar(@PathVariable int id, @Valid @RequestBody HistorialMedico historial) {
-        historialMedicoService.actualizar(id, historial);
+    public HistorialMedicoEntity actualizar(@PathVariable Long id, @Valid @RequestBody HistorialMedicoEntity historial) {
+        return historialMedicoService.actualizar(id, historial);
     }
 
     @Operation(summary = "Elimina un historial médico por su ID")
@@ -66,7 +64,7 @@ public class HistorialMedicoController {
         @ApiResponse(responseCode = "404", description = "Historial no encontrado")
     })
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable int id) {
+    public void eliminar(@PathVariable Long id) {
         historialMedicoService.eliminar(id);
     }
 }

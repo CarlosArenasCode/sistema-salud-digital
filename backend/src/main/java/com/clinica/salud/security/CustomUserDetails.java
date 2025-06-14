@@ -1,6 +1,6 @@
 package com.clinica.salud.security;
 
-import com.clinica.salud.modelo.Usuario;
+import com.clinica.salud.entity.UsuarioEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,13 +9,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
-    private final Usuario usuario;
+    private final UsuarioEntity usuario;
 
-    public CustomUserDetails(Usuario usuario) {
+    public CustomUserDetails(UsuarioEntity usuario) {
         this.usuario = usuario;
-    }
-
-    @Override
+    }    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()));
     }
