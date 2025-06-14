@@ -14,7 +14,7 @@ server:
 
 # JWT Configuration
 jwt:
-  secret: mySecretKey123456789012345678901234567890
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
   expiration: 86400000
 
 # Logging Configuration
@@ -49,12 +49,11 @@ management:
 spring:
   config:
     activate:
-      on-profile: postgresql
-  # PostgreSQL Database Configuration
+      on-profile: postgresql  # PostgreSQL Database Configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/sistema_salud
     username: postgres
-    password: 1234
+    password: ${DB_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20

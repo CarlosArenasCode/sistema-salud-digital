@@ -1,9 +1,7 @@
 // Utilidades comunes para el frontend
 class AppUtils {
     
-    static API_BASE = 'http://localhost:8080/api';
-    
-    // Realizar petición HTTP genérica
+    static API_BASE = 'http://localhost:8080/api';    // Realizar petición HTTP genérica
     static async apiRequest(endpoint, method = 'GET', data = null) {
         const config = {
             method,
@@ -23,7 +21,7 @@ class AppUtils {
             console.error('Error en petición:', error);
             throw error;
         }
-    }      // Operaciones CRUD genéricas
+    }// Operaciones CRUD genéricas
     static async getAll(entity) {
         const response = await this.apiRequest(`/${entity}`);
         if (response.ok) {

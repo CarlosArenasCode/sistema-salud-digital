@@ -9,15 +9,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
-    @Autowired
+public class SecurityConfig {    @Autowired
     private UsuarioEntityDetailsService userDetailsService;
 
     @Bean
@@ -25,7 +23,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()  // Permitir todo temporalmente para probar la conectividad básica
+                .anyRequest().permitAll()  // Versión simple - todo abierto
             );
 
         return http.build();
@@ -37,11 +35,13 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    @Bean
+    @SuppressWarnings("deprecation")
+    @Bean 
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // Sin encriptación - contraseñas en texto plano
+        return NoOpPasswordEncoder.getInstance();
     }
-
+    
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
