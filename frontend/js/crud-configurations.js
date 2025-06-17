@@ -3,13 +3,29 @@
 
 class CRUDConfigurations {
     
-    // Configuración base común para todas las entidades
+    //==================================================
+    // CONFIGURACIÓN BASE
+    //==================================================
+    
+    /**
+     * Configuración base común para todas las entidades
+     * Proporciona valores predeterminados para los componentes del CRUD
+     */
     static getBaseConfig() {
         return {
             searchInputId: 'searchInput',
             exportButtonId: 'exportBtn'
         };
-    }    // Configuración específica para Pacientes
+    }
+    
+    //==================================================
+    // CONFIGURACIONES DE PERSONAL MÉDICO
+    //==================================================
+    
+    /**
+     * Configuración específica para Pacientes
+     * Define los campos, formato de tabla y propiedades para la entidad Paciente
+     */
     static getPacienteConfig() {
         return {
             ...this.getBaseConfig(),
@@ -28,15 +44,16 @@ class CRUDConfigurations {
                 { name: 'direccion', type: 'text', required: false },
                 { name: 'tipoSangre', type: 'select', required: false, options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
                 { name: 'genero', type: 'select', required: false, options: ['MASCULINO', 'FEMENINO', 'OTRO'] }
-            ],            // Función personalizada para formatear filas de tabla
+            ],
+            // Función personalizada para formatear filas de tabla
             formatTableRow: function(item) {
                 return `
                     <tr>
                         <td>${item.nombreCompleto || (item.nombres + ' ' + item.apellidos)}</td>
                         <td>${item.numeroIdentificacion || ''}</td>
                         <td>${item.telefono || ''}</td>
-                        <td>${item.email || ''}</td>
-                        <td class="table-actions">
+                        <td>${item.email || ''}</td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="pacienteManager.view(${item.id})">👁️</button>
                             <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#patientModal" onclick="pacienteManager.edit(${item.id})">✏️</button>
                             <button class="btn btn-delete btn-sm" onclick="pacienteManager.delete(${item.id})">🗑️</button>
                         </td>
@@ -44,7 +61,12 @@ class CRUDConfigurations {
                 `;
             }
         };
-    }    // Configuración específica para Médicos
+    }
+    
+    /**
+     * Configuración específica para Médicos
+     * Define los campos, formato de tabla y propiedades para la entidad Médico
+     */
     static getMedicoConfig() {
         return {
             ...this.getBaseConfig(),
@@ -72,8 +94,8 @@ class CRUDConfigurations {
                         <td>${item.especializacion || ''}</td>
                         <td>${item.numeroLicencia || ''}</td>
                         <td>${item.telefono || ''}</td>
-                        <td>${item.email || ''}</td>
-                        <td class="table-actions">
+                        <td>${item.email || ''}</td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="medicoManager.view(${item.id})">👁️</button>
                             <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#doctorModal" onclick="medicoManager.edit(${item.id})">✏️</button>
                             <button class="btn btn-delete btn-sm" onclick="medicoManager.delete(${item.id})">🗑️</button>
                         </td>
@@ -81,7 +103,16 @@ class CRUDConfigurations {
                 `;
             }
         };
-    }    // Configuración específica para Medicamentos
+    }
+    
+    //==================================================
+    // CONFIGURACIONES DE INVENTARIO
+    //==================================================
+    
+    /**
+     * Configuración específica para Medicamentos
+     * Define los campos, formato de tabla y propiedades para la entidad Medicamento
+     */
     static getMedicamentoConfig() {
         return {
             ...this.getBaseConfig(),
@@ -110,8 +141,8 @@ class CRUDConfigurations {
                         <td>${item.categoria || ''}</td>
                         <td>$${item.precio || '0'}</td>
                         <td>${item.stock || '0'}</td>
-                        <td>${item.fabricante || ''}</td>
-                        <td class="table-actions">
+                        <td>${item.fabricante || ''}</td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="medicamentoManager.view(${item.id})">👁️</button>
                             <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#medicineModal" onclick="medicamentoManager.edit(${item.id})">✏️</button>
                             <button class="btn btn-delete btn-sm" onclick="medicamentoManager.delete(${item.id})">🗑️</button>
                         </td>
@@ -120,7 +151,14 @@ class CRUDConfigurations {
             }
         };
     }
-      // Configuración específica para Citas
+    
+    //==================================================
+    // CONFIGURACIONES DE SERVICIOS MÉDICOS
+    //==================================================
+        /**
+     * Configuración específica para Citas
+     * Define los campos y propiedades para la gestión de citas médicas
+     */
     static getCitaConfig() {
         return {
             ...this.getBaseConfig(),
@@ -136,11 +174,33 @@ class CRUDConfigurations {
                 { name: 'motivoConsulta', type: 'textarea', required: true },
                 { name: 'estado', type: 'select', required: true, options: ['PROGRAMADA', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'] },
                 { name: 'observaciones', type: 'textarea', required: false }
-            ]
+            ],
+            // Función personalizada para formatear filas de tabla
+            formatTableRow: function(item) {
+                return `
+                    <tr>
+                        <td>${item.fechaCita || ''}</td>
+                        <td>${item.pacienteNombre || ''}</td>
+                        <td>${item.medicoNombre || ''}</td>
+                        <td>${item.motivoConsulta || ''}</td>
+                        <td><span class="badge bg-${item.estado === 'COMPLETADA' ? 'success' : item.estado === 'CANCELADA' ? 'danger' : 'warning'}">${item.estado || ''}</span></td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="citaManager.view(${item.id})">👁️</button>
+                            <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#citaModal" onclick="citaManager.edit(${item.id})">✏️</button>
+                            <button class="btn btn-delete btn-sm" onclick="citaManager.delete(${item.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }
         };
     }
     
-    // Configuración específica para Historiales Médicos
+    //==================================================
+    // CONFIGURACIONES DE DOCUMENTACIÓN CLÍNICA
+    //==================================================
+      /**
+     * Configuración específica para Historiales Médicos
+     * Define los campos y propiedades para gestionar el historial clínico
+     */
     static getHistorialConfig() {
         return {
             ...this.getBaseConfig(),
@@ -156,11 +216,29 @@ class CRUDConfigurations {
                 { name: 'diagnostico', type: 'textarea', required: true },
                 { name: 'tratamiento', type: 'textarea', required: false },
                 { name: 'observaciones', type: 'textarea', required: false }
-            ]
+            ],
+            // Función personalizada para formatear filas de tabla
+            formatTableRow: function(item) {
+                return `
+                    <tr>
+                        <td>${item.fecha || ''}</td>
+                        <td>${item.pacienteNombre || ''}</td>
+                        <td>${item.medicoNombre || ''}</td>
+                        <td>${item.diagnostico || ''}</td>
+                        <td>${item.tratamiento || ''}</td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="historialManager.view(${item.id})">👁️</button>
+                            <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#historialModal" onclick="historialManager.edit(${item.id})">✏️</button>
+                            <button class="btn btn-delete btn-sm" onclick="historialManager.delete(${item.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }
         };
     }
-    
-    // Configuración específica para Resultados de Laboratorio
+      /**
+     * Configuración específica para Resultados de Laboratorio
+     * Define los campos y propiedades para gestionar los exámenes médicos
+     */
     static getResultadoConfig() {
         return {
             ...this.getBaseConfig(),
@@ -176,11 +254,34 @@ class CRUDConfigurations {
                 { name: 'resultado', type: 'textarea', required: true },
                 { name: 'valorReferencia', type: 'text', required: false },
                 { name: 'observaciones', type: 'textarea', required: false }
-            ]
+            ],
+            // Función personalizada para formatear filas de tabla
+            formatTableRow: function(item) {
+                return `
+                    <tr>
+                        <td>${item.fecha || ''}</td>
+                        <td>${item.pacienteNombre || ''}</td>
+                        <td>${item.tipoExamen || ''}</td>
+                        <td>${item.resultado || ''}</td>
+                        <td>${item.valorReferencia || ''}</td>                        <td class="table-actions">
+                            <button class="btn btn-view btn-sm" onclick="resultadoManager.view(${item.id})">👁️</button>
+                            <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#resultadoModal" onclick="resultadoManager.edit(${item.id})">✏️</button>
+                            <button class="btn btn-delete btn-sm" onclick="resultadoManager.delete(${item.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }
         };
     }
     
-    // Método para obtener configuración por nombre de entidad
+    //==================================================
+    // MÉTODOS DE UTILIDAD
+    //==================================================
+    
+    /**
+     * Método para obtener configuración por nombre de entidad
+     * Facilita la obtención de una configuración específica basada en el tipo de entidad
+     */
     static getConfigByEntity(entityName) {
         const configs = {
             'pacientes': this.getPacienteConfig(),

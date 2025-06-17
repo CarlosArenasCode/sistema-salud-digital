@@ -18,54 +18,110 @@ import java.util.Optional;
  */
 @Repository
 public interface UsuarioJpaRepository extends JpaRepository<UsuarioEntity, Long> {
-      // Consultas básicas
-    Optional<UsuarioEntity> findByNombreUsuario(String nombreUsuario);
-    Optional<UsuarioEntity> findByEmail(String email);
-    boolean existsByNombreUsuario(String nombreUsuario);
-    boolean existsByEmail(String email);    // Consultas por rol
-    List<UsuarioEntity> findByRol(String rol);
-    Page<UsuarioEntity> findByRol(String rol, Pageable pageable);
-    
-    // Consultas por estado
-    List<UsuarioEntity> findByActivo(Boolean activo);
-    Page<UsuarioEntity> findByActivo(Boolean activo, Pageable pageable);
-      // Consultas combinadas
-    List<UsuarioEntity> findByRolAndActivo(String rol, Boolean activo);
-    Page<UsuarioEntity> findByRolAndActivo(String rol, Boolean activo, Pageable pageable);
-      // Búsquedas con texto
-    @Query("SELECT u FROM UsuarioEntity u WHERE " +
-           "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<UsuarioEntity> findByUsernameOrEmailContainingIgnoreCase(@Param("searchTerm") String searchTerm);
-    
-    @Query("SELECT u FROM UsuarioEntity u WHERE " +
-           "u.activo = true AND " +
-           "(LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
-    Page<UsuarioEntity> findActiveUsersWithSearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
-      // Consultas por fecha
-    List<UsuarioEntity> findByFechaCreacionBetween(LocalDateTime start, LocalDateTime end);
-    List<UsuarioEntity> findByFechaCreacionAfter(LocalDateTime date);
-      // Estadísticas
-    @Query("SELECT COUNT(u) FROM UsuarioEntity u WHERE u.activo = true")
-    long countActiveUsers();
-    
-    @Query("SELECT u.rol, COUNT(u) FROM UsuarioEntity u WHERE u.activo = true GROUP BY u.rol")
-    List<Object[]> countUsersByRole();
-      @Query("SELECT COUNT(u) FROM UsuarioEntity u WHERE u.fechaCreacion >= :date")
-    long countUsersCreatedAfter(@Param("date") LocalDateTime date);
-      // Métodos de administración
-    @Query("UPDATE UsuarioEntity u SET u.activo = false WHERE u.id = :id")
-    void deactivateUser(@Param("id") Long id);
-    
-    @Query("UPDATE UsuarioEntity u SET u.activo = true WHERE u.id = :id")
-    void activateUser(@Param("id") Long id);
-      // Validaciones de seguridad
-    @Query("SELECT u FROM UsuarioEntity u WHERE u.nombreUsuario = :nombreUsuario AND u.activo = true")
-    Optional<UsuarioEntity> findActiveUserByUsername(@Param("nombreUsuario") String nombreUsuario);
-    
-    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UsuarioEntity u WHERE u.email = :email AND u.id <> :excludeId")
-    boolean existsByEmailAndIdNot(@Param("email") String email, @Param("excludeId") Long excludeId);
-      @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UsuarioEntity u WHERE u.nombreUsuario = :nombreUsuario AND u.id <> :excludeId")
-    boolean existsByUsernameAndIdNot(@Param("nombreUsuario") String nombreUsuario, @Param("excludeId") Long excludeId);
+  
+  // ==========================================
+  // === CONSULTAS BÁSICAS DE USUARIO =========
+  // ==========================================
+  /**
+   * Métodos para operaciones fundamentales de búsqueda de usuarios
+   */
+  Optional<UsuarioEntity> findByNombreUsuario(String nombreUsuario);
+  Optional<UsuarioEntity> findByEmail(String email);
+  boolean existsByNombreUsuario(String nombreUsuario);
+  boolean existsByEmail(String email);
+  
+  // ==========================================
+  // === CONSULTAS POR ROL ===================
+  // ==========================================
+  /**
+   * Métodos para filtrar usuarios según su rol en el sistema
+   */
+  List<UsuarioEntity> findByRol(String rol);
+  Page<UsuarioEntity> findByRol(String rol, Pageable pageable);
+  
+  // ==========================================
+  // === CONSULTAS POR ESTADO ================
+  // ==========================================
+  /**
+   * Métodos para filtrar usuarios según su estado de activación
+   */
+  List<UsuarioEntity> findByActivo(Boolean activo);
+  Page<UsuarioEntity> findByActivo(Boolean activo, Pageable pageable);
+  
+  // ==========================================
+  // === CONSULTAS COMBINADAS ================
+  // ==========================================
+  /**
+   * Métodos que combinan múltiples criterios de búsqueda
+   */
+  List<UsuarioEntity> findByRolAndActivo(String rol, Boolean activo);
+  Page<UsuarioEntity> findByRolAndActivo(String rol, Boolean activo, Pageable pageable);
+  
+  // ==========================================
+  // === BÚSQUEDAS CON TEXTO ================
+  // ==========================================
+  /**
+   * Métodos para realizar búsquedas textuales en campos de usuario
+   */
+  @Query("SELECT u FROM UsuarioEntity u WHERE " +
+       "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+       "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+  List<UsuarioEntity> findByUsernameOrEmailContainingIgnoreCase(@Param("searchTerm") String searchTerm);
+  
+  @Query("SELECT u FROM UsuarioEntity u WHERE " +
+       "u.activo = true AND " +
+       "(LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+       "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+  Page<UsuarioEntity> findActiveUsersWithSearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
+  
+  // ==========================================
+  // === CONSULTAS POR FECHA ================
+  // ==========================================
+  /**
+   * Métodos para filtrar usuarios según criterios temporales
+   */
+  List<UsuarioEntity> findByFechaCreacionBetween(LocalDateTime start, LocalDateTime end);
+  List<UsuarioEntity> findByFechaCreacionAfter(LocalDateTime date);
+  
+  // ==========================================
+  // === ESTADÍSTICAS ======================
+  // ==========================================
+  /**
+   * Métodos para obtener datos estadísticos sobre usuarios
+   */
+  @Query("SELECT COUNT(u) FROM UsuarioEntity u WHERE u.activo = true")
+  long countActiveUsers();
+  
+  @Query("SELECT u.rol, COUNT(u) FROM UsuarioEntity u WHERE u.activo = true GROUP BY u.rol")
+  List<Object[]> countUsersByRole();
+  
+  @Query("SELECT COUNT(u) FROM UsuarioEntity u WHERE u.fechaCreacion >= :date")
+  long countUsersCreatedAfter(@Param("date") LocalDateTime date);
+  
+  // ==========================================
+  // === MÉTODOS DE ADMINISTRACIÓN ===========
+  // ==========================================
+  /**
+   * Métodos para gestionar el estado administrativo de los usuarios
+   */
+  @Query("UPDATE UsuarioEntity u SET u.activo = false WHERE u.id = :id")
+  void deactivateUser(@Param("id") Long id);
+  
+  @Query("UPDATE UsuarioEntity u SET u.activo = true WHERE u.id = :id")
+  void activateUser(@Param("id") Long id);
+  
+  // ==========================================
+  // === VALIDACIONES DE SEGURIDAD ===========
+  // ==========================================
+  /**
+   * Métodos para validaciones relacionadas con seguridad y unicidad
+   */
+  @Query("SELECT u FROM UsuarioEntity u WHERE u.nombreUsuario = :nombreUsuario AND u.activo = true")
+  Optional<UsuarioEntity> findActiveUserByUsername(@Param("nombreUsuario") String nombreUsuario);
+  
+  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UsuarioEntity u WHERE u.email = :email AND u.id <> :excludeId")
+  boolean existsByEmailAndIdNot(@Param("email") String email, @Param("excludeId") Long excludeId);
+  
+  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UsuarioEntity u WHERE u.nombreUsuario = :nombreUsuario AND u.id <> :excludeId")
+  boolean existsByUsernameAndIdNot(@Param("nombreUsuario") String nombreUsuario, @Param("excludeId") Long excludeId);
 }

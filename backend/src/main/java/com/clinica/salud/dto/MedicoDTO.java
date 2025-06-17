@@ -15,12 +15,20 @@ import java.math.BigDecimal;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class MedicoDTO extends PersonaDTO {
+    
+    // Información profesional del médico
     private String specialization;
     private String licenseNumber;
     private Integer yearsOfExperience;
+    
+    // Información financiera
     private BigDecimal consultationFee;
+    
+    // Información de disponibilidad
     private String availableDays;
     private String availableHours;
     private String consultorio;
+    
+    // Información académica
     private String universidad;
 }

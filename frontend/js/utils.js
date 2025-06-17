@@ -1,7 +1,14 @@
 // Utilidades comunes para el frontend
 class AppUtils {
     
-    static API_BASE = 'http://localhost:8080/api';    // Realizar petición HTTP genérica
+    // ===================================================
+    // CONFIGURACIÓN DE API Y PETICIONES HTTP
+    // ===================================================
+    static API_BASE = 'http://localhost:8080/api';
+    
+    /**
+     * Realiza peticiones HTTP genéricas a la API
+     */
     static async apiRequest(endpoint, method = 'GET', data = null) {
         const config = {
             method,
@@ -21,7 +28,11 @@ class AppUtils {
             console.error('Error en petición:', error);
             throw error;
         }
-    }// Operaciones CRUD genéricas
+    }
+    
+    // ===================================================
+    // OPERACIONES CRUD GENÉRICAS
+    // ===================================================
     static async getAll(entity) {
         const response = await this.apiRequest(`/${entity}`);
         if (response.ok) {
@@ -39,7 +50,8 @@ class AppUtils {
             throw new Error(`Error fetching data: ${response.status}`);
         }
     }
-      static async getById(entity, id) {
+    
+    static async getById(entity, id) {
         const response = await this.apiRequest(`/${entity}/${id}`);
         if (response.ok) {
             return await response.json();
@@ -75,7 +87,13 @@ class AppUtils {
         }
     }
     
-    // Mostrar/ocultar modal genérico
+    // ===================================================
+    // MANIPULACIÓN DE INTERFAZ DE USUARIO
+    // ===================================================
+    
+    /**
+     * Funciones para mostrar y ocultar modales de Bootstrap
+     */
     static showModal(modalId) {
         const modalEl = document.getElementById(modalId);
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
@@ -88,7 +106,26 @@ class AppUtils {
         modal.hide();
     }
     
-    // Exportar datos a CSV genérico
+    /**
+     * Filtra elementos en una tabla según un criterio de búsqueda
+     */
+    static filterTable(tableBodyId, searchTerm, filterFunction) {
+        const tbody = document.getElementById(tableBodyId);
+        const rows = tbody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const matches = filterFunction(row, searchTerm);
+            row.style.display = matches ? '' : 'none';
+        });
+    }
+    
+    // ===================================================
+    // EXPORTACIÓN DE DATOS
+    // ===================================================
+    
+    /**
+     * Exporta datos a un archivo CSV descargable
+     */
     static exportToCSV(data, headers, filename) {
         const csvContent = [
             headers.join(','),
@@ -104,17 +141,13 @@ class AppUtils {
         URL.revokeObjectURL(url);
     }
     
-    // Filtrar tabla genérica
-    static filterTable(tableBodyId, searchTerm, filterFunction) {
-        const tbody = document.getElementById(tableBodyId);
-        const rows = tbody.querySelectorAll('tr');
-        
-        rows.forEach(row => {
-            const matches = filterFunction(row, searchTerm);
-            row.style.display = matches ? '' : 'none';
-        });
-    }
-      // Mostrar mensajes de éxito/error
+    // ===================================================
+    // NOTIFICACIONES Y MENSAJES
+    // ===================================================
+    
+    /**
+     * Muestra mensajes de notificación tipo toast
+     */
     static showMessage(message, type = 'info') {
         // Crear un toast Bootstrap
         const toastContainer = this.getOrCreateToastContainer();
@@ -163,7 +196,13 @@ class AppUtils {
         return container;
     }
 
-    // Verificar autenticación y redirigir al login si es necesario
+    // ===================================================
+    // AUTENTICACIÓN Y MANEJO DE SESIONES
+    // ===================================================
+    
+    /**
+     * Verifica si el usuario está autenticado
+     */
     static checkAuth() {
         const token = localStorage.getItem('auth_token');
         if (!token) {
@@ -173,7 +212,9 @@ class AppUtils {
         return true;
     }
     
-    // Función de logout
+    /**
+     * Cierra la sesión del usuario
+     */
     static logout() {
         if (confirm('¿Está seguro que desea cerrar sesión?')) {
             localStorage.removeItem('auth_token');
@@ -182,7 +223,9 @@ class AppUtils {
         }
     }
     
-    // Obtener datos del usuario logueado
+    /**
+     * Obtiene los datos del usuario actualmente logueado
+     */
     static getUserData() {
         return JSON.parse(localStorage.getItem('user_data') || '{}');
     }

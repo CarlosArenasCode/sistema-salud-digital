@@ -17,18 +17,39 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 public class PersonaDTO {
+    
+    // -------------------------------------------------
+    // Identificación
+    // -------------------------------------------------
     private Long id;
+    
+    // -------------------------------------------------
+    // Información personal
+    // -------------------------------------------------
     private String firstName;
     private String lastName;
+    private String gender;
+    private LocalDate dateOfBirth;
+    
+    // -------------------------------------------------
+    // Información de contacto
+    // -------------------------------------------------
     private String phone;
     private String email;
     private String address;
-    private String gender;
-    private LocalDate dateOfBirth;
+    
+    // -------------------------------------------------
+    // Metadatos del registro
+    // -------------------------------------------------
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
-    // Método utilitario
+    // -------------------------------------------------
+    // Métodos utilitarios
+    // -------------------------------------------------
+    /**
+     * Devuelve el nombre completo de la persona
+     */
     public String getFullName() {
         return firstName + " " + lastName;
     }

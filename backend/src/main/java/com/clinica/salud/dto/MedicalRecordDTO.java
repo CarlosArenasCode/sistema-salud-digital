@@ -7,6 +7,10 @@ import java.time.LocalDate;
  */
 public class MedicalRecordDTO {
 
+    /* ================================================================
+     * ATRIBUTOS
+     * Propiedades que representan los datos del historial médico
+     * ================================================================ */
     private Integer id;
     private Integer pacienteId;
     private String nombrePaciente;
@@ -18,7 +22,10 @@ public class MedicalRecordDTO {
     private String tratamiento;
     private String notas;
     
-    // Constructores
+    /* ================================================================
+     * CONSTRUCTORES
+     * Métodos inicializadores de la clase
+     * ================================================================ */
     public MedicalRecordDTO() {}
     
     public MedicalRecordDTO(Integer id, Integer pacienteId, String nombrePaciente, Integer medicoId, 
@@ -36,7 +43,10 @@ public class MedicalRecordDTO {
         this.notas = notas;
     }
 
-    // Getters y setters
+    /* ================================================================
+     * MÉTODOS DE ACCESO
+     * Getters y setters para acceder y modificar los atributos
+     * ================================================================ */
     public Integer getId() {
         return id;
     }
@@ -117,6 +127,10 @@ public class MedicalRecordDTO {
         this.notas = notas;
     }
 
+    /* ================================================================
+     * MÉTODOS SOBRESCRITOS
+     * Implementaciones personalizadas de métodos heredados de Object
+     * ================================================================ */
     @Override
     public String toString() {
         return "MedicalRecordDTO{" +

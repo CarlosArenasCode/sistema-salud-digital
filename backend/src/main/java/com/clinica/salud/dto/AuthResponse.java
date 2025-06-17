@@ -7,11 +7,16 @@ import java.util.Map;
  */
 public class AuthResponse {
 
+    //---------------------------------------------------------------------
+    // Atributos
+    //---------------------------------------------------------------------
     private String token;
     private Map<String, Object> user;
     private String message;
 
+    //---------------------------------------------------------------------
     // Constructores
+    //---------------------------------------------------------------------
     public AuthResponse() {}
 
     public AuthResponse(String token, Map<String, Object> user) {
@@ -25,7 +30,9 @@ public class AuthResponse {
         this.message = message;
     }
 
-    // Getters y setters
+    //---------------------------------------------------------------------
+    // Métodos Getter y Setter
+    //---------------------------------------------------------------------
     public String getToken() {
         return token;
     }

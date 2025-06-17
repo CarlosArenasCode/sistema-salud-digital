@@ -3,9 +3,11 @@ package com.clinica.salud.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Entidad que representa un medicamento en el sistema de salud digital.
@@ -21,10 +23,16 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class MedicamentoEntity {
     
+    // -----------------------------------------
+    // Identificador principal
+    // -----------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    // -----------------------------------------
+    // Información básica del medicamento
+    // -----------------------------------------
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 255, message = "El nombre no puede exceder 255 caracteres")
     @Column(name = "nombre", nullable = false)
@@ -41,6 +49,9 @@ public class MedicamentoEntity {
     @Column(name = "fabricante")
     private String fabricante;
     
+    // -----------------------------------------
+    // Clasificación y forma farmacéutica
+    // -----------------------------------------
     @Size(max = 100, message = "La categoría no puede exceder 100 caracteres")
     @Column(name = "categoria", length = 100)
     private String categoria;
@@ -53,6 +64,9 @@ public class MedicamentoEntity {
     @Column(name = "concentracion", length = 100)
     private String concentracion;
     
+    // -----------------------------------------
+    // Información comercial e inventario
+    // -----------------------------------------
     @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     @Column(name = "precio", precision = 10, scale = 2)
     private BigDecimal precio;
@@ -70,14 +84,21 @@ public class MedicamentoEntity {
     @Column(name = "fecha_vencimiento")
     private LocalDate fechaVencimiento;
     
+    // -----------------------------------------
+    // Información médica
+    // -----------------------------------------
     @Column(name = "instrucciones", columnDefinition = "TEXT")
     private String instrucciones;
     
     @Column(name = "efectos_secundarios", columnDefinition = "TEXT")
     private String efectosSecundarios;
-      @Column(name = "contraindicaciones", columnDefinition = "TEXT")
+    
+    @Column(name = "contraindicaciones", columnDefinition = "TEXT")
     private String contraindicaciones;
     
+    // -----------------------------------------
+    // Estado y restricciones del medicamento
+    // -----------------------------------------
     @Builder.Default
     @Column(name = "requiere_receta")
     private Boolean requiereReceta = false;
@@ -86,12 +107,29 @@ public class MedicamentoEntity {
     @Column(name = "activo")
     private Boolean activo = true;
     
+    // -----------------------------------------
+    // RELACIONES CON OTRAS ENTIDADES
+    // -----------------------------------------
+      /**
+     * Relación con las recetas donde se prescribe este medicamento
+     * Se ignora en la serialización para evitar LazyInitializationException
+     */
+    @OneToMany(mappedBy = "medicamento", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<RecetaEntity> recetas;
+    
+    // -----------------------------------------
+    // Auditoría
+    // -----------------------------------------
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
     
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
     
+    // -----------------------------------------
+    // Eventos de ciclo de vida
+    // -----------------------------------------
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
@@ -103,7 +141,9 @@ public class MedicamentoEntity {
         fechaActualizacion = LocalDateTime.now();
     }
     
+    // -----------------------------------------
     // Métodos de negocio
+    // -----------------------------------------
     public boolean isVencido() {
         return fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now());
     }

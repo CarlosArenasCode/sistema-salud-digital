@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- ============================== -->
+    <!-- CONFIGURACIÓN DE METADATOS     -->
+    <!-- ============================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Citas - Sistema de Salud Digital</title>    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/icons.css" rel="stylesheet">
+    <title>Gestión de Citas - Sistema de Salud Digital</title>
+    
+    <!-- ============================== -->
+    <!-- IMPORTACIÓN DE ESTILOS CSS     -->
+    <!-- ============================== -->    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/iconos-espanol.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
+    <!-- ============================== -->
+    <!-- BARRA DE NAVEGACIÓN PRINCIPAL  -->
+    <!-- ============================== -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">            <a class="navbar-brand" href="dashboard.html">
-                <svg class="svg-icon me-2" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 10.12h-6.78l-2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79L12 24l10.4-7.01c2.73-2.71 2.73-7.08 0-9.79L21 10.12z" fill="currentColor"/>
-                </svg>Sistema de Salud Digital
+                <img src="Iconos/heartbeat_heart_rate_heart_medical_icon_187013.svg" alt="Sistema de Salud" class="icono me-2" width="24" height="24">
+                Sistema de Salud Digital
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="pacientes-optimized.html">Pacientes</a>
@@ -23,21 +32,23 @@
         </div>
     </nav>
 
+    <!-- ============================== -->
+    <!-- CONTENIDO PRINCIPAL - TABLA    -->
+    <!-- ============================== -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <!-- Encabezado de la tarjeta -->
                     <div class="card-header d-flex justify-content-between align-items-center">                        <h5 class="card-title mb-0">
-                            <svg class="svg-icon me-2" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor"/>
-                                <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                            </svg>Gestión de Citas Médicas
+                            <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Citas" class="icono me-2" width="24" height="24">
+                            Gestión de Citas Médicas
                         </h5>                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#citaModal">
-                            <svg class="svg-icon me-2" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="currentColor"/>
-                            </svg>Nueva Cita
+                            <img src="Iconos/add_circle_create_expand_new_plus_icon_123218.svg" alt="Agregar" class="icono me-1" width="16" height="16">
+                            Nueva Cita
                         </button>
                     </div>
+                    <!-- Cuerpo de la tarjeta con tabla -->
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped" id="citasTable">
@@ -60,20 +71,25 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Modal para crear/editar cita -->
+    </div>    <!-- ================================= -->
+    <!-- MODAL PARA CREAR/EDITAR CITAS     -->
+    <!-- ================================= -->
     <div class="modal fade" id="citaModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
+                <!-- Encabezado del modal -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="citaModalTitle">Nueva Cita</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
+                <!-- Formulario del modal -->
                 <div class="modal-body">
                     <form id="citaForm">
                         <input type="hidden" id="citaId">
-                          <div class="mb-3">
+                        
+                        <!-- Sección de selección de paciente y médico -->
+                        <div class="mb-3">
                             <label for="idPaciente" class="form-label">Paciente *</label>
                             <select class="form-select" id="idPaciente" required>
                                 <option value="">Seleccione un paciente</option>
@@ -87,6 +103,7 @@
                             </select>
                         </div>
 
+                        <!-- Sección de fecha y hora -->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -102,6 +119,7 @@
                             </div>
                         </div>
 
+                        <!-- Sección de detalles de la cita -->
                         <div class="mb-3">
                             <label for="motivoConsulta" class="form-label">Motivo de la Consulta</label>
                             <textarea class="form-control" id="motivoConsulta" rows="3" placeholder="Describe el motivo de la consulta"></textarea>
@@ -125,16 +143,26 @@
                         </div>
                     </form>
                 </div>
+                
+                <!-- Botones de acción del modal -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="saveCitaBtn">Guardar</button>
                 </div>
             </div>
         </div>
-    </div>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/icons.js"></script>
+    </div>
+
+    <!-- ============================== -->
+    <!-- IMPORTACIÓN DE SCRIPTS JS      -->
+    <!-- ============================== -->    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/iconos-espanol.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/crud-manager.js"></script><script>
+        // ==================================================
+        // VARIABLES GLOBALES Y CONFIGURACIÓN INICIAL
+        // ==================================================
+        
         // Variables globales para almacenar pacientes y médicos
         let pacientesData = [];
         let medicosData = [];
@@ -191,19 +219,32 @@
                         <td>${fecha}</td>
                         <td>${hora}</td>
                         <td><span class="badge ${estadoClass[cita.estado] || 'bg-secondary'}">${cita.estado || 'N/A'}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="citaManager.edit(${cita.id})">
-                                <i class="fas fa-edit"></i>
+                        <td>                            <button class="btn btn-sm btn-outline-primary me-1" onclick="citaManager.edit(${cita.id})">
+                                <img src="Iconos/edit_modify_icon_196940.svg" alt="Editar" class="icono" width="14" height="14">
                             </button>
                             <button class="btn btn-sm btn-outline-danger" onclick="citaManager.delete(${cita.id})">
-                                <i class="fas fa-trash"></i>
+                                <img src="Iconos/ic-cancel_97589.svg" alt="Eliminar" class="icono" width="14" height="14">
                             </button>
                         </td>
                     </tr>
                 `;
             }
-        };        // Inicializar el manager de citas
-        const citaManager = new CRUDManager(citaConfig);        // Sobrescribir el método save para manejar la fecha y hora
+        };
+
+        // ==================================================
+        // INICIALIZACIÓN DEL MANAGER DE CITAS
+        // ==================================================
+        
+        // Inicializar el manager de citas
+        const citaManager = new CRUDManager(citaConfig);
+
+        // ==================================================
+        // SOBRESCRITURA DE MÉTODOS DEL CRUD MANAGER
+        // ==================================================        // ==================================================
+        // SOBRESCRITURA DE MÉTODOS DEL CRUD MANAGER
+        // ==================================================
+        
+        // Sobrescribir el método save para manejar la fecha y hora
         const originalSave = citaManager.save.bind(citaManager);
         citaManager.save = async function(event) {
             event.preventDefault();
@@ -249,7 +290,7 @@
                 console.error('Error:', error);
                 AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
             }
-        };// Sobrescribir openModal para separar fecha y hora al editar
+        };        // Sobrescribir openModal para separar fecha y hora al editar
         const originalOpenModal = citaManager.openModal.bind(citaManager);
         citaManager.openModal = function(id = null) {
             this.currentId = id;
@@ -305,7 +346,15 @@
         citaManager.loadData = async function() {
             await loadSelectOptions(); // Cargar pacientes y médicos primero
             await originalLoadData(); // Luego cargar las citas
-        };        // Función para cargar opciones de selects
+        };
+
+        // ==================================================
+        // FUNCIONES DE CARGA DE DATOS
+        // ==================================================        // ==================================================
+        // FUNCIONES DE CARGA DE DATOS
+        // ==================================================
+        
+        // Función para cargar opciones de selects
         async function loadSelectOptions() {
             try {
                 console.log('Cargando opciones de pacientes y médicos...');
@@ -341,10 +390,24 @@
                 console.error('❌ Error loading select options:', error);
                 AppUtils.showMessage(`Error al cargar las opciones: ${error.message}`, 'error');
             }
-        }// Cargar opciones cuando se abra el modal
+        }
+
+        // ==================================================
+        // EVENT LISTENERS
+        // ==================================================        // ==================================================
+        // EVENT LISTENERS
+        // ==================================================
+        
+        // Cargar opciones cuando se abra el modal
         document.getElementById('citaModal').addEventListener('show.bs.modal', async function() {
             await loadSelectOptions();
-        });        // Cargar datos al inicializar la página
+        });
+
+        // ==================================================
+        // INICIALIZACIÓN DE LA APLICACIÓN
+        // ==================================================
+        
+        // Cargar datos al inicializar la página
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Iniciando módulo de citas...');
             

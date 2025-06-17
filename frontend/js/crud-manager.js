@@ -1,5 +1,9 @@
 // Clase genérica para manejo de formularios CRUD
 class CRUDManager {
+    //============================================================
+    // INICIALIZACIÓN Y CONFIGURACIÓN
+    // Constructor y configuración inicial de la clase
+    //============================================================
     constructor(config) {
         this.config = config; // Almacenar toda la configuración
         this.entityName = config.entityName;
@@ -19,7 +23,12 @@ class CRUDManager {
         this.loadData();
         this.bindEvents();
     }
-      async loadData() {
+    
+    //============================================================
+    // GESTIÓN DE DATOS
+    // Métodos para cargar y manipular los datos de la entidad
+    //============================================================
+    async loadData() {
         try {
             console.log(`Cargando datos de ${this.entityNamePlural}...`);
             console.log(`URL: ${AppUtils.API_BASE}/${this.entityNamePlural.toLowerCase()}`);
@@ -34,7 +43,12 @@ class CRUDManager {
             AppUtils.showMessage(`Error cargando ${this.entityNamePlural}: ${error.message}`, 'error');
         }
     }
-      renderTable() {
+    
+    //============================================================
+    // RENDERIZADO DE UI
+    // Métodos para mostrar los datos en la interfaz de usuario
+    //============================================================
+    renderTable() {
         const tbody = document.getElementById(this.tableBodyId);
         if (tbody) {
             tbody.innerHTML = this.data.map(item => this.renderTableRow(item)).join('');
@@ -63,6 +77,17 @@ class CRUDManager {
         `;
     }
     
+    updateCount() {
+        const countElement = document.querySelector('[id*="Count"]');
+        if (countElement) {
+            countElement.textContent = `Total: ${this.data.length} ${this.entityNamePlural.toLowerCase()}`;
+        }
+    }
+    
+    //============================================================
+    // GESTIÓN DEL MODAL
+    // Métodos para manipular el modal de creación/edición
+    //============================================================
     openModal(id = null) {
         this.currentId = id;
         const form = document.getElementById(this.formId);
@@ -105,6 +130,10 @@ class CRUDManager {
         document.getElementById(this.formId).reset();
     }
     
+    //============================================================
+    // OPERACIONES CRUD
+    // Métodos para crear, leer, actualizar y eliminar registros
+    //============================================================
     async save(event) {
         event.preventDefault();
         
@@ -140,7 +169,8 @@ class CRUDManager {
             }
         }
     }
-      edit(id) {
+    
+    edit(id) {
         this.openModal(id);
     }
     
@@ -162,6 +192,10 @@ class CRUDManager {
         return this.deleteItem(id);
     }
     
+    //============================================================
+    // UTILIDADES
+    // Métodos auxiliares para filtrado, exportación y otras funciones
+    //============================================================
     filter() {
         const searchTerm = document.getElementById(this.searchInputId).value.toLowerCase();
         AppUtils.filterTable(this.tableBodyId, searchTerm, (row, term) => {
@@ -174,13 +208,10 @@ class CRUDManager {
         AppUtils.exportToCSV(this.data, headers, `${this.entityNamePlural.toLowerCase()}.csv`);
     }
     
-    updateCount() {
-        const countElement = document.querySelector('[id*="Count"]');
-        if (countElement) {
-            countElement.textContent = `Total: ${this.data.length} ${this.entityNamePlural.toLowerCase()}`;
-        }
-    }
-    
+    //============================================================
+    // GESTIÓN DE EVENTOS
+    // Métodos para asociar eventos a elementos del DOM
+    //============================================================
     bindEvents() {
         // Bind form submit
         const form = document.getElementById(this.formId);

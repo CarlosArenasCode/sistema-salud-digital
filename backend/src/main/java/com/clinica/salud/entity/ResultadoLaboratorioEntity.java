@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Entidad que representa los resultados de laboratorio de un paciente
+ */
 @Entity
 @Table(name = "resultados_laboratorio")
 @Data
@@ -19,11 +22,17 @@ import java.time.LocalDate;
 @Builder
 public class ResultadoLaboratorioEntity extends BaseEntity {
     
+    // ------------------------------
+    // Identificador principal
+    // ------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_resultado")
     private Long id;
     
+    // ------------------------------
+    // Datos básicos del resultado
+    // ------------------------------
     @Column(name = "id_paciente", nullable = false)
     private Long idPaciente;
     
@@ -38,6 +47,9 @@ public class ResultadoLaboratorioEntity extends BaseEntity {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     
+    // ------------------------------
+    // Relaciones con otras entidades
+    // ------------------------------
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", insertable = false, updatable = false)
     private PacienteEntity paciente;

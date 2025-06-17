@@ -1,40 +1,37 @@
-# Sistema de Salud Digital Configuration
+# ===================================================================
+# SISTEMA DE SALUD DIGITAL - CONFIGURACIÓN PRINCIPAL
+# ===================================================================
 
+# ------------------
+# Configuración básica de la aplicación
+# ------------------
 spring:
   application:
     name: sistema-salud-digital
   profiles:
     active: postgresql
 
-# Server Configuration
+# ------------------
+# Configuración del servidor
+# ------------------
 server:
   port: 8080
   servlet:
     context-path: /api
 
-# JWT Configuration
-jwt:
-  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
-  expiration: 86400000
-
-# Logging Configuration
+# ------------------
+# Configuración de registros (logs)
+# ------------------
 logging:
   level:
     com.clinica.salud: DEBUG
-    org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
   file:
     name: logs/salud-digital.log
 
-# SpringDoc OpenAPI
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-
-# Actuator
+# ------------------
+# Configuración de monitoreo y gestión
+# ------------------
 management:
   endpoints:
     web:
@@ -44,12 +41,18 @@ management:
     health:
       show-details: always
 
+# ===================================================================
+# CONFIGURACIÓN ESPECÍFICA DE PERFIL: POSTGRESQL
+# ===================================================================
 ---
-# PostgreSQL Profile Configuration
 spring:
   config:
     activate:
-      on-profile: postgresql  # PostgreSQL Database Configuration
+      on-profile: postgresql
+  
+  # ------------------
+  # Configuración de base de datos PostgreSQL
+  # ------------------
   datasource:
     url: jdbc:postgresql://localhost:5432/sistema_salud
     username: postgres
@@ -60,8 +63,11 @@ spring:
       minimum-idle: 5
       connection-timeout: 30000
       idle-timeout: 600000
-      max-lifetime: 1800000  # JPA Configuration  
-  jpa:
+      max-lifetime: 1800000
+  
+  # ------------------
+  # Configuración de JPA/Hibernate
+  # ------------------  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -69,7 +75,21 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  # Disable automatic schema initialization since we'll manage it manually
+    open-in-view: false  # Desactiva la conexión perezosa en la vista
+  
+  # ------------------
+  # Configuración de Jackson (JSON)
+  # ------------------
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  
+  # ------------------
+  # Configuración de inicialización SQL
+  # ------------------
   sql:
     init:
-      mode: never
+      mode: never  # Desactivado porque se gestionará manualmente

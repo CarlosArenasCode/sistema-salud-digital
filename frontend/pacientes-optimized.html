@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- ==================== META ETIQUETAS Y CONFIGURACIÓN ==================== -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Pacientes - Sistema de Salud Digital</title>    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes - Sistema de Salud Digital</title>
+    
+    <!-- ==================== HOJAS DE ESTILO ==================== -->    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/iconos-espanol.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
+    <!-- ==================== BARRA DE NAVEGACIÓN ==================== -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">            <a class="navbar-brand" href="dashboard.html">
-                <svg class="svg-icon me-2" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 10.12h-6.78l-2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79L12 24l10.4-7.01c2.73-2.71 2.73-7.08 0-9.79L21 10.12z" fill="currentColor"/>
-                </svg>Sistema de Salud Digital
+        <div class="container">
+            <!-- Logo y nombre del sistema -->            <a class="navbar-brand" href="dashboard.html">
+                <img src="Iconos/heartbeat_heart_rate_heart_medical_icon_187013.svg" alt="Sistema de Salud" class="icono me-2" width="24" height="24">
+                Sistema de Salud Digital
             </a>
+            
+            <!-- Menú de navegación -->
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="pacientes-optimized.html">Pacientes</a>
                 <a class="nav-link" href="medicos-optimized.html">Médicos</a>
@@ -20,34 +27,51 @@
                 <a class="nav-link" href="medicamentos-optimized.html">Medicamentos</a>
             </div>
         </div>
-    </nav>
-
+    </nav>    <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">                        <h5 class="card-title mb-0">
-                            <svg class="svg-icon me-2" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M16 4c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
-                                <path d="M8 4c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
-                                <path d="M8 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm8 0c-.29 0-.62.02-.97.05C16.2 14.6 17 15.7 17 17v1h7v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-                            </svg>Gestión de Pacientes
+                    <!-- ==================== ENCABEZADO DE LA SECCIÓN ==================== -->
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <!-- Título con icono -->                        <h5 class="card-title mb-0">
+                            <img src="Iconos/user_injured_icon_198640.svg" alt="Pacientes" class="icono me-2" width="24" height="24">
+                            Gestión de Pacientes
                         </h5>
-                        <div>                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#patientModal">
-                                <svg class="svg-icon me-1" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="currentColor"/>
-                                </svg>Nuevo Paciente
-                            </button><button class="btn btn-secondary me-2" onclick="pacienteManager.loadData()">Recargar</button>
-                            <button class="btn btn-secondary me-2" onclick="pacienteManager.exportData()">Exportar</button>
+                        
+                        <!-- Botones de acción y contador -->
+                        <div>
+                            <!-- Botón para nuevo paciente -->                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#patientModal">
+                                <img src="Iconos/add_circle_create_expand_new_plus_icon_123218.svg" alt="Agregar" class="icono-boton">
+                                Nuevo Paciente
+                            </button>
+                              <!-- Botones de utilidades -->                            <button class="btn btn-secondary me-2" onclick="pacienteManager.loadData()">
+                                <img src="Iconos/twocirclingarrows1_120592.svg" alt="Recargar" class="icono-boton">
+                                Recargar
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="pacienteManager.exportData()">
+                                <img src="Iconos/download_111133.svg" alt="Exportar" class="icono-boton">
+                                Exportar
+                            </button>
+                            
+                            <!-- Contador de pacientes -->
                             <span id="patientCount" class="badge bg-secondary">Total: 0 pacientes</span>
                         </div>
                     </div>
-                    <div class="card-body">
+                    
+                    <!-- ==================== CUERPO DE LA SECCIÓN ==================== -->
+                    <div class="card-body">                        <!-- Barra de búsqueda -->
                         <div class="row mb-3">
-                            <div class="col-md-4">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar pacientes..." />
+                            <div class="col-md-4">                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <img src="Iconos/magnifier_118394.svg" alt="Buscar" class="icono-buscar">
+                                    </span>
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar pacientes..." />
+                                </div>
                             </div>
                         </div>
+                        
+                        <!-- Tabla de pacientes -->
                         <div class="table-responsive">
                             <table class="table table-striped" id="patientsTable">
                                 <thead>
@@ -66,19 +90,21 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Modal optimizado -->
+    </div>    <!-- ==================== MODAL PARA GESTIÓN DE PACIENTES ==================== -->
     <div class="modal fade" id="patientModal" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true" data-bs-backdrop="false">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
+          <!-- Encabezado del modal -->
           <div class="modal-header">
             <h5 class="modal-title" id="patientModalLabel">Nuevo Paciente</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
+          
+          <!-- Formulario de paciente -->
           <form id="patientForm">
             <div class="modal-body">
               <div class="form-grid">
+                <!-- ==================== INFORMACIÓN PERSONAL BÁSICA ==================== -->
                 <div class="form-group">
                   <label>Nombres *</label>
                   <input type="text" id="nombres" class="form-control" required>
@@ -92,18 +118,9 @@
                   <input type="text" id="numeroIdentificacion" class="form-control" required>
                 </div>
                 <div class="form-group">
-                  <label>Teléfono</label>
-                  <input type="tel" id="telefono" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="email" id="email" class="form-control">
-                </div>
-                <div class="form-group">
                   <label>Fecha de Nacimiento</label>
                   <input type="date" id="fechaNacimiento" class="form-control">
                 </div>
-                <!-- Campos adicionales en español -->
                 <div class="form-group">
                   <label>Género</label>
                   <select id="genero" class="form-control">
@@ -113,10 +130,22 @@
                     <option value="OTRO">Otro</option>
                   </select>
                 </div>
+                
+                <!-- ==================== INFORMACIÓN DE CONTACTO ==================== -->
+                <div class="form-group">
+                  <label>Teléfono</label>
+                  <input type="tel" id="telefono" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" id="email" class="form-control">
+                </div>
                 <div class="form-group">
                   <label>Dirección</label>
                   <textarea id="direccion" class="form-control"></textarea>
                 </div>
+                
+                <!-- ==================== CONTACTO DE EMERGENCIA ==================== -->
                 <div class="form-group">
                   <label>Contacto de Emergencia</label>
                   <input type="text" id="contactoEmergencia" class="form-control">
@@ -125,6 +154,8 @@
                   <label>Teléfono de Emergencia</label>
                   <input type="tel" id="telefonoEmergencia" class="form-control">
                 </div>
+                
+                <!-- ==================== INFORMACIÓN MÉDICA ==================== -->
                 <div class="form-group">
                   <label>Tipo de Sangre</label>
                   <input type="text" id="tipoSangre" class="form-control">
@@ -137,6 +168,8 @@
                   <label>Seguro Médico</label>
                   <input type="text" id="seguroMedico" class="form-control">
                 </div>
+                
+                <!-- ==================== INFORMACIÓN ADICIONAL ==================== -->
                 <div class="form-group">
                   <label>Estado Civil</label>
                   <input type="text" id="estadoCivil" class="form-control">
@@ -145,12 +178,16 @@
                   <label>Ocupación</label>
                   <input type="text" id="ocupacion" class="form-control">
                 </div>
+                
+                <!-- ==================== ESTADO DEL PACIENTE ==================== -->
                 <div class="form-check">
                   <input type="checkbox" id="activo" class="form-check-input">
                   <label class="form-check-label">Activo</label>
                 </div>
               </div>
             </div>
+            
+            <!-- Botones de acción del modal -->
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -158,14 +195,14 @@
           </form>
         </div>
       </div>
-    </div>
-
-    <!-- Scripts optimizados -->    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/icons.js"></script>
+    </div>    <!-- ==================== SCRIPTS EXTERNOS ==================== -->    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/iconos-espanol.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/crud-manager.js"></script>
+    
+    <!-- ==================== CONFIGURACIÓN ESPECÍFICA DE PACIENTES ==================== -->
     <script>
-        // Configuración específica para pacientes
+        // Inicialización del gestor CRUD para pacientes
         var pacienteManager = new CRUDManager({
             entityName: 'Paciente',
             entityNamePlural: 'pacientes',
@@ -173,43 +210,59 @@
             formId: 'patientForm',
             tableBodyId: 'patientsTableBody',
             searchInputId: 'searchInput',
+            
+            // Definición de campos del formulario
             fields: [
+                // Información personal básica
                 { name: 'nombres', type: 'text', required: true },
                 { name: 'apellidos', type: 'text', required: true },
                 { name: 'numeroIdentificacion', type: 'text', required: true },
-                { name: 'telefono', type: 'tel' },
-                { name: 'email', type: 'email' },
                 { name: 'fechaNacimiento', type: 'date' },
                 { name: 'genero', type: 'select', options: ['MASCULINO','FEMENINO','OTRO'] },
+                
+                // Información de contacto
+                { name: 'telefono', type: 'tel' },
+                { name: 'email', type: 'email' },
                 { name: 'direccion', type: 'textarea' },
+                
+                // Contacto de emergencia
                 { name: 'contactoEmergencia', type: 'text' },
                 { name: 'telefonoEmergencia', type: 'tel' },
+                
+                // Información médica
                 { name: 'tipoSangre', type: 'text' },
                 { name: 'alergias', type: 'textarea' },
                 { name: 'seguroMedico', type: 'text' },
+                
+                // Información adicional
                 { name: 'estadoCivil', type: 'text' },
                 { name: 'ocupacion', type: 'text' },
                 { name: 'activo', type: 'checkbox' }
             ]
         });
 
-        // Personalizar el renderizado de la tabla si es necesario
+        // ==================== PERSONALIZACIÓN DE LA TABLA ==================== 
+        // Función personalizada para renderizar las filas de la tabla
         pacienteManager.renderTableRow = function(item) {
             return `
                 <tr>
                     <td>${item.nombres || ''} ${item.apellidos || ''}</td>
                     <td>${item.numeroIdentificacion || ''}</td>
                     <td>${item.telefono || ''}</td>
-                    <td>${item.email || ''}</td>
-                    <td class="table-actions">                        <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#patientModal" onclick="pacienteManager.edit(${item.id})">
-                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
-                            </svg>
+                    <td>${item.email || ''}</td>                    <td class="table-actions">
+                        <!-- Botón ver -->
+                        <button class="btn btn-view btn-sm" onclick="pacienteManager.view(${item.id})">
+                            <img src="Iconos/information_105113.svg" alt="Ver" class="icono-accion">
                         </button>
+                        
+                        <!-- Botón editar -->
+                        <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#patientModal" onclick="pacienteManager.edit(${item.id})">
+                            <img src="Iconos/edit_modify_icon_196940.svg" alt="Editar" class="icono-accion">
+                        </button>
+                        
+                        <!-- Botón eliminar -->
                         <button class="btn btn-delete btn-sm" onclick="pacienteManager.delete(${item.id})">
-                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
-                            </svg>
+                            <img src="Iconos/ic-cancel_97589.svg" alt="Eliminar" class="icono-accion">
                         </button>
                     </td>
                 </tr>

@@ -7,13 +7,20 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class AuthRequest {
 
+    // --------------------- ATRIBUTOS ------------------------
+    /**
+     * Propiedades para almacenar las credenciales del usuario
+     */
     @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
 
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
-    // Constructores
+    // --------------------- CONSTRUCTORES --------------------
+    /**
+     * Constructores para crear instancias de solicitud de autenticación
+     */
     public AuthRequest() {}
 
     public AuthRequest(String username, String password) {
@@ -21,7 +28,10 @@ public class AuthRequest {
         this.password = password;
     }
 
-    // Getters y setters
+    // ----------------- GETTERS Y SETTERS -------------------
+    /**
+     * Métodos de acceso para las propiedades del objeto
+     */
     public String getUsername() {
         return username;
     }

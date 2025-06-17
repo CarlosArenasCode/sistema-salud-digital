@@ -18,105 +18,168 @@ import java.util.List;
  */
 @Repository
 public interface CitaJpaRepository extends JpaRepository<CitaEntity, Long> {
-    
-    // Consultas por paciente
-    List<CitaEntity> findByIdPaciente(Long idPaciente);
-    Page<CitaEntity> findByIdPaciente(Long idPaciente, Pageable pageable);
-    List<CitaEntity> findByIdPacienteAndEstado(Long idPaciente, EstadoCita estado);
-    
-    // Consultas por médico
-    List<CitaEntity> findByIdMedico(Long idMedico);
-    Page<CitaEntity> findByIdMedico(Long idMedico, Pageable pageable);
-    List<CitaEntity> findByIdMedicoAndEstado(Long idMedico, EstadoCita estado);
-    
-    // Consultas por fecha
-    List<CitaEntity> findByFechaCita(LocalDate fecha);
-    List<CitaEntity> findByFechaCitaBetween(LocalDate fechaInicio, LocalDate fechaFin);
-    Page<CitaEntity> findByFechaCitaBetween(LocalDate fechaInicio, LocalDate fechaFin, Pageable pageable);
-    
-    // Consultas por estado
-    List<CitaEntity> findByEstado(EstadoCita estado);
-    Page<CitaEntity> findByEstado(EstadoCita estado, Pageable pageable);
-    
-    // Consultas combinadas
-    List<CitaEntity> findByFechaCitaAndEstado(LocalDate fecha, EstadoCita estado);
-    List<CitaEntity> findByIdMedicoAndFechaCita(Long idMedico, LocalDate fecha);
-    List<CitaEntity> findByIdPacienteAndFechaCitaBetween(Long idPaciente, LocalDate fechaInicio, LocalDate fechaFin);
-    
-    // Verificación de disponibilidad
-    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CitaEntity c WHERE " +
-           "c.idMedico = :idMedico AND " +
-           "c.fechaCita = :fechaCita AND " +
-           "c.estado = 'PROGRAMADA'")
-    boolean existsScheduledAppointment(@Param("idMedico") Long idMedico, 
-                                      @Param("fechaCita") LocalDateTime fechaCita);
+       
+       // ==================================================================================
+       // SECCIÓN 1: CONSULTAS RELACIONADAS CON PACIENTES
+       // Métodos para buscar y filtrar citas por paciente
+       // ==================================================================================
+       
+       List<CitaEntity> findByIdPaciente(Long idPaciente);
+       Page<CitaEntity> findByIdPaciente(Long idPaciente, Pageable pageable);
+       List<CitaEntity> findByIdPacienteAndEstado(Long idPaciente, EstadoCita estado);
+       List<CitaEntity> findByIdPacienteAndFechaCitaBetween(Long idPaciente, LocalDate fechaInicio, LocalDate fechaFin);
+       
+       // ==================================================================================
+       // SECCIÓN 2: CONSULTAS RELACIONADAS CON MÉDICOS
+       // Métodos para buscar y filtrar citas por médico
+       // ==================================================================================
+       
+       List<CitaEntity> findByIdMedico(Long idMedico);
+       Page<CitaEntity> findByIdMedico(Long idMedico, Pageable pageable);
+       List<CitaEntity> findByIdMedicoAndEstado(Long idMedico, EstadoCita estado);
+       List<CitaEntity> findByIdMedicoAndFechaCita(Long idMedico, LocalDate fecha);
+       
+       // ==================================================================================
+       // SECCIÓN 3: CONSULTAS POR FECHAS
+       // Métodos para filtrar citas por fecha o rangos de fechas
+       // ==================================================================================
+       
+       List<CitaEntity> findByFechaCita(LocalDate fecha);
+       List<CitaEntity> findByFechaCitaBetween(LocalDate fechaInicio, LocalDate fechaFin);
+       Page<CitaEntity> findByFechaCitaBetween(LocalDate fechaInicio, LocalDate fechaFin, Pageable pageable);
+       List<CitaEntity> findByFechaCitaAndEstado(LocalDate fecha, EstadoCita estado);
+       
+       // ==================================================================================
+       // SECCIÓN 4: CONSULTAS POR ESTADO
+       // Métodos para filtrar citas según su estado actual
+       // ==================================================================================
+       
+       List<CitaEntity> findByEstado(EstadoCita estado);
+       Page<CitaEntity> findByEstado(EstadoCita estado, Pageable pageable);
+       
+       // ==================================================================================
+       // SECCIÓN 5: VERIFICACIÓN DE DISPONIBILIDAD
+       // Métodos para comprobar la disponibilidad de horarios
+       // ==================================================================================
+       
+       @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CitaEntity c WHERE " +
+                 "c.idMedico = :idMedico AND " +
+                 "c.fechaCita = :fechaCita AND " +
+                 "c.estado = 'PROGRAMADA'")
+       boolean existsScheduledAppointment(@Param("idMedico") Long idMedico, 
+                                         @Param("fechaCita") LocalDateTime fechaCita);
 
-    // Consultas avanzadas
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.fechaCita >= :fechaInicio AND " +
-           "c.fechaCita <= :fechaFin AND " +
-           "c.estado = :estado " +
-           "ORDER BY c.fechaCita")
-    List<CitaEntity> findAppointmentsByDateRangeAndStatus(@Param("fechaInicio") LocalDate fechaInicio,
-                                                          @Param("fechaFin") LocalDate fechaFin,
-                                                          @Param("estado") EstadoCita estado);
+       // ==================================================================================
+       // SECCIÓN 6: CONSULTAS AVANZADAS CON FILTROS
+       // Métodos con múltiples parámetros para búsquedas específicas
+       // ==================================================================================
+       
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.fechaCita >= :fechaInicio AND " +
+                 "c.fechaCita <= :fechaFin AND " +
+                 "c.estado = :estado " +
+                 "ORDER BY c.fechaCita")
+       List<CitaEntity> findAppointmentsByDateRangeAndStatus(@Param("fechaInicio") LocalDate fechaInicio,
+                                                            @Param("fechaFin") LocalDate fechaFin,
+                                                            @Param("estado") EstadoCita estado);
 
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.idMedico = :idMedico AND " +
-           "c.fechaCita >= :fechaInicio AND " +
-           "c.fechaCita <= :fechaFin " +
-           "ORDER BY c.fechaCita")
-    List<CitaEntity> findDoctorAppointmentsByDateRange(@Param("idMedico") Long idMedico,
-                                                       @Param("fechaInicio") LocalDate fechaInicio,
-                                                       @Param("fechaFin") LocalDate fechaFin);    // Búsquedas con texto
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<CitaEntity> searchAppointments(@Param("searchTerm") String searchTerm);
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.idMedico = :idMedico AND " +
+                 "c.fechaCita >= :fechaInicio AND " +
+                 "c.fechaCita <= :fechaFin " +
+                 "ORDER BY c.fechaCita")
+       List<CitaEntity> findDoctorAppointmentsByDateRange(@Param("idMedico") Long idMedico,
+                                                         @Param("fechaInicio") LocalDate fechaInicio,
+                                                         @Param("fechaFin") LocalDate fechaFin);
+       
+       // ==================================================================================
+       // SECCIÓN 7: BÚSQUEDAS CON TEXTO
+       // Métodos para buscar citas por términos en diferentes campos
+       // ==================================================================================
+       
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                 "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                 "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+       List<CitaEntity> searchAppointments(@Param("searchTerm") String searchTerm);
 
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.fechaCita >= :fecha AND " +
-           "(LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
-    Page<CitaEntity> searchUpcomingAppointments(@Param("searchTerm") String searchTerm, 
-                                               @Param("fecha") LocalDate fecha, 
-                                               Pageable pageable);
-    
-    // Estadísticas
-    @Query("SELECT COUNT(c) FROM CitaEntity c WHERE c.estado = :estado")
-    long countByStatus(@Param("estado") EstadoCita estado);
-    
-    @Query("SELECT c.estado, COUNT(c) FROM CitaEntity c GROUP BY c.estado")
-    List<Object[]> countAppointmentsByStatus();
-    
-    @Query("SELECT COUNT(c) FROM CitaEntity c WHERE c.fechaCita = :fecha")
-    long countAppointmentsByDate(@Param("fecha") LocalDate fecha);
-      @Query("SELECT COUNT(c) FROM CitaEntity c WHERE " +
-           "c.fechaCita >= :fechaInicio AND " +
-           "c.fechaCita <= :fechaFin")
-    long countAppointmentsByDateRange(@Param("fechaInicio") LocalDate fechaInicio, 
-                                     @Param("fechaFin") LocalDate fechaFin);
-    
-    // Citas próximas
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.fechaCita = :fecha AND " +
-           "c.estado = 'PROGRAMADA' " +
-           "ORDER BY c.fechaCita")
-    List<CitaEntity> findTodayScheduledAppointments(@Param("fecha") LocalDate fecha);
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.fechaCita >= :fecha AND " +
+                 "(LOWER(c.motivoConsulta) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                 "LOWER(CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                 "LOWER(CONCAT(c.medico.nombres, ' ', c.medico.apellidos)) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+       Page<CitaEntity> searchUpcomingAppointments(@Param("searchTerm") String searchTerm, 
+                                                  @Param("fecha") LocalDate fecha, 
+                                                  Pageable pageable);
+       
+       // ==================================================================================
+       // SECCIÓN 8: ESTADÍSTICAS Y REPORTES
+       // Métodos para generar estadísticas y conteos de citas
+       // ==================================================================================
+       
+       @Query("SELECT COUNT(c) FROM CitaEntity c WHERE c.estado = :estado")
+       long countByStatus(@Param("estado") EstadoCita estado);
+       
+       @Query("SELECT c.estado, COUNT(c) FROM CitaEntity c GROUP BY c.estado")
+       List<Object[]> countAppointmentsByStatus();
+       
+       @Query("SELECT COUNT(c) FROM CitaEntity c WHERE c.fechaCita = :fecha")
+       long countAppointmentsByDate(@Param("fecha") LocalDate fecha);
+       
+       @Query("SELECT COUNT(c) FROM CitaEntity c WHERE " +
+                 "c.fechaCita >= :fechaInicio AND " +
+                 "c.fechaCita <= :fechaFin")
+       long countAppointmentsByDateRange(@Param("fechaInicio") LocalDate fechaInicio, 
+                                        @Param("fechaFin") LocalDate fechaFin);
+       
+       // ==================================================================================
+       // SECCIÓN 9: GESTIÓN DE CITAS PRÓXIMAS
+       // Métodos para obtener citas programadas en fechas futuras
+       // ==================================================================================
+       
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.fechaCita = :fecha AND " +
+                 "c.estado = 'PROGRAMADA' " +
+                 "ORDER BY c.fechaCita")
+       List<CitaEntity> findTodayScheduledAppointments(@Param("fecha") LocalDate fecha);
 
-    @Query("SELECT c FROM CitaEntity c WHERE " +
-           "c.fechaCita BETWEEN :hoy AND :fechaFin AND " +
-           "c.estado = 'PROGRAMADA' " +
-           "ORDER BY c.fechaCita")
-    List<CitaEntity> findUpcomingAppointments(@Param("hoy") LocalDate hoy, 
-                                             @Param("fechaFin") LocalDate fechaFin);
-    
-    // Cancelaciones
-    @Query("UPDATE CitaEntity c SET c.estado = 'CANCELADA' WHERE c.id = :id")
-    void cancelAppointment(@Param("id") Long id);
-    
-    @Query("UPDATE CitaEntity c SET c.estado = 'COMPLETADA' WHERE c.id = :id")
-    void completeAppointment(@Param("id") Long id);
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.fechaCita BETWEEN :hoy AND :fechaFin AND " +
+                 "c.estado = 'PROGRAMADA' " +
+                 "ORDER BY c.fechaCita")
+       List<CitaEntity> findUpcomingAppointments(@Param("hoy") LocalDate hoy, 
+                                                @Param("fechaFin") LocalDate fechaFin);
+       
+       // ==================================================================================
+       // SECCIÓN 10: OPERACIONES DE ACTUALIZACIÓN DE ESTADO
+       // Métodos para cambiar el estado de las citas
+       // ==================================================================================
+       
+       @Query("UPDATE CitaEntity c SET c.estado = 'CANCELADA' WHERE c.id = :id")
+       void cancelAppointment(@Param("id") Long id);
+       
+       @Query("UPDATE CitaEntity c SET c.estado = 'COMPLETADA' WHERE c.id = :id")
+       void completeAppointment(@Param("id") Long id);
+       
+       // ==================================================================================
+       // SECCIÓN 11: CONSULTAS PARA VALIDACIÓN DE CONFLICTOS DE HORARIOS
+       // Métodos para detectar y prevenir solapamientos de citas
+       // ==================================================================================
+       
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.idMedico = :idMedico AND " +
+                 "c.fechaCita = :fechaCita AND " +
+                 "c.estado IN :estados")
+       List<CitaEntity> findByIdMedicoAndFechaCitaAndEstadoIn(@Param("idMedico") Long idMedico,
+                                                             @Param("fechaCita") LocalDateTime fechaCita,
+                                                             @Param("estados") List<String> estados);
+       
+       @Query("SELECT c FROM CitaEntity c WHERE " +
+                 "c.idMedico = :idMedico AND " +
+                 "c.fechaCita >= :fechaInicio AND " +
+                 "c.fechaCita <= :fechaFin " +
+                 "ORDER BY c.fechaCita")
+       List<CitaEntity> findByIdMedicoAndFechaCitaBetween(@Param("idMedico") Long idMedico,
+                                                         @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                         @Param("fechaFin") LocalDateTime fechaFin);
 }

@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
+    
+    <!-- ========================================
+         ESTILOS CSS - INTERFAZ DE USUARIO
+    ======================================== -->
     <style>
+        /* ===== ESTILOS GENERALES DEL CUERPO ===== */
         body {
             min-height: 100vh;
             display: flex;
@@ -13,6 +18,8 @@
             background: #f1f5f9;
             font-family: sans-serif;
         }
+
+        /* ===== CONTENEDOR PRINCIPAL DE LOGIN ===== */
         .login-card {
             background: #fff;
             padding: 2rem;
@@ -21,14 +28,26 @@
             width: 100%;
             max-width: 340px;
         }
+
+        /* ===== TÍTULO DE LA PÁGINA ===== */
         .login-card h1 {
             text-align: center;
             color: #2563eb;
             margin-bottom: 1.5rem;
             font-size: 1.3rem;
         }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.3rem; color: #374151; }
+
+        /* ===== ELEMENTOS DEL FORMULARIO ===== */
+        .form-group { 
+            margin-bottom: 1rem; 
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 0.3rem; 
+            color: #374151; 
+        }
+        
         input {
             width: 100%;
             padding: 0.6rem;
@@ -36,6 +55,8 @@
             border-radius: 4px;
             font-size: 1rem;
         }
+
+        /* ===== BOTÓN DE ENVÍO ===== */
         .btn {
             width: 100%;
             padding: 0.7rem;
@@ -46,7 +67,12 @@
             font-size: 1rem;
             cursor: pointer;
         }
-        .btn:disabled { background: #9ca3af; }
+        
+        .btn:disabled { 
+            background: #9ca3af; 
+        }
+
+        /* ===== MENSAJES DE ERROR ===== */
         .error-message {
             background: #fee2e2;
             color: #dc2626;
@@ -59,46 +85,76 @@
     </style>
 </head>
 <body>
+    <!-- ========================================
+         ESTRUCTURA HTML DEL FORMULARIO
+    ======================================== -->
     <div class="login-card">
         <h1>Iniciar Sesión</h1>
+        
         <form id="loginForm">
+            <!-- Contenedor para mensajes de error -->
             <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Campo de usuario -->
             <div class="form-group">
                 <label for="username">Usuario</label>
                 <input type="text" id="username" required autocomplete="username">
             </div>
+            
+            <!-- Campo de contraseña -->
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" required autocomplete="current-password">
             </div>
+            
+            <!-- Botón de envío -->
             <button type="submit" class="btn" id="loginButton">
                 <span id="buttonText">Iniciar Sesión</span>
             </button>
         </form>
     </div>
+
+    <!-- ========================================
+         LÓGICA JAVASCRIPT DEL FORMULARIO
+    ======================================== -->
     <script>
+        // ===== CONFIGURACIÓN DE LA API =====
         const API_BASE = 'http://localhost:8080/api';
+
+        // ===== MANEJO DEL ENVÍO DEL FORMULARIO =====
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Obtener valores de los campos
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorDiv = document.getElementById('errorMessage');
             const loginButton = document.getElementById('loginButton');
             const buttonText = document.getElementById('buttonText');
+            
+            // Ocultar mensajes de error previos
             errorDiv.style.display = 'none';
+            
+            // Validación básica de campos
             if (!username || !password) {
                 showError('Por favor, complete todos los campos');
                 return;
             }
+            
+            // Deshabilitar botón durante el proceso
             loginButton.disabled = true;
             buttonText.textContent = 'Verificando...';
+            
             try {
+                // Realizar petición de autenticación
                 const response = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
+                
                 if (response.ok) {
+                    // Login exitoso - guardar datos y redirigir
                     const data = await response.json();
                     localStorage.setItem('auth_token', data.token);
                     localStorage.setItem('user_data', JSON.stringify({
@@ -106,35 +162,49 @@
                         name: data.username || username,
                         role: data.role || 'user'
                     }));
+                    
                     buttonText.textContent = '¡Acceso exitoso!';
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 800);
                 } else {
+                    // Error en la autenticación
                     const errorData = await response.json().catch(() => ({}));
                     showError(errorData.message || 'Usuario o contraseña incorrectos');
                 }
             } catch (error) {
+                // Error de conexión
                 showError('Error de conexión. Verifique el servidor.');
             } finally {
+                // Restaurar estado del botón si no fue exitoso
                 if (buttonText.textContent !== '¡Acceso exitoso!') {
                     loginButton.disabled = false;
                     buttonText.textContent = 'Iniciar Sesión';
                 }
             }
         });
+
+        // ===== FUNCIÓN PARA MOSTRAR ERRORES =====
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
             setTimeout(() => errorDiv.style.display = 'none', 4000);
         }
+
+        // ===== VERIFICACIÓN DE SESIÓN EXISTENTE =====
+        // Redirigir al dashboard si ya está autenticado
         if (localStorage.getItem('auth_token')) {
             window.location.href = 'dashboard.html';
         }
+
+        // ===== NAVEGACIÓN POR TECLADO =====
+        // Navegar del campo usuario al campo contraseña con Enter
         document.getElementById('username').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') document.getElementById('password').focus();
         });
+        
+        // Enviar formulario desde el campo contraseña con Enter
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
         });

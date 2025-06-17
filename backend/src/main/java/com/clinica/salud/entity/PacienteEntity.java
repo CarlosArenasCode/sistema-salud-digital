@@ -3,6 +3,7 @@ package com.clinica.salud.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class PacienteEntity {
     
+    // ==================== IDENTIFICACIÓN ====================
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +29,7 @@ public class PacienteEntity {
     @Column(name = "id_usuario")
     private Long idUsuario;
     
+    // ==================== INFORMACIÓN PERSONAL BÁSICA ====================
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 100, message = "Los nombres no pueden exceder 100 caracteres")
     @Column(name = "nombres", nullable = false, length = 100)
@@ -44,7 +47,9 @@ public class PacienteEntity {
     @Pattern(regexp = "MASCULINO|FEMENINO|OTRO", message = "El género debe ser MASCULINO, FEMENINO u OTRO")
     @Column(name = "genero", length = 10)
     private String genero;
-      @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
+    
+    // ==================== INFORMACIÓN DE CONTACTO ====================
+    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
     @Column(name = "telefono", length = 20)
     private String telefono;
     
@@ -56,6 +61,7 @@ public class PacienteEntity {
     @Column(name = "direccion", columnDefinition = "TEXT")
     private String direccion;
     
+    // ==================== CONTACTO DE EMERGENCIA ====================
     @Size(max = 100, message = "El contacto de emergencia no puede exceder 100 caracteres")
     @Column(name = "contacto_emergencia", length = 100)
     private String contactoEmergencia;
@@ -64,6 +70,7 @@ public class PacienteEntity {
     @Column(name = "telefono_emergencia", length = 20)
     private String telefonoEmergencia;
     
+    // ==================== INFORMACIÓN MÉDICA ====================
     @Size(max = 5, message = "El tipo de sangre no puede exceder 5 caracteres")
     @Column(name = "tipo_sangre", length = 5)
     private String tipoSangre;
@@ -75,6 +82,7 @@ public class PacienteEntity {
     @Column(name = "seguro_medico", length = 100)
     private String seguroMedico;
     
+    // ==================== INFORMACIÓN SOCIODEMOGRÁFICA ====================
     @Size(max = 20, message = "El número de identificación no puede exceder 20 caracteres")
     @Column(name = "numero_identificacion", unique = true, length = 20)
     private String numeroIdentificacion;
@@ -87,6 +95,7 @@ public class PacienteEntity {
     @Column(name = "ocupacion", length = 100)
     private String ocupacion;
     
+    // ==================== CONTROL DE ESTADO ====================
     @Builder.Default
     @Column(name = "activo")
     private Boolean activo = true;
@@ -95,13 +104,13 @@ public class PacienteEntity {
     private LocalDateTime fechaCreacion;
     
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
-    
-    // Relación con usuario
-    @ManyToOne(fetch = FetchType.LAZY)
+    private LocalDateTime fechaActualizacion;      // ==================== RELACIONES ====================
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "contrasena"})
     private UsuarioEntity usuario;
     
+    // ==================== MÉTODOS DE CICLO DE VIDA ====================
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
@@ -113,12 +122,17 @@ public class PacienteEntity {
         fechaActualizacion = LocalDateTime.now();
     }
     
-    // Método utilitario para obtener el nombre completo
+    // ==================== MÉTODOS UTILITARIOS ====================
+    /**
+     * Devuelve el nombre completo del paciente
+     */
     public String getNombreCompleto() {
         return nombres + " " + apellidos;
     }
     
-    // Método para calcular la edad
+    /**
+     * Calcula la edad del paciente en años
+     */
     public int getEdad() {
         if (fechaNacimiento != null) {
             return LocalDate.now().getYear() - fechaNacimiento.getYear();

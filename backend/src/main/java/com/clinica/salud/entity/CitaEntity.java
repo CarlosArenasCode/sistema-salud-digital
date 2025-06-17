@@ -20,6 +20,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class CitaEntity {
     
+    // ==========================================
+    // ========== ATRIBUTOS BÁSICOS ============
+    // ==========================================
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,12 +51,20 @@ public class CitaEntity {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
     
+    // ==========================================
+    // ========== CONTROL DE TIEMPO ============
+    // ==========================================
+    
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
     
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;    
-    // Relaciones JPA
+    
+    // ==========================================
+    // ============== RELACIONES ===============
+    // ==========================================
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", insertable = false, updatable = false)
     @JsonIgnore
@@ -62,6 +74,10 @@ public class CitaEntity {
     @JoinColumn(name = "id_medico", insertable = false, updatable = false)
     @JsonIgnore
     private MedicoEntity medico;
+    
+    // ==========================================
+    // ======== MÉTODOS DEL CICLO DE VIDA ======
+    // ==========================================
     
     @PrePersist
     protected void onCreate() {

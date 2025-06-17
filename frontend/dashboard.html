@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- =========================== -->
+    <!-- CONFIGURACIÓN BÁSICA HTML   -->
+    <!-- =========================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Salud Digital</title>    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/icons.css" rel="stylesheet">
-    <style>
+    <title>Dashboard - Sistema de Salud Digital</title>
+    
+    <!-- =========================== -->
+    <!-- ENLACES A RECURSOS EXTERNOS -->
+    <!-- =========================== -->    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/iconos-espanol.css" rel="stylesheet">
+    
+    <!-- ======================== -->
+    <!-- ESTILOS PERSONALIZADOS  -->
+    <!-- ======================== -->    <style>
+        /* ============================= */
+        /* ESTILOS GENERALES DEL CUERPO  */
+        /* ============================= */
         body {
             background: #f8f9fa;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        
+        /* ============================= */
+        /* ESTILOS PARA TARJETA BIENVENIDA */
+        /* ============================= */
         .welcome-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
@@ -19,12 +36,20 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        
+        /* ============================= */
+        /* ESTILOS PARA GRID DE MÓDULOS  */
+        /* ============================= */
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
         }
+        
+        /* ============================= */
+        /* ESTILOS PARA TARJETAS MÓDULOS */
+        /* ============================= */
         .module-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
@@ -56,6 +81,10 @@
             color: #666;
             font-size: 0.9rem;
         }
+        
+        /* ============================= */
+        /* ESTILOS PARA BOTÓN DE LOGOUT  */
+        /* ============================= */
         .logout-btn {
             background: rgba(220,53,69,0.9);
             border: none;
@@ -68,6 +97,10 @@
             background: rgba(220,53,69,1);
             transform: scale(1.05);
         }
+        
+        /* ============================= */
+        /* ESTILOS PARA INFO DE USUARIO  */
+        /* ============================= */
         .user-info {
             color: white;
             display: flex;
@@ -77,88 +110,81 @@
     </style>
 </head>
 <body>
-    <!-- Usar Bootstrap navbar con paleta azul y blanca -->
+    <!-- ================================ -->
+    <!-- BARRA DE NAVEGACIÓN PRINCIPAL   -->
+    <!-- ================================ -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <div class="container-fluid">                    <a class="navbar-brand">
-                        <svg class="svg-icon me-2" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 10.12h-6.78l-2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79L12 24l10.4-7.01c2.73-2.71 2.73-7.08 0-9.79L21 10.12z" fill="currentColor"/>
-                        </svg>Sistema de Salud Digital
-                    </a>                    <div class="d-flex align-items-center">                        <div class="user-info me-3">
-                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8 3.59-8 8-8z" fill="currentColor"/>
-                                <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" fill="currentColor"/>
-                            </svg>
-                            <span id="currentDateTime" class="me-2"></span>
-                        </div>
-                        <div class="user-info me-3">
-                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-                            </svg>
-                            <span id="userName">Administrador</span>
-                        </div>
-                        <button class="btn logout-btn" onclick="logout()">
-                            <svg class="svg-icon me-1" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5-5-5z" fill="currentColor"/>
-                                <path d="M2 2v20h10v-2H4V4h8V2H2z" fill="currentColor"/>
-                            </svg>Cerrar Sesión
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
+        <div class="container-fluid">            <!-- Logo y nombre del sistema -->
+            <a class="navbar-brand">
+                <img src="Iconos/heartbeat_heart_rate_heart_medical_icon_187013.svg" alt="Sistema de Salud" class="icono me-2" width="28" height="28">
+                Sistema de Salud Digital
+            </a>
+            
+            <!-- Información del usuario y controles -->
+            <div class="d-flex align-items-center">                <!-- Fecha y hora actual -->
+                <div class="user-info me-3">
+                    <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Fecha y hora" class="icono me-1" width="16" height="16">
+                    <span id="currentDateTime" class="me-2"></span>
+                </div>                <!-- Nombre del usuario -->
+                <div class="user-info me-3">
+                    <img src="Iconos/4092564-about-mobile-ui-profile-ui-user-website_114033.svg" alt="Usuario" class="icono me-1" width="20" height="20">
+                    <span id="userName">Administrador</span>
+                </div>                <!-- Botón de cerrar sesión -->
+                <button class="btn logout-btn" onclick="logout()">
+                    <img src="Iconos/4115235-exit-logout-sign-out_114030.svg" alt="Cerrar sesión" class="icono me-1" width="16" height="16">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>    <!-- ============================= -->
+    <!-- CONTENIDO PRINCIPAL           -->
+    <!-- ============================= -->
     <div class="container">
+        <!-- Tarjeta de bienvenida -->
         <div class="welcome-card">            <h1 class="text-primary mb-3">
-                <svg class="svg-icon me-2" width="32" height="32" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2l10 9h-3v9H5v-9H2l10-9zm-1 16h2v-2h-2v2zm0-4h2v-2h-2v2zm0-4h2V8h-2v2z" fill="currentColor"/>
-                    <path d="M11 6h2v2h2v2h-2v2h-2V10H9V8h2V6z" fill="currentColor"/>
-                </svg>Bienvenido al Sistema de Salud Digital
+                <img src="Iconos/hospital_icon_140108.svg" alt="Hospital" class="icono me-2" width="32" height="32">
+                Bienvenido al Sistema de Salud Digital
             </h1>
             <p class="lead">Gestiona de manera eficiente pacientes, médicos, citas y medicamentos desde una plataforma integrada.</p>
         </div>
 
-        <div class="modules-grid">            <a href="pacientes-optimized.html" class="module-card">
-                <svg class="svg-icon module-icon text-primary" width="48" height="48" viewBox="0 0 24 24" fill="none">
-                    <path d="M16 4c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
-                    <path d="M8 4c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
-                    <path d="M8 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm8 0c-.29 0-.62.02-.97.05C16.2 14.6 17 15.7 17 17v1h7v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-                </svg>
+        <!-- ============================= -->
+        <!-- MÓDULOS DEL SISTEMA           -->
+        <!-- ============================= -->
+        <div class="modules-grid">            <!-- Módulo de Pacientes -->
+            <a href="pacientes-optimized.html" class="module-card">
+                <img src="Iconos/user_injured_icon_198640.svg" alt="Pacientes" class="modulo-icono">
                 <div class="module-title">Pacientes</div>
                 <div class="module-description">Registro y gestión de pacientes</div>
-            </a>
-
+            </a>            <!-- Módulo de Médicos -->
             <a href="medicos-optimized.html" class="module-card">
-                <svg class="svg-icon module-icon text-success" width="48" height="48" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-                    <path d="M15.5 2h-1v2h-2v2h2v2h1V6h2V4h-2V2z" fill="currentColor"/>
-                </svg>
+                <img src="Iconos/avatar_doctor_health_hospital_medical_icon_140085.svg" alt="Médicos" class="modulo-icono">
                 <div class="module-title">Médicos</div>
                 <div class="module-description">Gestión del personal médico</div>
-            </a>
-
+            </a>            <!-- Módulo de Citas -->
             <a href="citas-optimized.html" class="module-card">
-                <svg class="svg-icon module-icon text-info" width="48" height="48" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                </svg>
+                <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Citas" class="modulo-icono">
                 <div class="module-title">Citas</div>
                 <div class="module-description">Programación de citas médicas</div>
-            </a>
-
+            </a><!-- Módulo de Medicamentos -->
             <a href="medicamentos-optimized.html" class="module-card">
-                <svg class="svg-icon module-icon text-warning" width="48" height="48" viewBox="0 0 24 24" fill="none">
-                    <path d="M4.22 11.29l7.07-7.07c1.39-1.39 3.65-1.39 5.04 0l3.45 3.45c1.39 1.39 1.39 3.65 0 5.04l-7.07 7.07c-1.39 1.39-3.65 1.39-5.04 0l-3.45-3.45c-1.39-1.39-1.39-3.65 0-5.04z" fill="currentColor"/>
-                    <path d="M9.88 14.12l4.24-4.24-1.41-1.41-4.24 4.24 1.41 1.41z" fill="#ffffff"/>
-                </svg>
+                <img src="Iconos/medicines_icon-icons.com_58863.svg" alt="Medicamentos" class="modulo-icono">
                 <div class="module-title">Medicamentos</div>
                 <div class="module-description">Inventario farmacéutico</div>
             </a>
         </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/icons.js"></script>
+    </div>    <!-- ============================= -->
+    <!-- SCRIPTS EXTERNOS              -->
+    <!-- ============================= -->    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/iconos-espanol.js"></script>
+    
+    <!-- ============================= -->
+    <!-- SCRIPTS PERSONALIZADOS       -->
+    <!-- ============================= -->
     <script>
-        // Verificar autenticación
+        // ========================================
+        // FUNCIÓN DE VERIFICACIÓN DE AUTENTICACIÓN
+        // ========================================
         function checkAuth() {
             const token = localStorage.getItem('auth_token');
             if (!token) {
@@ -171,7 +197,11 @@
             if (userData.name) {
                 document.getElementById('userName').textContent = userData.name;
             }
-        }        // Función de logout
+        }
+        
+        // ========================================
+        // FUNCIÓN DE CERRAR SESIÓN
+        // ========================================
         function logout() {
             if (confirm('¿Está seguro que desea cerrar sesión?')) {
                 localStorage.removeItem('auth_token');
@@ -180,7 +210,9 @@
             }
         }
 
-        // Función para actualizar la fecha y hora
+        // ========================================
+        // FUNCIÓN PARA ACTUALIZAR FECHA Y HORA
+        // ========================================
         function updateDateTime() {
             const now = new Date();
             const options = {
@@ -198,9 +230,11 @@
             document.getElementById('currentDateTime').textContent = dateTimeString;
         }
 
-        // Verificar autenticación al cargar la página
+        // ========================================
+        // INICIALIZACIÓN AL CARGAR LA PÁGINA
+        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
+            checkAuth(); // Verificar autenticación
             updateDateTime(); // Mostrar la hora inmediatamente
             setInterval(updateDateTime, 1000); // Actualizar cada segundo
         });
