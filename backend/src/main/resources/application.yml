@@ -6,12 +6,17 @@ spring:
     name: sistema-salud-digital
   profiles:
     active: postgresql
+  # Configuración para servir archivos estáticos del frontend
+  web:
+    resources:
+      static-locations: classpath:/static/
+  mvc:
+    static-path-pattern: /**
 
 # Configuración del servidor web
 server:
   port: 8080
-  servlet:
-    context-path: /api
+  # Removemos context-path para que los archivos estáticos estén en la raíz
 
 # Configuración de registros y logs del sistema
 logging:

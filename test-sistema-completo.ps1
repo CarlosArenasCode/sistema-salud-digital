@@ -28,10 +28,10 @@ try {
     Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Verificar Frontend (Puerto 8081)
-Write-Host "• Frontend (Puerto 8081):" -NoNewline
+# Verificar Frontend (Puerto 8080 - Servido por Backend)
+Write-Host "• Frontend (Puerto 8080):" -NoNewline
 try {
-    $frontendResponse = Invoke-WebRequest -Uri "http://localhost:8081" -Method GET -UseBasicParsing
+    $frontendResponse = Invoke-WebRequest -Uri "http://localhost:8080/login.html" -Method GET -UseBasicParsing
     if ($frontendResponse.StatusCode -eq 200) {
         Write-Host " ✓ ACTIVO" -ForegroundColor Green
     } else {
@@ -125,19 +125,19 @@ Write-Host ""
 Write-Host "✓ SISTEMA DE SALUD DIGITAL - COMPLETAMENTE OPERATIVO" -ForegroundColor Green
 Write-Host ""
 Write-Host "URLs de acceso:" -ForegroundColor Yellow
-Write-Host "• Frontend: http://localhost:8081" -ForegroundColor Cyan
+Write-Host "• Frontend: http://localhost:8080" -ForegroundColor Cyan
 Write-Host "• Backend API: http://localhost:8080/api" -ForegroundColor Cyan
 Write-Host "• Documentación API: http://localhost:8080/api/swagger-ui.html" -ForegroundColor Cyan
 Write-Host "• Salud del sistema: http://localhost:8080/api/actuator/health" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "Páginas del frontend disponibles:" -ForegroundColor Yellow
-Write-Host "• Inicio: http://localhost:8081/index-optimized.html" -ForegroundColor Cyan
-Write-Host "• Dashboard: http://localhost:8081/dashboard.html" -ForegroundColor Cyan
-Write-Host "• Pacientes: http://localhost:8081/pacientes-optimized.html" -ForegroundColor Cyan
-Write-Host "• Médicos: http://localhost:8081/medicos-optimized.html" -ForegroundColor Cyan
-Write-Host "• Citas: http://localhost:8081/citas-optimized.html" -ForegroundColor Cyan
-Write-Host "• Medicamentos: http://localhost:8081/medicamentos-optimized.html" -ForegroundColor Cyan
+Write-Host "• Login: http://localhost:8080/login.html" -ForegroundColor Cyan
+Write-Host "• Dashboard: http://localhost:8080/dashboard.html" -ForegroundColor Cyan
+Write-Host "• Pacientes: http://localhost:8080/pacientes-optimized.html" -ForegroundColor Cyan
+Write-Host "• Médicos: http://localhost:8080/medicos-optimized.html" -ForegroundColor Cyan
+Write-Host "• Citas: http://localhost:8080/citas-optimized.html" -ForegroundColor Cyan
+Write-Host "• Medicamentos: http://localhost:8080/medicamentos-optimized.html" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "============================================================" -ForegroundColor Cyan

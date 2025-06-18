@@ -1,9 +1,8 @@
-# Script de automatización para el sistema de salud digital
-# Ejecuta backend y frontend en ventanas separadas y abre el navegador en el frontend
+# Script de automatización para el sistema de salud digital - VERSIÓN UNIFICADA
+# Solo ejecuta backend (que ahora también sirve el frontend) en un solo puerto
 
-# Ruta absoluta de los proyectos
+# Ruta absoluta del proyecto backend
 $backendPath = "c:\WorkSpace\Sistema de Salud Digital\backend"
-$frontendPath = "c:\WorkSpace\Sistema de Salud Digital\frontend"
 
 # Omitir inicialización de base de datos para no modificar la BD
 Write-Host "Omitiendo verificación e inicialización de la base de datos."
@@ -11,36 +10,32 @@ Write-Host "Omitiendo verificación e inicialización de la base de datos."
 # Cambiar al directorio raíz del proyecto
 Set-Location -Path 'C:\WorkSpace\Sistema de Salud Digital'
 
-# Liberar puerto 8081 si está en uso
-$puertoFront = 8081
-$proceso = (Get-NetTCPConnection -LocalPort $puertoFront -ErrorAction SilentlyContinue).OwningProcess
+# Liberar puerto 8080 si está en uso (ahora solo necesitamos uno)
+$puerto = 8080
+$proceso = (Get-NetTCPConnection -LocalPort $puerto -ErrorAction SilentlyContinue).OwningProcess
 if ($proceso) {
-    Write-Host "Puerto $puertoFront en uso por PID $proceso. Matando proceso..."
+    Write-Host "Puerto $puerto en uso por PID $proceso. Matando proceso..."
     Stop-Process -Id $proceso -Force -ErrorAction SilentlyContinue
 }
 
-# Iniciar backend en nueva ventana de PowerShell, asegurando el directorio correcto
+# Iniciar backend en nueva ventana de PowerShell (ahora sirve también el frontend)
 try {
     Start-Process pwsh -ArgumentList "-NoExit", "-Command", "mvn spring-boot:run" -WorkingDirectory $backendPath -WindowStyle Normal
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 5
+    Write-Host "Backend iniciado exitosamente. Ahora sirve frontend y backend en puerto 8080."
     $backendStarted = $true
 } catch {
-    Write-Host "Error iniciando el backend."
+    Write-Host "Error iniciando el sistema."
     $backendStarted = $false
 }
 
-# Iniciar servidor frontend en nueva ventana de PowerShell usando Node.js
-try {
-    Start-Process pwsh -ArgumentList "-NoExit", "-Command", "node server-frontend.js" -WorkingDirectory $PSScriptRoot -WindowStyle Normal
-    Start-Sleep -Seconds 2
-    $frontendStarted = $true
-} catch {
-    Write-Host "Error iniciando el frontend con Node.js."
-    $frontendStarted = $false
+# Abrir navegador en la página principal (ahora todo en puerto 8080)
+if ($backendStarted) {
+    Start-Sleep -Seconds 3
+    Start-Process "http://localhost:8080/login.html"
+    Write-Host "Sistema de Salud Digital iniciado exitosamente en puerto 8080."
+    Write-Host "Frontend: http://localhost:8080"
+    Write-Host "API Backend: http://localhost:8080/api"
+} else {
+    Write-Host "Error al iniciar el sistema."
 }
-
-# Abrir navegador en la página principal del frontend (ahora en el login)
-Start-Sleep -Seconds 3
-Start-Process "http://localhost:8081/login.html"
-
-Write-Host "Sistema de Salud Digital iniciado."

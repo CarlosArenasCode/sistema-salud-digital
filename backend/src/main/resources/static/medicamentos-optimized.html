@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Configuración básica del documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Medicamentos - Sistema de Salud Digital</title>
+    
+    <!-- Importación de hojas de estilo -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/iconos-espanol.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- ========================================
+         BARRA DE NAVEGACIÓN PRINCIPAL
+    ======================================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <!-- Logo y título del sistema -->            <a class="navbar-brand" href="dashboard.html">
+                <img src="Iconos/heartbeat_heart_rate_heart_medical_icon_187013.svg" alt="Sistema de Salud" class="icono me-2" width="24" height="24">
+                Sistema de Salud Digital
+            </a>
+            
+            <!-- Enlaces de navegación -->
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="pacientes-optimized.html">Pacientes</a>
+                <a class="nav-link" href="medicos-optimized.html">Médicos</a>
+                <a class="nav-link" href="citas-optimized.html">Citas</a>
+                <a class="nav-link active" href="medicamentos-optimized.html">Medicamentos</a>
+            </div>
+        </div>
+    </nav>    <!-- ========================================
+         CONTENIDO PRINCIPAL DE LA PÁGINA
+    ======================================== -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- ========================================
+                     TARJETA PRINCIPAL DE GESTIÓN
+                ======================================== -->
+                <div class="card">
+                    <!-- Encabezado de la tarjeta con título y botón -->
+                    <div class="card-header d-flex justify-content-between align-items-center">                        <h5 class="card-title mb-0">
+                            <img src="Iconos/medicines_icon-icons.com_58863.svg" alt="Medicamentos" class="icono me-2" width="24" height="24">
+                            Gestión de Medicamentos
+                        </h5>                        <div>
+                            <button class="btn btn-primary me-2" id="newMedicamentoBtn" data-bs-toggle="modal" data-bs-target="#medicamentoModal">
+                                <img src="Iconos/add_circle_create_expand_new_plus_icon_123218.svg" alt="Agregar" class="icono me-1" width="16" height="16">
+                                Nuevo Medicamento
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="medicamentoManager.loadData()">
+                                <img src="Iconos/twocirclingarrows1_120592.svg" alt="Recargar" class="icono me-1" width="16" height="16">
+                                Recargar
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="medicamentoManager.exportData()">
+                                <img src="Iconos/download_111133.svg" alt="Exportar" class="icono me-1" width="16" height="16">
+                                Exportar
+                            </button>
+                            <span id="medicamentoCount" class="badge bg-secondary">Total: 0 medicamentos</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Cuerpo de la tarjeta con filtros y tabla -->
+                    <div class="card-body">
+                        <!-- ========================================
+                             SECCIÓN DE FILTROS Y BÚSQUEDA
+                        ======================================== -->
+                        <div class="row mb-3">
+                            <!-- Campo de búsqueda -->                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <img src="Iconos/magnifier_118394.svg" alt="Buscar" class="icono" width="16" height="16">
+                                    </span>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar medicamentos...">
+                                </div>
+                            </div>
+                            
+                            <!-- Filtro por categoría -->
+                            <div class="col-md-6">
+                                <select class="form-select" id="categoryFilter">
+                                    <option value="">Todas las categorías</option>
+                                    <option value="Analgésicos">Analgésicos</option>
+                                    <option value="Antiinflamatorios">Antiinflamatorios</option>
+                                    <option value="Antibióticos">Antibióticos</option>
+                                    <option value="Antialérgicos">Antialérgicos</option>
+                                    <option value="Gastrointestinales">Gastrointestinales</option>
+                                    <option value="Cardiovascular">Cardiovascular</option>
+                                    <option value="Neurológico">Neurológico</option>
+                                    <option value="Endocrino">Endocrino</option>
+                                    <option value="Suplementos">Suplementos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ========================================
+                             TABLA DE MEDICAMENTOS
+                        ======================================== -->
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="medicamentosTable">
+                                <!-- Encabezados de la tabla -->
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <!-- Cuerpo de la tabla (se llena dinámicamente) -->
+                                <tbody id="medicamentosTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- ========================================
+         MODAL PARA CREAR/EDITAR MEDICAMENTO
+    ======================================== -->
+    <div class="modal fade" id="medicamentoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Encabezado del modal -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="medicamentoModalTitle">Nuevo Medicamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <!-- Cuerpo del modal con formulario -->
+                <div class="modal-body">
+                    <form id="medicamentoForm">
+                        <!-- Campo oculto para ID del medicamento -->
+                        <input type="hidden" id="medicamentoId">
+                        
+                        <!-- ========================================
+                             SECCIÓN: INFORMACIÓN BÁSICA
+                        ======================================== -->
+                        <div class="row">
+                            <!-- Código del medicamento -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="codigo" class="form-label">Código *</label>
+                                    <input type="text" class="form-control" id="codigo" required placeholder="Ej: MED001">
+                                </div>
+                            </div>
+                            
+                            <!-- Nombre del medicamento -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre *</label>
+                                    <input type="text" class="form-control" id="nombre" required placeholder="Nombre del medicamento">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descripción del medicamento -->
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" rows="2" placeholder="Descripción del medicamento"></textarea>
+                        </div>
+
+                        <!-- ========================================
+                             SECCIÓN: CATEGORÍA Y FABRICANTE
+                        ======================================== -->
+                        <div class="row">
+                            <!-- Categoría del medicamento -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría</label>
+                                    <select class="form-select" id="categoria">
+                                        <option value="">Seleccione una categoría</option>
+                                        <option value="Analgésicos">Analgésicos</option>
+                                        <option value="Antibióticos">Antibióticos</option>
+                                        <option value="Antiinflamatorios">Antiinflamatorios</option>
+                                        <option value="Antialérgicos">Antialérgicos</option>
+                                        <option value="Gastrointestinales">Gastrointestinales</option>
+                                        <option value="Cardiovascular">Cardiovascular</option>
+                                        <option value="Neurológico">Neurológico</option>
+                                        <option value="Endocrino">Endocrino</option>
+                                        <option value="Suplementos">Suplementos</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Fabricante del medicamento -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fabricante" class="form-label">Fabricante</label>
+                                    <input type="text" class="form-control" id="fabricante" placeholder="Nombre del fabricante">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================
+                             SECCIÓN: PRECIO Y STOCK
+                        ======================================== -->
+                        <div class="row">
+                            <!-- Precio del medicamento -->
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="precio" class="form-label">Precio *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="precio" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock disponible -->
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="stock" class="form-label">Stock *</label>
+                                    <input type="number" class="form-control" id="stock" min="0" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock mínimo -->
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="stockMinimo" class="form-label">Stock Mínimo</label>
+                                    <input type="number" class="form-control" id="stockMinimo" min="0" value="10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========================================
+                             SECCIÓN: CONFIGURACIONES ADICIONALES
+                        ======================================== -->
+                        <div class="row">
+                            <!-- Checkbox para receta médica -->
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="requiereReceta">
+                                    <label class="form-check-label" for="requiereReceta">
+                                        Requiere Receta Médica
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Checkbox para estado activo -->
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="activo" checked>
+                                    <label class="form-check-label" for="activo">
+                                        Medicamento Activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Pie del modal con botones de acción -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveMedicamentoBtn" form="medicamentoForm">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- ========================================
+         IMPORTACIÓN DE SCRIPTS EXTERNOS
+    ======================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/iconos-espanol.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/crud-manager.js"></script>
+    
+    <!-- ========================================
+         CONFIGURACIÓN Y LÓGICA JAVASCRIPT
+    ======================================== -->    <script>
+        // ========================================
+        // CONFIGURACIÓN DE MEDICAMENTOS
+        // ========================================
+        // Configuración principal del CRUD de medicamentos con campos y validaciones
+        const medicamentoConfig = {
+            entityName: 'medicamento',
+            entityNamePlural: 'medicamentos',
+            apiEndpoint: '/api/medicamentos',
+            modalId: 'medicamentoModal',
+            formId: 'medicamentoForm',
+            tableBodyId: 'medicamentosTableBody',
+            fields: [
+                { name: 'codigo', type: 'text', required: true },
+                { name: 'nombre', type: 'text', required: true },
+                { name: 'descripcion', type: 'textarea' },
+                { name: 'categoria', type: 'select' },
+                { name: 'fabricante', type: 'text' },
+                { name: 'precio', type: 'number', required: true },
+                { name: 'stock', type: 'number', required: true },
+                { name: 'stockMinimo', type: 'number' },
+                { name: 'requiereReceta', type: 'checkbox' },
+                { name: 'activo', type: 'checkbox' }
+            ]
+        };        // ========================================
+        // INICIALIZACIÓN DEL MANAGER
+        // ========================================
+        // Instancia del manager CRUD con la configuración de medicamentos
+        const medicamentoManager = new CRUDManager(medicamentoConfig);
+
+        // Variable global para almacenar todos los medicamentos
+        let allMedicamentos = [];        // ========================================
+        // PERSONALIZACIÓN DEL FORMATO DE TABLA
+        // ========================================
+        // Personaliza la visualización de cada fila de medicamento en la tabla
+        medicamentoManager.formatTableRow = function(medicamento) {
+            const stockClass = medicamento.stock <= (medicamento.stockMinimo || 10) ? 'text-danger fw-bold' : '';
+            const estadoClass = medicamento.activo ? 'bg-success' : 'bg-secondary';
+            const estadoText = medicamento.activo ? 'Activo' : 'Inactivo';
+
+            return `
+                <tr>
+                    <td>${medicamento.codigo || 'N/A'}</td>
+                    <td>${medicamento.nombre}</td>
+                    <td>${medicamento.categoria || 'N/A'}</td>
+                    <td>$${parseFloat(medicamento.precio || 0).toFixed(2)}</td>
+                    <td class="${stockClass}">${medicamento.stock || 0}</td>
+                    <td><span class="badge ${estadoClass}">${estadoText}</span></td>                    <td class="table-actions">                        <button class="btn btn-edit btn-sm" onclick="editMedicamento(${medicamento.id})" data-bs-toggle="modal" data-bs-target="#medicamentoModal">
+                            <img src="Iconos/edit_modify_icon_196940.svg" alt="Editar" class="icono" width="20" height="20">
+                        </button>
+                        <button class="btn btn-delete btn-sm" onclick="medicamentoManager.delete(${medicamento.id})">
+                            <img src="Iconos/ic-cancel_97589.svg" alt="Eliminar" class="icono" width="18" height="18">
+                        </button>
+                    </td>
+                </tr>
+            `;
+        };        // ========================================
+        // PERSONALIZACIÓN DE CARGA DE DATOS
+        // ========================================
+        // Sobrescribe el método de carga para mantener datos originales y aplicar filtros
+        const originalLoadData = medicamentoManager.loadData.bind(medicamentoManager);
+        medicamentoManager.loadData = async function() {
+            try {
+                allMedicamentos = await AppUtils.getAll('medicamentos');
+                this.data = allMedicamentos;
+                this.applyFilters();
+                this.updateCount();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                AppUtils.showMessage('Error al cargar los datos', 'error');
+            }
+        };        // ========================================
+        // LÓGICA DE FILTROS
+        // ========================================
+        // Aplica filtros de búsqueda por texto y categoría a los medicamentos
+        medicamentoManager.applyFilters = function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            let filteredData = allMedicamentos.filter(item => {
+                // Filtro de búsqueda por texto
+                const matchesSearch = !searchTerm || 
+                    item.nombre.toLowerCase().includes(searchTerm) ||
+                    (item.codigo && item.codigo.toLowerCase().includes(searchTerm)) ||
+                    (item.descripcion && item.descripcion.toLowerCase().includes(searchTerm));
+                
+                // Normalizar categorías para comparación (eliminar acentos)
+                const normalizeString = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const normalizedItemCategory = item.categoria ? normalizeString(item.categoria) : '';
+                const normalizedFilterCategory = categoryFilter ? normalizeString(categoryFilter) : '';
+                
+                // Filtro por categoría
+                const matchesCategory = !categoryFilter || 
+                    normalizedItemCategory === normalizedFilterCategory ||
+                    item.categoria === categoryFilter;
+                
+                return matchesSearch && matchesCategory;
+            });
+
+            this.data = filteredData;
+            this.renderTable();
+        };        // ========================================
+        // RENDERIZADO PERSONALIZADO DE FILAS
+        // ========================================
+        // Delega el renderizado de filas al método formatTableRow personalizado
+        medicamentoManager.renderTableRow = function(item) {
+            return this.formatTableRow(item);
+        };        // ========================================
+        // FUNCIÓN PERSONALIZADA PARA EDITAR
+        // ========================================
+        // Carga los datos del medicamento seleccionado en el formulario modal de edición
+        function editMedicamento(id) {
+            console.log('Editando medicamento con ID:', id);
+            
+            // Encontrar el medicamento en los datos
+            const medicamento = allMedicamentos.find(m => m.id === id);
+            if (!medicamento) {
+                AppUtils.showMessage('Medicamento no encontrado', 'error');
+                return;
+            }
+            
+            // Cargar datos en el formulario
+            document.getElementById('medicamentoId').value = medicamento.id;
+            document.getElementById('codigo').value = medicamento.codigo || '';
+            document.getElementById('nombre').value = medicamento.nombre || '';
+            document.getElementById('descripcion').value = medicamento.descripcion || '';
+            document.getElementById('categoria').value = medicamento.categoria || '';
+            document.getElementById('fabricante').value = medicamento.fabricante || '';
+            document.getElementById('precio').value = medicamento.precio || '';
+            document.getElementById('stock').value = medicamento.stock || '';
+            document.getElementById('stockMinimo').value = medicamento.stockMinimo || '';
+            document.getElementById('requiereReceta').checked = medicamento.requiereReceta || false;
+            document.getElementById('activo').checked = medicamento.activo !== false;
+            
+            // Cambiar título del modal
+            document.getElementById('medicamentoModalTitle').textContent = 'Editar Medicamento';
+            document.getElementById('saveMedicamentoBtn').textContent = 'Actualizar';
+            
+            // Establecer el ID actual para el manager
+            medicamentoManager.currentId = id;
+        }        // ========================================
+        // INICIALIZACIÓN DE LA PÁGINA
+        // ========================================
+        // Configura eventos y carga inicial de datos al cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales
+            medicamentoManager.loadData();            // ========================================
+            // EVENT LISTENERS PARA FILTROS
+            // ========================================
+            
+            // Filtro de búsqueda en tiempo real por nombre, código o descripción
+            document.getElementById('searchInput').addEventListener('input', function() {
+                medicamentoManager.applyFilters();
+            });
+
+            // Filtro por categoría de medicamento
+            document.getElementById('categoryFilter').addEventListener('change', function() {
+                medicamentoManager.applyFilters();
+            });            // ========================================
+            // EVENT LISTENERS PARA FORMULARIOS
+            // ========================================
+            
+            // Limpia y prepara el formulario para crear un nuevo medicamento
+            document.getElementById('newMedicamentoBtn').addEventListener('click', function() {
+                // Limpiar formulario
+                document.getElementById('medicamentoForm').reset();
+                document.getElementById('medicamentoId').value = '';
+                
+                // Restaurar título y botón
+                document.getElementById('medicamentoModalTitle').textContent = 'Nuevo Medicamento';
+                document.getElementById('saveMedicamentoBtn').textContent = 'Guardar';
+                
+                // Limpiar ID actual
+                medicamentoManager.currentId = null;
+            });
+            
+            // Previene el comportamiento por defecto del botón guardar
+            document.getElementById('saveMedicamentoBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('medicamentoForm').requestSubmit();
+            });
+
+            // Maneja el envío del formulario de medicamento
+            document.getElementById('medicamentoForm').addEventListener('submit', function(e) {
+                medicamentoManager.save(e);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -20,25 +20,23 @@ public class ApiResponse<T> {
     // Marca de tiempo de la respuesta
     private LocalDateTime timestamp;
     // Mensaje de error si existe
-    private String error;    
-    // Método estático para crear respuesta exitosa con datos
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, "Operación exitosa", data, LocalDateTime.now(), null);    }
-    
-    // Método estático para crear respuesta exitosa con datos y mensaje personalizado
+    private String error;      // Método base para crear respuesta exitosa con datos y mensaje personalizado
     public static <T> ApiResponse<T> success(T data, String message) {
-        return new ApiResponse<>(true, message, data, LocalDateTime.now(), null);    }
+        return new ApiResponse<>(true, message, data, LocalDateTime.now(), null);
+    }
     
-    // Método estático para crear respuesta exitosa simple sin datos
-    public static <T> ApiResponse<T> success() {
-        return new ApiResponse<>(true, "Operación exitosa", null, LocalDateTime.now(), null);    }
-    
-    // Método estático para crear respuesta de error con mensaje
-    public static <T> ApiResponse<T> error(String error) {
-        return new ApiResponse<>(false, null, null, LocalDateTime.now(), error);    }
-    
-    // Método estático para crear respuesta de error con mensaje personalizado adicional
+    // Método base para crear respuesta de error con mensaje personalizado
     public static <T> ApiResponse<T> error(String error, String message) {
         return new ApiResponse<>(false, message, null, LocalDateTime.now(), error);
+    }
+    
+    // Método de conveniencia para crear respuesta exitosa
+    public static <T> ApiResponse<T> success() {
+        return success(null, "Operación exitosa");
+    }
+    
+    // Método de conveniencia para crear respuesta de error
+    public static <T> ApiResponse<T> error(String error) {
+        return error(error, "Error en la operación");
     }
 }

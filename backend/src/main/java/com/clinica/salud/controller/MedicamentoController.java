@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-// Controlador REST para gestión de medicamentos con CORS habilitado
+// Controlador REST para gestión de medicamentos
 @RestController
 @RequestMapping("/medicamentos")
-@CrossOrigin(origins = "*")
-public class MedicamentoController {    
+public class MedicamentoController {
     // Repositorio JPA para operaciones CRUD de medicamentos
     private final MedicamentoJpaRepository repository;
     
@@ -33,7 +32,7 @@ public class MedicamentoController {
         }
         return ResponseEntity.notFound().build();    }
     
-    // Endpoint GET /medicamentos/buscar - Busca medicamentos por nombre (case-insensitive)
+    // Endpoint GET /medicamentos/buscar - Busca medicamentos por nombre
     @GetMapping("/buscar")
     public List<MedicamentoEntity> buscarPorNombre(@RequestParam String nombre) {
         return repository.findByNombreContainingIgnoreCase(nombre);    }

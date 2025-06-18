@@ -28,8 +28,8 @@ public class MedicalRecordDTO {    // Identificador único del historial médico
     
     // Constructor completo con todos los parámetros
     public MedicalRecordDTO(Integer id, Integer pacienteId, String nombrePaciente, Integer medicoId,
-                         String nombreMedico, String especialidad, LocalDate fechaConsulta, 
-                         String diagnostico, String tratamiento, String notas) {
+    String nombreMedico, String especialidad, LocalDate fechaConsulta,  String diagnostico, String tratamiento, String notas) {
+                        
         this.id = id;
         this.pacienteId = pacienteId;
         this.nombrePaciente = nombrePaciente;

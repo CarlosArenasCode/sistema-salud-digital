@@ -14,15 +14,8 @@ if ($procBack) {
     Write-Host "No se encontró ningún servicio escuchando en el puerto $puertoBack."
 }
 
-# Detener servidor frontend Node.js (puerto 8081)
-$puertoFront = 8081
-$procFront = (Get-NetTCPConnection -LocalPort $puertoFront -ErrorAction SilentlyContinue).OwningProcess
-if ($procFront) {
-    Write-Host "Deteniendo servidor frontend Node.js (PID $procFront)..."
-    Stop-Process -Id $procFront -Force -ErrorAction SilentlyContinue
-} else {
-    Write-Host "No se encontró ningún servicio escuchando en el puerto $puertoFront."
-}
+# El sistema ahora funciona completamente en el puerto 8080
+# No hay servidor frontend separado que detener
 
 # Cerrar las ventanas de PowerShell secundarias abiertas
 $me = $PID

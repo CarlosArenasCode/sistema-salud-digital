@@ -1,0 +1,65 @@
+/* Iconos Simplificados - Sistema de Salud Digital */
+
+/* ===== ESTILOS BASE ===== */
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+/* ===== TAMAÑOS ===== */
+.icon-xs { width: 12px; height: 12px; }
+.icon-sm { width: 16px; height: 16px; }
+.icon-md { width: 24px; height: 24px; }
+.icon-lg { width: 32px; height: 32px; }
+.icon-xl { width: 48px; height: 48px; }
+
+/* ===== CONTEXTOS ===== */
+/* Botones */
+.btn .icon { margin-right: 0.5rem; }
+.btn .icon:only-child { margin: 0; }
+
+/* Botones de tabla */
+.btn-table {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-table .icon {
+    margin: 0 !important;
+}
+
+/* Navegación */
+.navbar-brand .icon {
+    margin-right: 0.5rem;
+}
+
+/* ===== COMPATIBILIDAD CON CLASES ANTERIORES ===== */
+.icono {
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.icono-accion, .icono-boton, .icono-buscar {
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== EFECTOS ===== */
+.icon:hover, .icono:hover {
+    transform: scale(1.1);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .icon-lg { width: 24px; height: 24px; }
+    .icon-xl { width: 32px; height: 32px; }
+}

@@ -23,7 +23,7 @@ public class AuthController {
 
     // Servicio de autenticación inyectado por Spring
     @Autowired
-    private AuthService authService;    // Endpoint POST /auth/login - Autentica usuario y retorna token JWT
+    private AuthService authService;    // Endpoint POST /auth/login Autentica usuario y retorna token JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
         try {

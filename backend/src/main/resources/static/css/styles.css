@@ -1,0 +1,130 @@
+/* Sistema de Salud Digital - Estilos Simplificados */
+
+/* ===== VARIABLES ESENCIALES ===== */
+:root {
+    --primary-color: #2563eb;
+    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --card-shadow-hover: 0 10px 25px rgba(0,0,0,0.15);
+    --transition: all 0.3s ease;
+    --border-radius: 0.5rem;
+}
+
+/* ===== ESTILOS BASE ===== */
+body {
+    background-color: #f8fafc;
+}
+
+/* ===== UTILIDADES PERSONALIZADAS ===== */
+.hero-gradient {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 80px 0;
+}
+
+.card-hover {
+    transition: var(--transition);
+    box-shadow: var(--card-shadow);
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.optimization-badge {
+    background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.stats-display {
+    background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    min-width: 120px;
+}
+
+/* ===== ESTILOS PARA TABLAS ===== */
+.btn-table {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 2px !important;
+}
+
+/* ===== ESTILOS PARA BOTONES DE ACCIONES ===== */
+.table-actions {
+    width: 100px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.table-actions .btn {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    background: transparent;
+    border: none;
+    color: #6c757d;
+    vertical-align: middle;
+}
+
+.table-actions .btn:hover {
+    background: transparent;
+    border: none;
+    transform: scale(1.1);
+}
+
+/* Iconos en botones */
+.table-actions .icono {
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== ESTILOS PARA FORMULARIOS ===== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    max-width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.form-check {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero-gradient { 
+        padding: 40px 0; 
+    }
+    
+    .stats-display { 
+        padding: 1rem;
+        min-width: 100px;
+    }
+}

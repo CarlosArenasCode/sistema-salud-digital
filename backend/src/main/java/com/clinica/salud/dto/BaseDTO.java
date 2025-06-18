@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-// DTO base abstracto con campos comunes para reducir duplicación
+// DTO base
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +23,6 @@ public abstract class BaseDTO {
     
     // Método que retorna información de auditoría formateada
     public String getInfoAuditoria() {
-        if (fechaCreacion == null) {
-            return "Sin información de auditoría";
-        }
         
         StringBuilder info = new StringBuilder();
         info.append("Creado: ").append(fechaCreacion);
