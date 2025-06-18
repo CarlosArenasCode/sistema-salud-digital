@@ -1,13 +1,11 @@
 // Sistema de Iconos en Español para Sistema de Salud Digital
 // Mapeo de iconos SVG con nombres descriptivos en español
 
-class IconosEspanol {
-    // Mapeo de nombres en español a archivos SVG
+class IconosEspanol {    // Mapeo de nombres en español a archivos SVG
     static iconos = {
         // Iconos principales del sistema
         'latidos-corazon': 'heartbeat_heart_rate_heart_medical_icon_187013.svg',
         'hospital': 'hospital_icon_140108.svg',
-        'usuario-hospital': 'hospital_user_icon_198537.svg',
         'doctor': 'avatar_doctor_health_hospital_medical_icon_140085.svg',
         'paciente-herido': 'user_injured_icon_198640.svg',
         'perfil-usuario': '4092564-about-mobile-ui-profile-ui-user-website_114033.svg',
@@ -23,13 +21,9 @@ class IconosEspanol {
         
         // Iconos de estado y notificación
         'verificado': 'check_circle_icon_128923.svg',
-        'advertencia': 'exclamation_triangle_icon_185045.svg',
-        'informacion': 'information_105113.svg',
         
-        // Iconos específicos del sistema médico
-        'medicamentos': 'medicines_icon-icons.com_58863.svg',
-        'calendario': 'calendar-with-a-clock-time-tools_icon-icons.com_56831.svg',
-        'red-social': 'seo-social-web-network-internet_262_icon-icons.com_61518.svg'
+        // Iconos específicos del sistema médico        'medicamentos': 'medicines_icon-icons.com_58863.svg',
+        'calendario': 'calendar-with-a-clock-time-tools_icon-icons.com_56831.svg'
     };
 
     // Método para crear un elemento img con el icono SVG

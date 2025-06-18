@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Repository JPA para citas médicas
  */
+// Repository interface for managing medical appointments (CitaEntity) providing CRUD operations and specialized queries for patient/doctor appointments, date filtering, status management, availability checking, and appointment statistics
 @Repository
 public interface CitaJpaRepository extends JpaRepository<CitaEntity, Long> {
        

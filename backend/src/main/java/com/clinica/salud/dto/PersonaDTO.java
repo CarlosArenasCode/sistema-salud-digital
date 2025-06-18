@@ -8,48 +8,36 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * DTO genérico para personas (pacientes y médicos)
- * Reduce duplicación de campos comunes
- */
+// DTO genérico para personas (pacientes y médicos) con campos comunes
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class PersonaDTO {
-    
-    // -------------------------------------------------
-    // Identificación
-    // -------------------------------------------------
+public class PersonaDTO {    
+    // Identificador único de la persona
     private Long id;
     
-    // -------------------------------------------------
-    // Información personal
-    // -------------------------------------------------
+    // Nombre de la persona
     private String firstName;
+    // Apellido de la persona
     private String lastName;
+    // Género de la persona
     private String gender;
+    // Fecha de nacimiento
     private LocalDate dateOfBirth;
     
-    // -------------------------------------------------
-    // Información de contacto
-    // -------------------------------------------------
+    // Número de teléfono de contacto
     private String phone;
+    // Dirección de correo electrónico
     private String email;
+    // Dirección física de residencia
     private String address;
     
-    // -------------------------------------------------
-    // Metadatos del registro
-    // -------------------------------------------------
+    // Fecha y hora de creación del registro
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    
-    // -------------------------------------------------
-    // Métodos utilitarios
-    // -------------------------------------------------
-    /**
-     * Devuelve el nombre completo de la persona
-     */
+    // Fecha y hora de última actualización
+    private LocalDateTime updatedAt;    
+    // Método que devuelve el nombre completo concatenado
     public String getFullName() {
         return firstName + " " + lastName;
     }

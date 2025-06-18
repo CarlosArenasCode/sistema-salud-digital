@@ -1,55 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- =========================== -->
-    <!-- CONFIGURACIÓN BÁSICA HTML   -->
-    <!-- =========================== -->
+    <!-- Configuración básica HTML y metadatos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Salud Digital</title>
     
-    <!-- =========================== -->
-    <!-- ENLACES A RECURSOS EXTERNOS -->
-    <!-- =========================== -->    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Enlaces a recursos externos CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/iconos-espanol.css" rel="stylesheet">
     
-    <!-- ======================== -->
-    <!-- ESTILOS PERSONALIZADOS  -->
-    <!-- ======================== -->    <style>
-        /* ============================= */
-        /* ESTILOS GENERALES DEL CUERPO  */
-        /* ============================= */
+    <!-- Estilos personalizados del dashboard -->
+    <style>
+        /* Estilos generales del cuerpo de la página */
         body {
             background: #f8f9fa;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;        }
         
-        /* ============================= */
-        /* ESTILOS PARA TARJETA BIENVENIDA */
-        /* ============================= */
+        /* Estilos para tarjeta de bienvenida */
         .welcome-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
             padding: 2rem;
             margin: 2rem 0;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);        }
         
-        /* ============================= */
-        /* ESTILOS PARA GRID DE MÓDULOS  */
-        /* ============================= */
+        /* Estilos para grid de módulos del sistema */
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            margin: 2rem 0;
-        }
+            margin: 2rem 0;        }
         
-        /* ============================= */
-        /* ESTILOS PARA TARJETAS MÓDULOS */
-        /* ============================= */
+        /* Estilos para tarjetas de módulos individuales */
         .module-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
@@ -60,17 +45,32 @@
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.2);
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .module-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            color: #333;
-            text-decoration: none;
+            color: #333;            text-decoration: none;
         }
-        .module-icon {
-            font-size: 3rem;
+        
+        /* Estilos para iconos de módulos */
+        .module-icon, .modulo-icono {
+            width: 64px;
+            height: 64px;
             margin-bottom: 1rem;
             display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            transition: all 0.3s ease;
+        }
+        .module-card:hover .module-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
         }
         .module-title {
             font-size: 1.5rem;
@@ -79,12 +79,9 @@
         }
         .module-description {
             color: #666;
-            font-size: 0.9rem;
-        }
+            font-size: 0.9rem;        }
         
-        /* ============================= */
-        /* ESTILOS PARA BOTÓN DE LOGOUT  */
-        /* ============================= */
+        /* Estilos para botón de cerrar sesión */
         .logout-btn {
             background: rgba(220,53,69,0.9);
             border: none;
@@ -95,96 +92,90 @@
         }
         .logout-btn:hover {
             background: rgba(220,53,69,1);
-            transform: scale(1.05);
-        }
+            transform: scale(1.05);        }
         
-        /* ============================= */
-        /* ESTILOS PARA INFO DE USUARIO  */
-        /* ============================= */
+        /* Estilos para información de usuario */
         .user-info {
             color: white;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-    </style>
+        }    </style>
 </head>
 <body>
-    <!-- ================================ -->
-    <!-- BARRA DE NAVEGACIÓN PRINCIPAL   -->
-    <!-- ================================ -->
+    <!-- Barra de navegación principal del dashboard -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">            <!-- Logo y nombre del sistema -->
+        <div class="container-fluid">
+            <!-- Logo y nombre del sistema -->
             <a class="navbar-brand">
                 <img src="Iconos/heartbeat_heart_rate_heart_medical_icon_187013.svg" alt="Sistema de Salud" class="icono me-2" width="28" height="28">
-                Sistema de Salud Digital
-            </a>
+                Sistema de Salud Digital            </a>
             
             <!-- Información del usuario y controles -->
-            <div class="d-flex align-items-center">                <!-- Fecha y hora actual -->
+            <div class="d-flex align-items-center">
+                <!-- Fecha y hora actual -->
                 <div class="user-info me-3">
                     <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Fecha y hora" class="icono me-1" width="16" height="16">
-                    <span id="currentDateTime" class="me-2"></span>
-                </div>                <!-- Nombre del usuario -->
+                    <span id="currentDateTime" class="me-2"></span>                </div>
+                
+                <!-- Nombre del usuario -->
                 <div class="user-info me-3">
                     <img src="Iconos/4092564-about-mobile-ui-profile-ui-user-website_114033.svg" alt="Usuario" class="icono me-1" width="20" height="20">
-                    <span id="userName">Administrador</span>
-                </div>                <!-- Botón de cerrar sesión -->
+                    <span id="userName">Administrador</span>                </div>
+                
+                <!-- Botón de cerrar sesión -->
                 <button class="btn logout-btn" onclick="logout()">
                     <img src="Iconos/4115235-exit-logout-sign-out_114030.svg" alt="Cerrar sesión" class="icono me-1" width="16" height="16">
                     Cerrar Sesión
                 </button>
-            </div>
-        </div>
-    </nav>    <!-- ============================= -->
-    <!-- CONTENIDO PRINCIPAL           -->
-    <!-- ============================= -->
+            </div>        </div>
+    </nav>
+    
+    <!-- Contenido principal del dashboard -->
     <div class="container">
         <!-- Tarjeta de bienvenida -->
-        <div class="welcome-card">            <h1 class="text-primary mb-3">
+        <div class="welcome-card">
+            <h1 class="text-primary mb-3">
                 <img src="Iconos/hospital_icon_140108.svg" alt="Hospital" class="icono me-2" width="32" height="32">
                 Bienvenido al Sistema de Salud Digital
             </h1>
-            <p class="lead">Gestiona de manera eficiente pacientes, médicos, citas y medicamentos desde una plataforma integrada.</p>
-        </div>
+            <p class="lead">Gestiona de manera eficiente pacientes, médicos, citas y medicamentos desde una plataforma integrada.</p>        </div>
 
-        <!-- ============================= -->
-        <!-- MÓDULOS DEL SISTEMA           -->
-        <!-- ============================= -->
-        <div class="modules-grid">            <!-- Módulo de Pacientes -->
+        <!-- Módulos del sistema en grid -->
+        <div class="modules-grid">
+            <!-- Módulo de Pacientes -->
             <a href="pacientes-optimized.html" class="module-card">
-                <img src="Iconos/user_injured_icon_198640.svg" alt="Pacientes" class="modulo-icono">
+                <img src="Iconos/user_injured_icon_198640.svg" alt="Pacientes" class="module-icon">
                 <div class="module-title">Pacientes</div>
-                <div class="module-description">Registro y gestión de pacientes</div>
-            </a>            <!-- Módulo de Médicos -->
+                <div class="module-description">Registro y gestión de pacientes</div>            </a>
+            
+            <!-- Módulo de Médicos -->
             <a href="medicos-optimized.html" class="module-card">
-                <img src="Iconos/avatar_doctor_health_hospital_medical_icon_140085.svg" alt="Médicos" class="modulo-icono">
+                <img src="Iconos/avatar_doctor_health_hospital_medical_icon_140085.svg" alt="Médicos" class="module-icon">
                 <div class="module-title">Médicos</div>
-                <div class="module-description">Gestión del personal médico</div>
-            </a>            <!-- Módulo de Citas -->
+                <div class="module-description">Gestión del personal médico</div>            </a>
+            
+            <!-- Módulo de Citas -->
             <a href="citas-optimized.html" class="module-card">
-                <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Citas" class="modulo-icono">
+                <img src="Iconos/calendar-with-a-clock-time-tools_icon-icons.com_56831.svg" alt="Citas" class="module-icon">
                 <div class="module-title">Citas</div>
-                <div class="module-description">Programación de citas médicas</div>
-            </a><!-- Módulo de Medicamentos -->
+                <div class="module-description">Programación de citas médicas</div>            </a>
+
+            <!-- Módulo de Medicamentos -->
             <a href="medicamentos-optimized.html" class="module-card">
-                <img src="Iconos/medicines_icon-icons.com_58863.svg" alt="Medicamentos" class="modulo-icono">
+                <img src="Iconos/medicines_icon-icons.com_58863.svg" alt="Medicamentos" class="module-icon">
                 <div class="module-title">Medicamentos</div>
                 <div class="module-description">Inventario farmacéutico</div>
-            </a>
-        </div>
-    </div>    <!-- ============================= -->
-    <!-- SCRIPTS EXTERNOS              -->
-    <!-- ============================= -->    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            </a>        </div>
+    </div>
+    
+    <!-- Scripts externos necesarios -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/iconos-espanol.js"></script>
     
-    <!-- ============================= -->
-    <!-- SCRIPTS PERSONALIZADOS       -->
-    <!-- ============================= -->
+    <!-- Scripts personalizados del dashboard -->
     <script>
-        // ========================================
-        // FUNCIÓN DE VERIFICACIÓN DE AUTENTICACIÓN
-        // ========================================
+        // Función de verificación de autenticación de usuario
         function checkAuth() {
             const token = localStorage.getItem('auth_token');
             if (!token) {
@@ -196,23 +187,17 @@
             const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
             if (userData.name) {
                 document.getElementById('userName').textContent = userData.name;
-            }
-        }
+            }        }
         
-        // ========================================
-        // FUNCIÓN DE CERRAR SESIÓN
-        // ========================================
+        // Función de cerrar sesión del usuario
         function logout() {
             if (confirm('¿Está seguro que desea cerrar sesión?')) {
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('user_data');
                 window.location.href = 'login.html';
-            }
-        }
+            }        }
 
-        // ========================================
-        // FUNCIÓN PARA ACTUALIZAR FECHA Y HORA
-        // ========================================
+        // Función para actualizar fecha y hora en tiempo real
         function updateDateTime() {
             const now = new Date();
             const options = {
@@ -227,12 +212,9 @@
             };
             
             const dateTimeString = now.toLocaleDateString('es-ES', options);
-            document.getElementById('currentDateTime').textContent = dateTimeString;
-        }
+            document.getElementById('currentDateTime').textContent = dateTimeString;        }
 
-        // ========================================
-        // INICIALIZACIÓN AL CARGAR LA PÁGINA
-        // ========================================
+        // Inicialización al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth(); // Verificar autenticación
             updateDateTime(); // Mostrar la hora inmediatamente

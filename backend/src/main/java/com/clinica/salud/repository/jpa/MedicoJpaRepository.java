@@ -11,29 +11,28 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository para Médicos con métodos de búsqueda básicos
- */
+// Repository JPA para gestión de médicos con búsquedas básicas
 @Repository
 public interface MedicoJpaRepository extends JpaRepository<MedicoEntity, Long> {
-      // Búsquedas por especialización
+    
+    // Busca médicos por especialización específica
     List<MedicoEntity> findByEspecializacion(String especializacion);
     
-    // Búsquedas por número de licencia
+    // Busca médico por número de licencia único
     Optional<MedicoEntity> findByNumeroLicencia(String numeroLicencia);
     
-    // Búsquedas por nombres
+    // Busca médicos por nombres parciales ignorando mayúsculas
     @Query("SELECT m FROM MedicoEntity m WHERE LOWER(m.nombres) LIKE LOWER(CONCAT('%', :nombres, '%'))")
     List<MedicoEntity> findByNombresContainingIgnoreCase(@Param("nombres") String nombres);
     
-    // Búsqueda general
+    // Búsqueda general por nombres, apellidos o especialización paginada
     @Query("SELECT m FROM MedicoEntity m WHERE " +
            "LOWER(m.nombres) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(m.apellidos) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(m.especializacion) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     Page<MedicoEntity> findBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
     
-    // Médicos disponibles
+    // Obtiene todos los médicos activos disponibles
     @Query("SELECT m FROM MedicoEntity m WHERE m.activo = true")
     List<MedicoEntity> findMedicosActivos();
 }

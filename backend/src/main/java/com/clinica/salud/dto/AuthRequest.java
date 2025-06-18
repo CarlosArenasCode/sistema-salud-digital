@@ -2,48 +2,35 @@ package com.clinica.salud.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * DTO para solicitudes de autenticación
- */
+// DTO para solicitudes de autenticación de usuarios
 public class AuthRequest {
-
-    // --------------------- ATRIBUTOS ------------------------
-    /**
-     * Propiedades para almacenar las credenciales del usuario
-     */
+    // Nombre de usuario requerido para autenticación
     @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
 
+    // Contraseña requerida para autenticación
     @NotBlank(message = "La contraseña es obligatoria")
-    private String password;
-
-    // --------------------- CONSTRUCTORES --------------------
-    /**
-     * Constructores para crear instancias de solicitud de autenticación
-     */
+    private String password;    // Constructor por defecto
     public AuthRequest() {}
 
+    // Constructor con parámetros para credenciales
     public AuthRequest(String username, String password) {
         this.username = username;
-        this.password = password;
-    }
+        this.password = password;    }
 
-    // ----------------- GETTERS Y SETTERS -------------------
-    /**
-     * Métodos de acceso para las propiedades del objeto
-     */
+    // Getter para obtener el nombre de usuario
     public String getUsername() {
-        return username;
-    }
+        return username;    }
 
+    // Setter para establecer el nombre de usuario
     public void setUsername(String username) {
-        this.username = username;
-    }
+        this.username = username;    }
 
+    // Getter para obtener la contraseña
     public String getPassword() {
-        return password;
-    }
+        return password;    }
 
+    // Setter para establecer la contraseña
     public void setPassword(String password) {
         this.password = password;
     }

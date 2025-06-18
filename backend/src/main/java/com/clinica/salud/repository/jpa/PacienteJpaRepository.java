@@ -11,18 +11,21 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository para Pacientes con métodos de búsqueda básicos
- */
+// Repository JPA para gestión de pacientes con búsquedas básicas
 @Repository
 public interface PacienteJpaRepository extends JpaRepository<PacienteEntity, Long> {
-      // Búsquedas básicas por número de identificación
+    
+    // Busca paciente por número de identificación único
     Optional<PacienteEntity> findByNumeroIdentificacion(String numeroIdentificacion);
+    
+    // Verifica si existe paciente con el número de identificación
     boolean existsByNumeroIdentificacion(String numeroIdentificacion);
-      // Búsquedas por nombres
+    
+    // Busca pacientes por nombres parciales ignorando mayúsculas
     @Query("SELECT p FROM PacienteEntity p WHERE LOWER(p.nombres) LIKE LOWER(CONCAT('%', :nombres, '%'))")
     List<PacienteEntity> findByNombresContainingIgnoreCase(@Param("nombres") String nombres);
-      // Búsqueda general
+    
+    // Búsqueda general por nombres, apellidos o identificación paginada
     @Query("SELECT p FROM PacienteEntity p WHERE " +
            "LOWER(p.nombres) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(p.apellidos) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +

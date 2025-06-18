@@ -9,68 +9,45 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Repositorio JPA para la entidad RecetaEntity.
- * Proporciona operaciones CRUD y consultas específicas para recetas médicas.
- */
+// Repository JPA para gestión de recetas médicas con operaciones CRUD específicas
 @Repository
 public interface RecetaJpaRepository extends JpaRepository<RecetaEntity, Long> {
     
-    /**
-     * Buscar recetas por paciente
-     */
+    // Busca recetas de un paciente ordenadas por fecha de prescripción descendente
     List<RecetaEntity> findByPacienteIdOrderByFechaPrescripcionDesc(Long pacienteId);
     
-    /**
-     * Buscar recetas por médico
-     */
+    // Busca recetas de un médico ordenadas por fecha de prescripción descendente
     List<RecetaEntity> findByMedicoIdOrderByFechaPrescripcionDesc(Long medicoId);
     
-    /**
-     * Buscar recetas por medicamento
-     */
+    // Busca recetas de un medicamento ordenadas por fecha de prescripción descendente
     List<RecetaEntity> findByMedicamentoIdOrderByFechaPrescripcionDesc(Long medicamentoId);
     
-    /**
-     * Buscar recetas activas de un paciente
-     */
+    // Busca recetas activas y vigentes de un paciente específico
     @Query("SELECT r FROM RecetaEntity r WHERE r.paciente.id = :pacienteId " +
            "AND r.estado = 'ACTIVA' AND r.fechaVencimientoReceta >= CURRENT_DATE")
     List<RecetaEntity> findRecetasActivasByPacienteId(@Param("pacienteId") Long pacienteId);
     
-    /**
-     * Buscar recetas por estado
-     */
+    // Busca recetas por estado específico ordenadas por fecha descendente
     List<RecetaEntity> findByEstadoOrderByFechaPrescripcionDesc(RecetaEntity.EstadoReceta estado);
     
-    /**
-     * Buscar recetas que vencen pronto
-     */
+    // Busca recetas activas que vencen antes de la fecha límite
     @Query("SELECT r FROM RecetaEntity r WHERE r.estado = 'ACTIVA' " +
            "AND r.fechaVencimientoReceta BETWEEN CURRENT_DATE AND :fechaLimite")
     List<RecetaEntity> findRecetasQueVencenPronto(@Param("fechaLimite") LocalDate fechaLimite);
     
-    /**
-     * Buscar recetas por historial médico
-     */
+    // Busca recetas por historial médico ordenadas por fecha descendente
     List<RecetaEntity> findByHistorialMedicoIdOrderByFechaPrescripcionDesc(Long historialId);
     
-    /**
-     * Contar recetas activas de un medicamento
-     */
+    // Cuenta recetas activas que incluyen un medicamento específico
     @Query("SELECT COUNT(r) FROM RecetaEntity r WHERE r.medicamento.id = :medicamentoId " +
            "AND r.estado = 'ACTIVA'")
     long countRecetasActivasByMedicamentoId(@Param("medicamentoId") Long medicamentoId);
     
-    /**
-     * Buscar recetas por rango de fechas
-     */
+    // Busca recetas por rango de fechas de prescripción ordenadas descendente
     List<RecetaEntity> findByFechaPrescripcionBetweenOrderByFechaPrescripcionDesc(
         LocalDate fechaInicio, LocalDate fechaFin);
     
-    /**
-     * Buscar recetas con medicamentos específicos para un paciente
-     */
+    // Busca recetas de un paciente con medicamento específico por código
     @Query("SELECT r FROM RecetaEntity r WHERE r.paciente.id = :pacienteId " +
            "AND r.medicamento.codigo = :codigoMedicamento")
     List<RecetaEntity> findByPacienteAndMedicamentoCodigo(

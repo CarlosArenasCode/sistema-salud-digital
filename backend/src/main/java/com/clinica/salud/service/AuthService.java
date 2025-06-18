@@ -17,23 +17,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Servicio de autenticación ULTRA-SIMPLE
- * Solo validación básica de usuario/contraseña, sin JWT ni seguridad compleja
- */
+// Servicio de autenticación simple con validación básica de usuario/contraseña
 @Service
 public class AuthService {
     
-    // ======================================================================
-    // ATRIBUTOS - SOLO LO ESENCIAL
-    // ======================================================================
+    // Repositorios para gestión de usuarios, pacientes y médicos
     private final UsuarioJpaRepository usuarioRepository;
     private final PacienteJpaRepository pacienteRepository;
     private final MedicoJpaRepository medicoRepository;
     
-    // ======================================================================
-    // CONSTRUCTOR SIMPLIFICADO
-    // ======================================================================
+    // Constructor con inyección de dependencias
     public AuthService(
             UsuarioJpaRepository usuarioRepository,
             PacienteJpaRepository pacienteRepository,
@@ -41,12 +34,8 @@ public class AuthService {
         this.usuarioRepository = usuarioRepository;
         this.pacienteRepository = pacienteRepository;
         this.medicoRepository = medicoRepository;
-    }    // ======================================================================
-    // AUTENTICACIÓN ULTRA-SIMPLE
-    // ======================================================================
-    /**
-     * Login básico: solo validar usuario/contraseña en BD
-     */
+    }
+      // Autenticación básica con validación de usuario/contraseña en BD
     public AuthResponse authenticate(AuthRequest authRequest) {
         // 1. Buscar usuario en la base de datos
         UsuarioEntity usuario = usuarioRepository.findByNombreUsuario(authRequest.getUsername())
@@ -75,12 +64,7 @@ public class AuthService {
         return new AuthResponse(token, userData, "Login exitoso");
     }
 
-    // ======================================================================
-    // REGISTRO DE USUARIOS
-    // ======================================================================
-    /**
-     * Registrar un nuevo usuario con registro específico automático
-     */
+    // Registra un nuevo usuario con creación automática de registro específico
     @Transactional
     public AuthResponse register(RegistroRequest request) {
         // Verificar si el usuario ya existe
@@ -113,18 +97,10 @@ public class AuthService {
         userData.put("id", usuario.getId());
         userData.put("username", usuario.getNombreUsuario());
         userData.put("role", usuario.getRol());
-        userData.put("email", usuario.getEmail());
-
-        return new AuthResponse(token, userData, "Usuario registrado exitosamente");
+        userData.put("email", usuario.getEmail());        return new AuthResponse(token, userData, "Usuario registrado exitosamente");
     }
 
-    // ======================================================================
-    // MÉTODOS PRIVADOS DE APOYO
-    // ======================================================================
-    
-    /**
-     * Crear registro específico según el rol del usuario
-     */
+    // Crea registro específico según el rol del usuario (paciente o médico)
     private void crearRegistroEspecifico(UsuarioEntity usuario, RegistroRequest request) {
         switch (usuario.getRol()) {
             case "PACIENTE":
@@ -139,12 +115,9 @@ public class AuthService {
                 break;
             default:
                 throw new RuntimeException("Rol no válido: " + usuario.getRol());
-        }
-    }
+        }    }
     
-    /**
-     * Crear registro específico de paciente
-     */
+    // Crea registro específico de paciente con datos por defecto si no se proporcionan
     private void crearRegistroPaciente(UsuarioEntity usuario, RegistroRequest request) {
         PacienteEntity paciente = PacienteEntity.builder()
                 .idUsuario(usuario.getId())
@@ -156,13 +129,10 @@ public class AuthService {
                 .email(usuario.getEmail())
                 .activo(true)
                 .build();
-                
-        pacienteRepository.save(paciente);
+                  pacienteRepository.save(paciente);
     }
     
-    /**
-     * Crear registro específico de médico
-     */
+    // Crea registro específico de médico con datos por defecto si no se proporcionan
     private void crearRegistroMedico(UsuarioEntity usuario, RegistroRequest request) {
         MedicoEntity medico = MedicoEntity.builder()
                 .idUsuario(usuario.getId())
@@ -173,14 +143,10 @@ public class AuthService {
                 .email(usuario.getEmail())
                 .activo(true)
                 .build();
-                
-        medicoRepository.save(medico);
-    }    // ======================================================================
-    // VALIDACIÓN SIMPLE DE TOKENS
-    // ======================================================================
-    /**
-     * Validación básica de token (solo verifica que no esté vacío)
-     */
+                  medicoRepository.save(medico);
+    }
+    
+    // Validación básica de token verificando formato y contenido
     public boolean validateToken(String token) {
         // Validación ultra-simple: solo verificar que no esté vacío y tenga formato básico
         return token != null && !token.trim().isEmpty() && token.startsWith("simple-");

@@ -2,64 +2,47 @@ package com.clinica.salud.controller;
 
 import com.clinica.salud.entity.PacienteEntity;
 import com.clinica.salud.repository.jpa.PacienteJpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-/**
- * Controlador ULTRA-SIMPLE para pacientes
- */
+// Controlador REST para gestión de pacientes
 @RestController
 @RequestMapping("/pacientes")
-public class PacienteController {
-    
-    /* ==========================================
-     * DEPENDENCIAS
-     * Repositorio para acceso a datos de pacientes
-     * ========================================== */
+public class PacienteController {    
+    // Repositorio JPA para operaciones CRUD de pacientes
     private final PacienteJpaRepository repository;
     
-    /* ==========================================
-     * CONSTRUCTOR
-     * Inicializa las dependencias requeridas
-     * ========================================== */
+    // Constructor para inyección de dependencias
     public PacienteController(PacienteJpaRepository repository) {
-        this.repository = repository;
-    }
+        this.repository = repository;    }
     
-    /* ==========================================
-     * OPERACIONES DE CONSULTA
-     * Métodos para obtener información de pacientes
-     * ========================================== */
+    // Endpoint GET /pacientes - Obtiene lista completa de pacientes
     @GetMapping
     public List<PacienteEntity> getAll() {
-        return repository.findAll();
-    }
+        return repository.findAll();    }
     
+    // Endpoint GET /pacientes/{id} - Busca paciente específico por ID
     @GetMapping("/{id}")
     public PacienteEntity getById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
-    }
+        return repository.findById(id).orElse(null);    }
     
-    /* ==========================================
-     * OPERACIONES DE CREACIÓN Y ACTUALIZACIÓN
-     * Métodos para crear y modificar pacientes
-     * ========================================== */
+    // Endpoint POST /pacientes - Crea nuevo paciente
     @PostMapping
     public PacienteEntity create(@RequestBody PacienteEntity paciente) {
-        return repository.save(paciente);
-    }
+        return repository.save(paciente);    }
     
+    // Endpoint PUT /pacientes/{id} - Actualiza paciente existente
     @PutMapping("/{id}")
     public PacienteEntity update(@PathVariable Long id, @RequestBody PacienteEntity paciente) {
-        return repository.save(paciente);
-    }
-    
-    /* ==========================================
-     * OPERACIONES DE ELIMINACIÓN
-     * Métodos para eliminar pacientes
-     * ========================================== */
+        return repository.save(paciente);    }
+      // Endpoint DELETE /pacientes/{id} - Elimina paciente por ID
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

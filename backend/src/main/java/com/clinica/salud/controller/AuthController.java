@@ -14,42 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-/**
- * ===================================================
- * CONTROLADOR DE AUTENTICACIÓN - SISTEMA DE SALUD DIGITAL
- * ===================================================
- *
- * Este controlador proporciona los endpoints necesarios para la gestión de la autenticación
- * de usuarios en el sistema, incluyendo funcionalidades de registro, inicio de sesión y validación
- * de tokens JWT. Actúa como punto de entrada para todos los procesos relacionados con la seguridad
- * y la identidad de los usuarios.
- *
- * Todos los endpoints están mapeados bajo "/auth" y no requieren autenticación previa.
- */
+// Controlador REST para autenticación de usuarios con JWT
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
-    
-    // ===================================================
-    // CONFIGURACIÓN Y DEPENDENCIAS
-    // ===================================================
-    
+public class AuthController {    
+    // Logger para registro de eventos de autenticación
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    // Servicio de autenticación inyectado por Spring
     @Autowired
-    private AuthService authService;
-
-    // ===================================================
-    // AUTENTICACIÓN DE USUARIOS
-    // ===================================================
-    
-    /**
-     * Procesa las solicitudes de inicio de sesión validando las credenciales.
-     * Si la autenticación es exitosa, genera y devuelve un token JWT.
-     * 
-     * @param request Credenciales del usuario (nombre y contraseña)
-     * @return Token JWT si la autenticación es exitosa
-     */    @PostMapping("/login")
+    private AuthService authService;    // Endpoint POST /auth/login - Autentica usuario y retorna token JWT
+    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
         try {
             AuthResponse authResponse = authService.authenticate(request);
@@ -63,18 +38,9 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Error interno del servidor"));
         }
-    }
+    }    
     
-    // ===================================================
-    // REGISTRO DE NUEVOS USUARIOS
-    // ===================================================
-    
-    /**
-     * Registra un nuevo usuario en el sistema de salud digital.
-     * 
-     * @param request Datos necesarios para el registro del usuario
-     * @return Token de autenticación si el registro es exitoso
-     */
+    // Endpoint POST /auth/register - Registra nuevo usuario en el sistema
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegistroRequest request) {
         try {
@@ -87,18 +53,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Error interno del servidor"));
         }
-    }
-
-    // ===================================================
-    // VALIDACIÓN DE TOKENS
-    // ===================================================
-    
-    /**
-     * Valida la autenticidad y vigencia de un token JWT.
-     * 
-     * @param token El token JWT a validar
-     * @return true si el token es válido, false en caso contrario
-     */
+        
+    }    // Endpoint GET /auth/validate - Valida token JWT recibido como parámetro
     @GetMapping("/validate")
     public ResponseEntity<Map<String, Boolean>> validateToken(@RequestParam String token) {
         boolean isValid = authService.validateToken(token);

@@ -5,28 +5,29 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-/**
- * DTO específico para pacientes que extiende PersonaDTO
- */
+// DTO específico para pacientes que extiende PersonaDTO
 @Data
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class PacienteDTO extends PersonaDTO {
-    
-    // Datos de identificación del paciente
+public class PacienteDTO extends PersonaDTO {    
+    // Número de identificación oficial del paciente
     private String numeroIdentificacion;
     
-    // Datos de contacto para emergencias
+    // Nombre del contacto de emergencia
     private String emergencyContact;
+    // Teléfono del contacto de emergencia
     private String emergencyPhone;
     
-    // Información médica relevante
+    // Tipo de sangre del paciente
     private String bloodType;
+    // Alergias conocidas del paciente
     private String allergies;
+    // Compañía de seguro médico
     private String seguroMedico;
     
-    // Información sociodemográfica
+    // Estado civil del paciente
     private String estadoCivil;
+    // Ocupación laboral del paciente
     private String ocupacion;
 }

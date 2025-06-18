@@ -1,31 +1,14 @@
-// Configuraciones centralizadas para CRUDManager
-// Reduce duplicación de código en páginas HTML
-
+// Configuraciones centralizadas para CRUDManager reduciendo duplicación de código
 class CRUDConfigurations {
     
-    //==================================================
-    // CONFIGURACIÓN BASE
-    //==================================================
-    
-    /**
-     * Configuración base común para todas las entidades
-     * Proporciona valores predeterminados para los componentes del CRUD
-     */
+    // Configuración base común para todas las entidades con valores predeterminados
     static getBaseConfig() {
         return {
             searchInputId: 'searchInput',
-            exportButtonId: 'exportBtn'
-        };
+            exportButtonId: 'exportBtn'        };
     }
     
-    //==================================================
-    // CONFIGURACIONES DE PERSONAL MÉDICO
-    //==================================================
-    
-    /**
-     * Configuración específica para Pacientes
-     * Define los campos, formato de tabla y propiedades para la entidad Paciente
-     */
+    // Configuración específica para Pacientes definiendo campos y formato de tabla
     static getPacienteConfig() {
         return {
             ...this.getBaseConfig(),
@@ -41,11 +24,10 @@ class CRUDConfigurations {
                 { name: 'telefono', type: 'tel', required: false },
                 { name: 'fechaNacimiento', type: 'date', required: true },
                 { name: 'numeroIdentificacion', type: 'text', required: true },
-                { name: 'direccion', type: 'text', required: false },
-                { name: 'tipoSangre', type: 'select', required: false, options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
+                { name: 'direccion', type: 'text', required: false },                { name: 'tipoSangre', type: 'select', required: false, options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
                 { name: 'genero', type: 'select', required: false, options: ['MASCULINO', 'FEMENINO', 'OTRO'] }
             ],
-            // Función personalizada para formatear filas de tabla
+            // Función personalizada para formatear filas de tabla de pacientes
             formatTableRow: function(item) {
                 return `
                     <tr>
@@ -59,14 +41,10 @@ class CRUDConfigurations {
                         </td>
                     </tr>
                 `;
-            }
-        };
+            }        };
     }
     
-    /**
-     * Configuración específica para Médicos
-     * Define los campos, formato de tabla y propiedades para la entidad Médico
-     */
+    // Configuración específica para Médicos definiendo campos y formato de tabla
     static getMedicoConfig() {
         return {
             ...this.getBaseConfig(),
@@ -82,11 +60,10 @@ class CRUDConfigurations {
                 { name: 'telefono', type: 'tel', required: false },
                 { name: 'especializacion', type: 'text', required: true },
                 { name: 'numeroLicencia', type: 'text', required: true },
-                { name: 'consultorio', type: 'text', required: false },
-                { name: 'anosExperiencia', type: 'number', required: false },
+                { name: 'consultorio', type: 'text', required: false },                { name: 'anosExperiencia', type: 'number', required: false },
                 { name: 'tarifaConsulta', type: 'number', required: false }
             ],
-            // Función personalizada para formatear filas de tabla
+            // Función personalizada para formatear filas de tabla de médicos
             formatTableRow: function(item) {
                 return `
                     <tr>
@@ -101,18 +78,10 @@ class CRUDConfigurations {
                         </td>
                     </tr>
                 `;
-            }
-        };
+            }        };
     }
     
-    //==================================================
-    // CONFIGURACIONES DE INVENTARIO
-    //==================================================
-    
-    /**
-     * Configuración específica para Medicamentos
-     * Define los campos, formato de tabla y propiedades para la entidad Medicamento
-     */
+    // Configuración específica para Medicamentos definiendo campos y formato de tabla
     static getMedicamentoConfig() {
         return {
             ...this.getBaseConfig(),
@@ -129,11 +98,10 @@ class CRUDConfigurations {
                 { name: 'categoria', type: 'text', required: true },
                 { name: 'precio', type: 'number', required: true },
                 { name: 'stock', type: 'number', required: true },
-                { name: 'stockMinimo', type: 'number', required: false },
-                { name: 'fechaVencimiento', type: 'date', required: false },
+                { name: 'stockMinimo', type: 'number', required: false },                { name: 'fechaVencimiento', type: 'date', required: false },
                 { name: 'requiereReceta', type: 'checkbox', required: false }
             ],
-            // Función personalizada para formatear filas de tabla
+            // Función personalizada para formatear filas de tabla de medicamentos
             formatTableRow: function(item) {
                 return `
                     <tr>
@@ -148,17 +116,10 @@ class CRUDConfigurations {
                         </td>
                     </tr>
                 `;
-            }
-        };
+            }        };
     }
     
-    //==================================================
-    // CONFIGURACIONES DE SERVICIOS MÉDICOS
-    //==================================================
-        /**
-     * Configuración específica para Citas
-     * Define los campos y propiedades para la gestión de citas médicas
-     */
+    // Configuración específica para Citas definiendo campos y propiedades
     static getCitaConfig() {
         return {
             ...this.getBaseConfig(),
@@ -171,11 +132,10 @@ class CRUDConfigurations {
                 { name: 'idPaciente', type: 'select', required: true, endpoint: '/pacientes' },
                 { name: 'idMedico', type: 'select', required: true, endpoint: '/medicos' },
                 { name: 'fechaCita', type: 'datetime-local', required: true },
-                { name: 'motivoConsulta', type: 'textarea', required: true },
-                { name: 'estado', type: 'select', required: true, options: ['PROGRAMADA', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'] },
+                { name: 'motivoConsulta', type: 'textarea', required: true },                { name: 'estado', type: 'select', required: true, options: ['PROGRAMADA', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'] },
                 { name: 'observaciones', type: 'textarea', required: false }
             ],
-            // Función personalizada para formatear filas de tabla
+            // Función personalizada para formatear filas de tabla de citas
             formatTableRow: function(item) {
                 return `
                     <tr>
@@ -190,106 +150,15 @@ class CRUDConfigurations {
                         </td>
                     </tr>
                 `;
-            }
-        };
-    }
-    
-    //==================================================
-    // CONFIGURACIONES DE DOCUMENTACIÓN CLÍNICA
-    //==================================================
-      /**
-     * Configuración específica para Historiales Médicos
-     * Define los campos y propiedades para gestionar el historial clínico
-     */
-    static getHistorialConfig() {
-        return {
-            ...this.getBaseConfig(),
-            entityName: 'Historial Médico',
-            entityNamePlural: 'historiales',
-            modalId: 'historialModal',
-            formId: 'historialForm',
-            tableBodyId: 'historialesTableBody',
-            fields: [
-                { name: 'paciente', type: 'select', required: true, endpoint: '/pacientes' },
-                { name: 'medico', type: 'select', required: true, endpoint: '/medicos' },
-                { name: 'fecha', type: 'date', required: true },
-                { name: 'diagnostico', type: 'textarea', required: true },
-                { name: 'tratamiento', type: 'textarea', required: false },
-                { name: 'observaciones', type: 'textarea', required: false }
-            ],
-            // Función personalizada para formatear filas de tabla
-            formatTableRow: function(item) {
-                return `
-                    <tr>
-                        <td>${item.fecha || ''}</td>
-                        <td>${item.pacienteNombre || ''}</td>
-                        <td>${item.medicoNombre || ''}</td>
-                        <td>${item.diagnostico || ''}</td>
-                        <td>${item.tratamiento || ''}</td>                        <td class="table-actions">
-                            <button class="btn btn-view btn-sm" onclick="historialManager.view(${item.id})">👁️</button>
-                            <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#historialModal" onclick="historialManager.edit(${item.id})">✏️</button>
-                            <button class="btn btn-delete btn-sm" onclick="historialManager.delete(${item.id})">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }
-        };
-    }
-      /**
-     * Configuración específica para Resultados de Laboratorio
-     * Define los campos y propiedades para gestionar los exámenes médicos
-     */
-    static getResultadoConfig() {
-        return {
-            ...this.getBaseConfig(),
-            entityName: 'Resultado de Laboratorio',
-            entityNamePlural: 'resultados',
-            modalId: 'resultadoModal',
-            formId: 'resultadoForm',
-            tableBodyId: 'resultadosTableBody',
-            fields: [
-                { name: 'paciente', type: 'select', required: true, endpoint: '/pacientes' },
-                { name: 'tipoExamen', type: 'text', required: true },
-                { name: 'fecha', type: 'date', required: true },
-                { name: 'resultado', type: 'textarea', required: true },
-                { name: 'valorReferencia', type: 'text', required: false },
-                { name: 'observaciones', type: 'textarea', required: false }
-            ],
-            // Función personalizada para formatear filas de tabla
-            formatTableRow: function(item) {
-                return `
-                    <tr>
-                        <td>${item.fecha || ''}</td>
-                        <td>${item.pacienteNombre || ''}</td>
-                        <td>${item.tipoExamen || ''}</td>
-                        <td>${item.resultado || ''}</td>
-                        <td>${item.valorReferencia || ''}</td>                        <td class="table-actions">
-                            <button class="btn btn-view btn-sm" onclick="resultadoManager.view(${item.id})">👁️</button>
-                            <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#resultadoModal" onclick="resultadoManager.edit(${item.id})">✏️</button>
-                            <button class="btn btn-delete btn-sm" onclick="resultadoManager.delete(${item.id})">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }
-        };
-    }
-    
-    //==================================================
-    // MÉTODOS DE UTILIDAD
-    //==================================================
-    
-    /**
-     * Método para obtener configuración por nombre de entidad
-     * Facilita la obtención de una configuración específica basada en el tipo de entidad
-     */
+            }        };
+    }    
+    // Método para obtener configuración por nombre de entidad facilitando acceso específico
     static getConfigByEntity(entityName) {
         const configs = {
             'pacientes': this.getPacienteConfig(),
             'medicos': this.getMedicoConfig(),
             'medicamentos': this.getMedicamentoConfig(),
-            'citas': this.getCitaConfig(),
-            'historiales': this.getHistorialConfig(),
-            'resultados': this.getResultadoConfig()
+            'citas': this.getCitaConfig()
         };
         
         return configs[entityName.toLowerCase()] || null;

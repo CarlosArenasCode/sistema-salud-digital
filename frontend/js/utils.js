@@ -1,14 +1,10 @@
-// Utilidades comunes para el frontend
+// Utilidades comunes para el frontend del sistema de salud
 class AppUtils {
     
-    // ===================================================
-    // CONFIGURACIÓN DE API Y PETICIONES HTTP
-    // ===================================================
+    // URL base para las peticiones a la API del backend
     static API_BASE = 'http://localhost:8080/api';
     
-    /**
-     * Realiza peticiones HTTP genéricas a la API
-     */
+    // Realiza peticiones HTTP genéricas a la API con configuración básica
     static async apiRequest(endpoint, method = 'GET', data = null) {
         const config = {
             method,
@@ -26,106 +22,96 @@ class AppUtils {
             return response;
         } catch (error) {
             console.error('Error en petición:', error);
-            throw error;
-        }
+            throw error;        }
     }
     
-    // ===================================================
-    // OPERACIONES CRUD GENÉRICAS
-    // ===================================================
+    // Obtiene todos los elementos de una entidad específica
     static async getAll(entity) {
         const response = await this.apiRequest(`/${entity}`);
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Error fetching data: ${response.status}`);
-        }
+            throw new Error(`Error fetching data: ${response.status}`);        }
     }
     
+    // Obtiene datos de un endpoint específico
     static async get(endpoint) {
         const response = await this.apiRequest(endpoint);
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Error fetching data: ${response.status}`);
-        }
+            throw new Error(`Error fetching data: ${response.status}`);        }
     }
     
+    // Obtiene un elemento específico por su ID
     static async getById(entity, id) {
         const response = await this.apiRequest(`/${entity}/${id}`);
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Error fetching data: ${response.status}`);
-        }
+            throw new Error(`Error fetching data: ${response.status}`);        }
     }
     
+    // Crea un nuevo elemento enviando datos a la API
     static async create(entity, data) {
         const response = await this.apiRequest(`/${entity}`, 'POST', data);
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Error creating data: ${response.status}`);
-        }
+            throw new Error(`Error creating data: ${response.status}`);        }
     }
     
+    // Actualiza un elemento existente por su ID
     static async update(entity, id, data) {
         const response = await this.apiRequest(`/${entity}/${id}`, 'PUT', data);
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Error updating data: ${response.status}`);
-        }
+            throw new Error(`Error updating data: ${response.status}`);        }
     }
     
+    // Elimina un elemento por su ID manejando respuestas vacías
     static async delete(entity, id) {
         const response = await this.apiRequest(`/${entity}/${id}`, 'DELETE');
         if (response.ok) {
-            return response.status === 204 ? null : await response.json();
+            // Manejar respuesta vacía o con contenido
+            if (response.status === 204) {
+                return null; // No Content - eliminación exitosa
+            }
+            // Verificar si hay contenido para parsear
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const text = await response.text();
+                return text ? JSON.parse(text) : null;
+            }
+            return null;
         } else {
-            throw new Error(`Error deleting data: ${response.status}`);
-        }
+            throw new Error(`Error deleting data: ${response.status}`);        }
     }
     
-    // ===================================================
-    // MANIPULACIÓN DE INTERFAZ DE USUARIO
-    // ===================================================
-    
-    /**
-     * Funciones para mostrar y ocultar modales de Bootstrap
-     */
+    // Muestra un modal de Bootstrap por su ID
     static showModal(modalId) {
         const modalEl = document.getElementById(modalId);
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.show();
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);        modal.show();
     }
 
+    // Oculta un modal de Bootstrap por su ID
     static hideModal(modalId) {
         const modalEl = document.getElementById(modalId);
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.hide();
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);        modal.hide();
     }
     
-    /**
-     * Filtra elementos en una tabla según un criterio de búsqueda
-     */
+    // Filtra elementos en una tabla según un criterio de búsqueda
     static filterTable(tableBodyId, searchTerm, filterFunction) {
         const tbody = document.getElementById(tableBodyId);
         const rows = tbody.querySelectorAll('tr');
         
         rows.forEach(row => {
             const matches = filterFunction(row, searchTerm);
-            row.style.display = matches ? '' : 'none';
-        });
+            row.style.display = matches ? '' : 'none';        });
     }
     
-    // ===================================================
-    // EXPORTACIÓN DE DATOS
-    // ===================================================
-    
-    /**
-     * Exporta datos a un archivo CSV descargable
-     */
+    // Exporta datos a un archivo CSV descargable
     static exportToCSV(data, headers, filename) {
         const csvContent = [
             headers.join(','),
@@ -137,17 +123,10 @@ class AppUtils {
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
+        a.click();        URL.revokeObjectURL(url);
     }
     
-    // ===================================================
-    // NOTIFICACIONES Y MENSAJES
-    // ===================================================
-    
-    /**
-     * Muestra mensajes de notificación tipo toast
-     */
+    // Muestra mensajes de notificación tipo toast con diferentes tipos
     static showMessage(message, type = 'info') {
         // Crear un toast Bootstrap
         const toastContainer = this.getOrCreateToastContainer();
@@ -180,10 +159,10 @@ class AppUtils {
         
         // Limpiar el toast después de que se cierre
         toastElement.addEventListener('hidden.bs.toast', () => {
-            toastElement.remove();
-        });
+            toastElement.remove();        });
     }
     
+    // Obtiene o crea el contenedor de toasts para notificaciones
     static getOrCreateToastContainer() {
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -192,40 +171,27 @@ class AppUtils {
             container.className = 'position-fixed top-0 end-0 p-3';
             container.style.zIndex = '1055';
             document.body.appendChild(container);
-        }
-        return container;
+        }        return container;
     }
 
-    // ===================================================
-    // AUTENTICACIÓN Y MANEJO DE SESIONES
-    // ===================================================
-    
-    /**
-     * Verifica si el usuario está autenticado
-     */
+    // Verifica si el usuario está autenticado comprobando el token
     static checkAuth() {
         const token = localStorage.getItem('auth_token');
         if (!token) {
             window.location.href = 'login.html';
             return false;
-        }
-        return true;
+        }        return true;
     }
     
-    /**
-     * Cierra la sesión del usuario
-     */
+    // Cierra la sesión del usuario eliminando datos locales
     static logout() {
         if (confirm('¿Está seguro que desea cerrar sesión?')) {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_data');
-            window.location.href = 'login.html';
-        }
+            window.location.href = 'login.html';        }
     }
     
-    /**
-     * Obtiene los datos del usuario actualmente logueado
-     */
+    // Obtiene los datos del usuario actualmente logueado desde localStorage
     static getUserData() {
         return JSON.parse(localStorage.getItem('user_data') || '{}');
     }

@@ -1,9 +1,7 @@
-// Clase genérica para manejo de formularios CRUD
+// Clase genérica para manejo de formularios CRUD con operaciones básicas
 class CRUDManager {
-    //============================================================
-    // INICIALIZACIÓN Y CONFIGURACIÓN
-    // Constructor y configuración inicial de la clase
-    //============================================================
+    
+    // Constructor que inicializa la configuración y propiedades de la entidad
     constructor(config) {
         this.config = config; // Almacenar toda la configuración
         this.entityName = config.entityName;
@@ -15,19 +13,16 @@ class CRUDManager {
         this.fields = config.fields; // Array de objetos {name, type, required}
         this.data = [];
         this.currentId = null;
-        
-        this.init();
+          this.init();
     }
     
+    // Inicializa el manager cargando datos y vinculando eventos
     init() {
         this.loadData();
         this.bindEvents();
     }
     
-    //============================================================
-    // GESTIÓN DE DATOS
-    // Métodos para cargar y manipular los datos de la entidad
-    //============================================================
+    // Carga los datos de la entidad desde el API
     async loadData() {
         try {
             console.log(`Cargando datos de ${this.entityNamePlural}...`);
@@ -40,21 +35,17 @@ class CRUDManager {
             this.updateCount();
         } catch (error) {
             console.error(`Error cargando ${this.entityNamePlural}:`, error);
-            AppUtils.showMessage(`Error cargando ${this.entityNamePlural}: ${error.message}`, 'error');
-        }
+            AppUtils.showMessage(`Error cargando ${this.entityNamePlural}: ${error.message}`, 'error');        }
     }
     
-    //============================================================
-    // RENDERIZADO DE UI
-    // Métodos para mostrar los datos en la interfaz de usuario
-    //============================================================
+    // Renderiza la tabla con los datos cargados
     renderTable() {
         const tbody = document.getElementById(this.tableBodyId);
         if (tbody) {
-            tbody.innerHTML = this.data.map(item => this.renderTableRow(item)).join('');
-        }
+            tbody.innerHTML = this.data.map(item => this.renderTableRow(item)).join('');        }
     }
     
+    // Renderiza una fila de la tabla usando configuración personalizada o genérica
     renderTableRow(item) {
         // Si hay una función personalizada formatTableRow en la configuración, usarla
         if (this.config && typeof this.config.formatTableRow === 'function') {
@@ -73,21 +64,17 @@ class CRUDManager {
                     <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#${this.modalId}" onclick="${managerVar}.edit(${item.id})">✏️</button>
                     <button class="btn btn-delete btn-sm" onclick="${managerVar}.delete(${item.id})">🗑️</button>
                 </td>
-            </tr>
-        `;
+            </tr>        `;
     }
     
+    // Actualiza el contador de elementos mostrados
     updateCount() {
         const countElement = document.querySelector('[id*="Count"]');
         if (countElement) {
-            countElement.textContent = `Total: ${this.data.length} ${this.entityNamePlural.toLowerCase()}`;
-        }
+            countElement.textContent = `Total: ${this.data.length} ${this.entityNamePlural.toLowerCase()}`;        }
     }
     
-    //============================================================
-    // GESTIÓN DEL MODAL
-    // Métodos para manipular el modal de creación/edición
-    //============================================================
+    // Abre el modal para crear o editar un elemento
     openModal(id = null) {
         this.currentId = id;
         const form = document.getElementById(this.formId);
@@ -120,20 +107,16 @@ class CRUDManager {
                 form.querySelector('[type="submit"]').textContent = 'Guardar';
             }
         }
-        
-        AppUtils.showModal(this.modalId);
+          AppUtils.showModal(this.modalId);
     }
     
+    // Cierra el modal y resetea el formulario
     closeModal() {
         AppUtils.hideModal(this.modalId);
-        this.currentId = null;
-        document.getElementById(this.formId).reset();
+        this.currentId = null;        document.getElementById(this.formId).reset();
     }
     
-    //============================================================
-    // OPERACIONES CRUD
-    // Métodos para crear, leer, actualizar y eliminar registros
-    //============================================================
+    // Guarda o actualiza un elemento enviando datos al API
     async save(event) {
         event.preventDefault();
         
@@ -166,14 +149,15 @@ class CRUDManager {
                 AppUtils.showMessage(`${this.entityName} guardado aunque el servidor devolvió 500`, 'warning');
             } else {
                 AppUtils.showMessage(`Error al guardar ${this.entityName}: ${error.message}`, 'error');
-            }
-        }
+            }        }
     }
     
+    // Abre el modal en modo edición para un elemento específico
     edit(id) {
         this.openModal(id);
     }
     
+    // Elimina un elemento después de confirmación del usuario
     async deleteItem(id) {
         if (!confirm(`¿Está seguro de eliminar este ${this.entityName}?`)) return;
         
@@ -183,35 +167,28 @@ class CRUDManager {
             AppUtils.showMessage(`${this.entityName} eliminado exitosamente`, 'success');
         } catch (error) {
             console.error('Error:', error);
-            AppUtils.showMessage(`Error al eliminar ${this.entityName}: ${error.message}`, 'error');
-        }
+            AppUtils.showMessage(`Error al eliminar ${this.entityName}: ${error.message}`, 'error');        }
     }
     
-    // Método de compatibilidad
+    // Método de compatibilidad para el método delete
     delete(id) {
         return this.deleteItem(id);
     }
     
-    //============================================================
-    // UTILIDADES
-    // Métodos auxiliares para filtrado, exportación y otras funciones
-    //============================================================
+    // Filtra los elementos de la tabla según el término de búsqueda
     filter() {
         const searchTerm = document.getElementById(this.searchInputId).value.toLowerCase();
         AppUtils.filterTable(this.tableBodyId, searchTerm, (row, term) => {
-            return row.textContent.toLowerCase().includes(term);
-        });
+            return row.textContent.toLowerCase().includes(term);        });
     }
     
+    // Exporta los datos a un archivo CSV
     exportData() {
         const headers = this.fields.map(field => field.name);
         AppUtils.exportToCSV(this.data, headers, `${this.entityNamePlural.toLowerCase()}.csv`);
     }
     
-    //============================================================
-    // GESTIÓN DE EVENTOS
-    // Métodos para asociar eventos a elementos del DOM
-    //============================================================
+    // Vincula eventos del DOM a los métodos correspondientes
     bindEvents() {
         // Bind form submit
         const form = document.getElementById(this.formId);

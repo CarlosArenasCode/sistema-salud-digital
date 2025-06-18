@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
  * Mapea con la tabla 'usuarios' en PostgreSQL.
  * Unificada y estandarizada en español.
  */
+// Entidad JPA que representa a un usuario del sistema con información básica, credenciales, rol y auditoría.
+// Entidad que representa un usuario del sistema de salud con sus credenciales, rol, estado y campos de auditoría para gestionar el acceso a la plataforma
 @Entity
 @Table(name = "usuarios")
 @Data

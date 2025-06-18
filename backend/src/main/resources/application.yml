@@ -1,27 +1,19 @@
-# ===================================================================
-# SISTEMA DE SALUD DIGITAL - CONFIGURACIÓN PRINCIPAL
-# ===================================================================
+# Configuración principal del Sistema de Salud Digital
 
-# ------------------
-# Configuración básica de la aplicación
-# ------------------
+# Configuración básica de la aplicación Spring Boot
 spring:
   application:
     name: sistema-salud-digital
   profiles:
     active: postgresql
 
-# ------------------
-# Configuración del servidor
-# ------------------
+# Configuración del servidor web
 server:
   port: 8080
   servlet:
     context-path: /api
 
-# ------------------
-# Configuración de registros (logs)
-# ------------------
+# Configuración de registros y logs del sistema
 logging:
   level:
     com.clinica.salud: DEBUG
@@ -29,9 +21,7 @@ logging:
   file:
     name: logs/salud-digital.log
 
-# ------------------
-# Configuración de monitoreo y gestión
-# ------------------
+# Configuración de endpoints de monitoreo y salud
 management:
   endpoints:
     web:
@@ -41,18 +31,14 @@ management:
     health:
       show-details: always
 
-# ===================================================================
-# CONFIGURACIÓN ESPECÍFICA DE PERFIL: POSTGRESQL
-# ===================================================================
+# Configuración específica para perfil PostgreSQL
 ---
 spring:
   config:
     activate:
       on-profile: postgresql
   
-  # ------------------
-  # Configuración de base de datos PostgreSQL
-  # ------------------
+  # Configuración de conexión a base de datos PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/sistema_salud
     username: postgres
@@ -65,9 +51,8 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
   
-  # ------------------
-  # Configuración de JPA/Hibernate
-  # ------------------  jpa:
+  # Configuración de JPA y Hibernate para manejo de entidades
+  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -77,9 +62,7 @@ spring:
         format_sql: true
     open-in-view: false  # Desactiva la conexión perezosa en la vista
   
-  # ------------------
-  # Configuración de Jackson (JSON)
-  # ------------------
+  # Configuración de serialización JSON con Jackson
   jackson:
     serialization:
       fail-on-empty-beans: false
@@ -87,9 +70,7 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   
-  # ------------------
-  # Configuración de inicialización SQL
-  # ------------------
+  # Configuración de inicialización de scripts SQL
   sql:
     init:
       mode: never  # Desactivado porque se gestionará manualmente

@@ -6,46 +6,22 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO base genérico que proporciona campos comunes
- * Reduce duplicación en objetos de transferencia de datos
- */
-
-// =====================================================
-// CONFIGURACIÓN DE CLASE
-// =====================================================
+// DTO base abstracto con campos comunes para reducir duplicación
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseDTO {
-    
-    // =====================================================
-    // ATRIBUTOS PRINCIPALES
-    // =====================================================
+public abstract class BaseDTO {    
+    // Identificador único de la entidad
     protected Long id;
+    // Fecha y hora de creación del registro
     protected LocalDateTime fechaCreacion;
-    protected LocalDateTime fechaActualizacion;
-    
-    // =====================================================
-    // MÉTODOS DE VALIDACIÓN
-    // =====================================================
-    
-    /**
-     * Método que determina si la entidad es nueva basándose en el ID
-     * @return true si es una entidad nueva, false si ya existe
-     */
+    // Fecha y hora de última actualización
+    protected LocalDateTime fechaActualizacion;    
+    // Método que verifica si la entidad es nueva basándose en el ID
     public boolean esNuevo() {
-        return id == null;
-    }
+        return id == null;    }
     
-    // =====================================================
-    // MÉTODOS DE AUDITORÍA
-    // =====================================================
-    
-    /**
-     * Método para obtener información de auditoría formateada
-     * @return cadena con la información de creación y actualización
-     */
+    // Método que retorna información de auditoría formateada
     public String getInfoAuditoria() {
         if (fechaCreacion == null) {
             return "Sin información de auditoría";
