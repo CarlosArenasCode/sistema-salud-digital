@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test jsPDF</title>
+</head>
+<body>
+    <h1>Test de jsPDF</h1>
+    <button onclick="testJsPDF()">Probar jsPDF</button>
+    <div id="status"></div>
+    
+    <!-- Cargar librerías jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        function testJsPDF() {
+            const statusDiv = document.getElementById('status');
+            
+            console.log('window.jspdf:', typeof window.jspdf);
+            console.log('window.jsPDF:', typeof window.jsPDF);
+            console.log('window.jspdf.jsPDF:', window.jspdf?.jsPDF);
+            
+            statusDiv.innerHTML = `
+                <p>window.jspdf: ${typeof window.jspdf}</p>
+                <p>window.jsPDF: ${typeof window.jsPDF}</p>
+                <p>window.jspdf.jsPDF: ${window.jspdf?.jsPDF ? 'Disponible' : 'No disponible'}</p>
+            `;
+            
+            // Intentar crear un PDF simple
+            try {
+                let jsPDF = null;
+                
+                if (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) {
+                    jsPDF = window.jspdf.jsPDF;
+                } else if (typeof window.jsPDF !== 'undefined') {
+                    jsPDF = window.jsPDF;
+                }
+                
+                if (jsPDF) {
+                    const doc = new jsPDF();
+                    doc.text('Prueba de jsPDF', 20, 20);
+                    doc.text('¡Funciona con tildes y ñ!', 20, 30);
+                    doc.save('prueba.pdf');
+                    statusDiv.innerHTML += '<p style="color: green;">✓ PDF generado exitosamente</p>';
+                } else {
+                    statusDiv.innerHTML += '<p style="color: red;">✗ jsPDF no está disponible</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.innerHTML += `<p style="color: red;">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Verificar al cargar la página
+        window.addEventListener('load', function() {
+            console.log('Página cargada');
+            setTimeout(testJsPDF, 1000); // Esperar 1 segundo para que se carguen las librerías
+        });
+    </script>
+</body>
+</html>

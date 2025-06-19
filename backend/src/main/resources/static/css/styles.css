@@ -2,12 +2,12 @@
 
 /* ===== VARIABLES ESENCIALES ===== */
 :root {
-    --primary-color: #2563eb;
-    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    --card-shadow-hover: 0 10px 25px rgba(0,0,0,0.15);
-    --transition: all 0.3s ease;
-    --border-radius: 0.5rem;
+    --color-primario: #2563eb;
+    --gradiente-acento: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --sombra-tarjeta: 0 2px 8px rgba(0,0,0,0.1);
+    --sombra-tarjeta-hover: 0 10px 25px rgba(0,0,0,0.15);
+    --transicion: all 0.3s ease;
+    --radio-borde: 0.5rem;
 }
 
 /* ===== ESTILOS BASE ===== */
@@ -16,23 +16,23 @@ body {
 }
 
 /* ===== UTILIDADES PERSONALIZADAS ===== */
-.hero-gradient {
-    background: var(--accent-gradient);
+.gradiente-hero {
+    background: var(--gradiente-acento);
     color: white;
     padding: 80px 0;
 }
 
-.card-hover {
-    transition: var(--transition);
-    box-shadow: var(--card-shadow);
+.tarjeta-hover {
+    transition: var(--transicion);
+    box-shadow: var(--sombra-tarjeta);
 }
 
-.card-hover:hover {
+.tarjeta-hover:hover {
     transform: translateY(-5px);
-    box-shadow: var(--card-shadow-hover);
+    box-shadow: var(--sombra-tarjeta-hover);
 }
 
-.optimization-badge {
+.insignia-optimizacion {
     background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
     color: white;
     padding: 0.5rem 1rem;
@@ -41,7 +41,7 @@ body {
     display: inline-block;
 }
 
-.stats-display {
+.mostrador-estadisticas {
     background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
     color: white;
     border-radius: 15px;
@@ -51,7 +51,7 @@ body {
 }
 
 /* ===== ESTILOS PARA TABLAS ===== */
-.btn-table {
+.btn-tabla {
     width: 32px !important;
     height: 32px !important;
     padding: 0 !important;
@@ -62,13 +62,13 @@ body {
 }
 
 /* ===== ESTILOS PARA BOTONES DE ACCIONES ===== */
-.table-actions {
+.acciones-tabla {
     width: 100px;
     text-align: center;
     white-space: nowrap;
 }
 
-.table-actions .btn {
+.acciones-tabla .btn {
     display: inline-block;
     margin: 0 4px;
     padding: 0.4rem 0.6rem;
@@ -80,50 +80,50 @@ body {
     vertical-align: middle;
 }
 
-.table-actions .btn:hover {
+.acciones-tabla .btn:hover {
     background: transparent;
     border: none;
     transform: scale(1.1);
 }
 
 /* Iconos en botones */
-.table-actions .icono {
+.acciones-tabla .icono {
     vertical-align: middle;
     width: 18px;
     height: 18px;
 }
 
 /* ===== ESTILOS PARA FORMULARIOS ===== */
-.form-grid {
+.rejilla-formulario {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
     max-width: 100%;
 }
 
-.form-group {
+.grupo-formulario {
     display: flex;
     flex-direction: column;
 }
 
-.form-group label {
+.grupo-formulario label {
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: #374151;
 }
 
-.form-check {
+.casilla-formulario {
     grid-column: 1 / -1;
     margin-top: 1rem;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    .hero-gradient { 
+    .gradiente-hero { 
         padding: 40px 0; 
     }
     
-    .stats-display { 
+    .mostrador-estadisticas { 
         padding: 1rem;
         min-width: 100px;
     }

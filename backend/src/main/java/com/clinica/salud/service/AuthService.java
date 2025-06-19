@@ -97,7 +97,8 @@ public class AuthService {
         userData.put("id", usuario.getId());
         userData.put("username", usuario.getNombreUsuario());
         userData.put("role", usuario.getRol());
-        userData.put("email", usuario.getEmail());        return new AuthResponse(token, userData, "Usuario registrado exitosamente");
+        userData.put("email", usuario.getEmail());        
+        return new AuthResponse(token, userData, "Usuario registrado exitosamente");
     }
 
     // Crea registro específico según el rol del usuario (paciente o médico)

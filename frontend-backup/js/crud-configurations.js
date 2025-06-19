@@ -1,4 +1,3 @@
-// Configuraciones centralizadas para CRUDManager reduciendo duplicación de código
 class CRUDConfigurations {
     
     // Configuración base común para todas las entidades con valores predeterminados
@@ -24,7 +23,8 @@ class CRUDConfigurations {
                 { name: 'telefono', type: 'tel', required: false },
                 { name: 'fechaNacimiento', type: 'date', required: true },
                 { name: 'numeroIdentificacion', type: 'text', required: true },
-                { name: 'direccion', type: 'text', required: false },                { name: 'tipoSangre', type: 'select', required: false, options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
+                { name: 'direccion', type: 'text', required: false },                
+                { name: 'tipoSangre', type: 'select', required: false, options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
                 { name: 'genero', type: 'select', required: false, options: ['MASCULINO', 'FEMENINO', 'OTRO'] }
             ],
             // Función personalizada para formatear filas de tabla de pacientes

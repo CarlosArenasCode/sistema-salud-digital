@@ -1,0 +1,30 @@
+/* Cambiar términos en inglés a español */
+
+/* Reemplazar btn por botón */
+.boton .icono { margin-right: 0.5rem; }
+.boton .icono:only-child { margin: 0; }
+
+/* Botones de tabla */
+.boton-tabla {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.boton-tabla .icono {
+    margin: 0 !important;
+}
+
+/* Navegación - cambiar navbar-brand */
+.marca-navegacion .icono {
+    margin-right: 0.5rem;
+}
+
+/* Mantener compatibilidad */
+.btn .icono { margin-right: 0.5rem; }
+.btn .icono:only-child { margin: 0; }
+.btn-tabla .icono { margin: 0 !important; }
+.navbar-brand .icono { margin-right: 0.5rem; }

@@ -181,11 +181,61 @@ class CRUDManager {
         AppUtils.filterTable(this.tableBodyId, searchTerm, (row, term) => {
             return row.textContent.toLowerCase().includes(term);        });
     }
-    
-    // Exporta los datos a un archivo CSV
+      // Exporta los datos a un archivo PDF (o CSV como fallback)
     exportData() {
-        const headers = this.fields.map(field => field.name);
-        AppUtils.exportToCSV(this.data, headers, `${this.entityNamePlural.toLowerCase()}.csv`);
+        console.log('Iniciando exportación...');
+        console.log('window.jspdf:', typeof window.jspdf);
+        console.log('window.jsPDF:', typeof window.jsPDF);
+        
+        // Verificar múltiples formas de detectar jsPDF
+        const hasJsPDF = (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) || 
+                        (typeof window.jsPDF !== 'undefined');
+        
+        console.log('jsPDF disponible:', hasJsPDF);
+        
+        // Crear encabezados más legibles
+        const headers = this.fields.map(field => {
+            // Convertir nombres de campo a formato más legible
+            const fieldName = field.name;
+            const headerMap = {
+                'nombres': 'Nombres',
+                'apellidos': 'Apellidos',
+                'numeroIdentificacion': 'Documento',
+                'fechaNacimiento': 'Fecha Nacimiento',
+                'genero': 'Género',
+                'telefono': 'Teléfono',
+                'email': 'Email',
+                'direccion': 'Dirección',
+                'contactoEmergencia': 'Contacto Emergencia',
+                'telefonoEmergencia': 'Tel. Emergencia',
+                'tipoSangre': 'Tipo Sangre',
+                'alergias': 'Alergias',
+                'seguroMedico': 'Seguro Médico',
+                'estadoCivil': 'Estado Civil',
+                'ocupacion': 'Ocupación',
+                'activo': 'Activo',
+                'especializacion': 'Especialidad',
+                'numeroLicencia': 'Licencia',
+                'anosExperiencia': 'Años Experiencia',
+                'tarifaConsulta': 'Tarifa',
+                'consultorio': 'Consultorio',
+                'universidad': 'Universidad'
+            };
+            return headerMap[fieldName] || fieldName;
+        });
+        
+        const fieldNames = this.fields.map(field => field.name);
+        const title = `Reporte de ${this.entityNamePlural}`;
+        
+        // Intentar exportar como PDF si está disponible
+        if (hasJsPDF) {
+            console.log('Usando exportación PDF');
+            AppUtils.exportToPDF(this.data, fieldNames, headers, `${this.entityNamePlural.toLowerCase()}.pdf`, title);
+        } else {
+            console.log('jsPDF no disponible, usando fallback CSV');
+            // Fallback a la función de CSV
+            AppUtils.exportToCSV(this.data, fieldNames, `${this.entityNamePlural.toLowerCase()}.csv`);
+        }
     }
     
     // Vincula eventos del DOM a los métodos correspondientes

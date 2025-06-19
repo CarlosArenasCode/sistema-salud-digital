@@ -228,14 +228,13 @@ class AppUtils {
         }
 
         console.log('Creando PDF con jsPDF...');
-        // Usar formato horizontal (landscape) para mejor distribución
-        const doc = new jsPDF('landscape', 'mm', 'a4');
+        const doc = new jsPDF();
         
         // Configurar fuente que soporte caracteres especiales
         doc.setFont('helvetica');
         
         // Título del documento
-        doc.setFontSize(18);
+        doc.setFontSize(16);
         doc.setTextColor(0, 123, 255); // Color azul
         doc.text(title, 20, 20);
         
@@ -246,133 +245,49 @@ class AppUtils {
         
         // Fecha
         doc.setFontSize(10);
-        doc.setTextColor(80, 80, 80);
-        doc.text(`Generado: ${new Date().toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        })}`, 20, 40);
+        doc.text(`Generado: ${new Date().toLocaleDateString('es-ES')}`, 20, 40);
         
         // Preparar datos para la tabla usando los nombres de campo
-        const tableData = data.map(row => 
-            fieldNames.map(fieldName => {
-                const value = row[fieldName];
-                if (value === null || value === undefined) return '';
-                return String(value);
-            })
-        );
+        const tableData = data.map(row => fieldNames.map(fieldName => row[fieldName] || ''));
         
         // Crear tabla usando autoTable (si está disponible)
         if (typeof doc.autoTable !== 'undefined') {
             console.log('Usando autoTable para generar tabla...');
-            
-            // Configurar anchos de columna dinámicamente
-            const columnCount = headers.length;
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const marginLeft = 20;
-            const marginRight = 20;
-            const availableWidth = pageWidth - marginLeft - marginRight;
-            
-            // Calcular ancho automático para columnas
-            const columnStyles = {};
-            headers.forEach((header, index) => {
-                const minWidth = Math.max(25, availableWidth / columnCount);
-                columnStyles[index] = { 
-                    cellWidth: minWidth,
-                    fontSize: 8
-                };
-                
-                // Ajustar anchos específicos para campos conocidos
-                if (header.includes('Documento') || header.includes('Teléfono')) {
-                    columnStyles[index].cellWidth = 30;
-                } else if (header.includes('Email') || header.includes('Dirección')) {
-                    columnStyles[index].cellWidth = 40;
-                } else if (header.includes('Nombres') || header.includes('Apellidos')) {
-                    columnStyles[index].cellWidth = 35;
-                }
-            });
-            
             doc.autoTable({
                 head: [headers],
                 body: tableData,
                 startY: 50,
-                margin: { left: marginLeft, right: marginRight },
                 styles: {
                     fontSize: 8,
-                    font: 'helvetica',
-                    cellPadding: 3,
-                    overflow: 'linebreak',
-                    halign: 'left'
+                    font: 'helvetica'
                 },
                 headStyles: {
                     fillColor: [0, 123, 255],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    fontSize: 9
+                    textColor: 255
                 },
                 alternateRowStyles: {
-                    fillColor: [248, 249, 250]
-                },
-                columnStyles: columnStyles,
-                tableWidth: 'auto',
-                theme: 'striped',
-                // Configurar el comportamiento cuando el contenido es muy largo
-                didParseCell: function(data) {
-                    // Limitar texto muy largo
-                    if (data.cell.text && data.cell.text.length > 0) {
-                        data.cell.text = data.cell.text.map(text => {
-                            if (typeof text === 'string' && text.length > 25) {
-                                return text.substring(0, 22) + '...';
-                            }
-                            return text;
-                        });
-                    }
+                    fillColor: [249, 249, 249]
                 }
             });
         } else {
             console.log('autoTable no disponible, usando tabla simple...');
-            // Fallback mejorado si autoTable no está disponible
+            // Fallback simple si autoTable no está disponible
             let y = 60;
-            const columnWidth = (doc.internal.pageSize.getWidth() - 40) / headers.length;
-            
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             
             // Encabezados
             doc.setFont('helvetica', 'bold');
-            doc.setFillColor(0, 123, 255);
-            doc.rect(20, y - 5, doc.internal.pageSize.getWidth() - 40, 10, 'F');
-            doc.setTextColor(255, 255, 255);
-            
             headers.forEach((header, index) => {
-                doc.text(header, 25 + (index * columnWidth), y);
+                doc.text(header, 20 + (index * 30), y);
             });
-            
-            y += 15;
             
             // Datos
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(0, 0, 0);
-            
             tableData.forEach((row, rowIndex) => {
-                if (rowIndex % 2 === 0) {
-                    doc.setFillColor(248, 249, 250);
-                    doc.rect(20, y - 5, doc.internal.pageSize.getWidth() - 40, 10, 'F');
-                }
-                
+                y += 10;
                 row.forEach((cell, cellIndex) => {
-                    const cellText = String(cell).length > 20 ? String(cell).substring(0, 17) + '...' : String(cell);
-                    doc.text(cellText, 25 + (cellIndex * columnWidth), y);
+                    doc.text(String(cell), 20 + (cellIndex * 30), y);
                 });
-                
-                y += 12;
-                
-                // Nueva página si es necesario
-                if (y > doc.internal.pageSize.getHeight() - 30) {
-                    doc.addPage();
-                    y = 30;
-                }
             });
         }
         

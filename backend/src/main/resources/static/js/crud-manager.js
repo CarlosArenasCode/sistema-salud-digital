@@ -180,12 +180,73 @@ class CRUDManager {
         const searchTerm = document.getElementById(this.searchInputId).value.toLowerCase();
         AppUtils.filterTable(this.tableBodyId, searchTerm, (row, term) => {
             return row.textContent.toLowerCase().includes(term);        });
-    }
-    
-    // Exporta los datos a un archivo CSV
+    }    // Exporta los datos a un archivo PDF (o CSV como fallback) - VERSIÓN ACTUALIZADA 2025-06-18
     exportData() {
-        const headers = this.fields.map(field => field.name);
-        AppUtils.exportToCSV(this.data, headers, `${this.entityNamePlural.toLowerCase()}.csv`);
+        console.log('=== EXPORTACIÓN INICIADA - VERSIÓN BACKEND 2025-06-18 ===');
+        console.log('Iniciando exportación...');
+        console.log('window.jspdf:', typeof window.jspdf);
+        console.log('window.jsPDF:', typeof window.jsPDF);
+        
+        // Verificar múltiples formas de detectar jsPDF
+        const hasJsPDF = (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) || 
+                        (typeof window.jsPDF !== 'undefined');
+        
+        console.log('jsPDF disponible:', hasJsPDF);
+          // Crear encabezados más legibles y filtrar campos importantes para PDF
+        const allHeaders = this.fields.map(field => {
+            // Convertir nombres de campo a formato más legible
+            const fieldName = field.name;
+            const headerMap = {
+                'nombres': 'Nombres',
+                'apellidos': 'Apellidos',
+                'numeroIdentificacion': 'Documento',
+                'fechaNacimiento': 'Fecha Nac.',
+                'genero': 'Género',
+                'telefono': 'Teléfono',
+                'email': 'Email',
+                'direccion': 'Dirección',
+                'contactoEmergencia': 'Contacto Emerg.',
+                'telefonoEmergencia': 'Tel. Emerg.',
+                'tipoSangre': 'Tipo Sangre',
+                'alergias': 'Alergias',
+                'seguroMedico': 'Seguro Médico',
+                'estadoCivil': 'Estado Civil',
+                'ocupacion': 'Ocupación',
+                'activo': 'Activo',
+                'especializacion': 'Especialidad',
+                'numeroLicencia': 'Licencia',
+                'anosExperiencia': 'Años Exp.',
+                'tarifaConsulta': 'Tarifa',
+                'consultorio': 'Consultorio',
+                'universidad': 'Universidad'
+            };
+            return {
+                fieldName: fieldName,
+                header: headerMap[fieldName] || fieldName
+            };
+        });
+        
+        // Para PDF, seleccionar solo campos importantes para evitar sobrecarga
+        const importantFields = ['nombres', 'apellidos', 'numeroIdentificacion', 'telefono', 'email', 'especializacion', 'activo'];
+        const pdfFields = allHeaders.filter(field => 
+            importantFields.includes(field.fieldName) || this.fields.length <= 6
+        );
+        
+        // Si tenemos pocos campos, usar todos; si tenemos muchos, usar solo los importantes
+        const selectedFields = this.fields.length <= 8 ? allHeaders : pdfFields;
+        const headers = selectedFields.map(field => field.header);
+        const fieldNames = selectedFields.map(field => field.fieldName);
+        const title = `Reporte de ${this.entityNamePlural}`;
+        
+        // Intentar exportar como PDF si está disponible
+        if (hasJsPDF) {
+            console.log('Usando exportación PDF');
+            AppUtils.exportToPDF(this.data, fieldNames, headers, `${this.entityNamePlural.toLowerCase()}.pdf`, title);
+        } else {
+            console.log('jsPDF no disponible, usando fallback CSV');
+            // Fallback a la función de CSV
+            AppUtils.exportToCSV(this.data, fieldNames, `${this.entityNamePlural.toLowerCase()}.csv`);
+        }
     }
     
     // Vincula eventos del DOM a los métodos correspondientes
