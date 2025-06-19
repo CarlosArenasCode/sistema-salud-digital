@@ -37,21 +37,21 @@ public class AuthService {
     }
       // Autenticación básica con validación de usuario/contraseña en BD
     public AuthResponse authenticate(AuthRequest authRequest) {
-        // 1. Buscar usuario en la base de datos
+        // Buscar usuario en la base de datos
         UsuarioEntity usuario = usuarioRepository.findByNombreUsuario(authRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 2. Verificar contraseña (comparación directa - sin codificación)
+        // Verificar contraseña (comparación directa - sin codificación)
         if (!usuario.getContrasena().equals(authRequest.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
-        // 3. Verificar que el usuario esté activo
+        // Verificar que el usuario esté activo
         if (!usuario.getActivo()) {
             throw new RuntimeException("Usuario inactivo");
         }
 
-        // 4. Generar token ultra-simple (UUID)
+        // Generar token
         String token = "simple-" + UUID.randomUUID().toString().substring(0, 8);
 
         // 5. Preparar datos de respuesta
@@ -149,7 +149,7 @@ public class AuthService {
     
     // Validación básica de token verificando formato y contenido
     public boolean validateToken(String token) {
-        // Validación ultra-simple: solo verificar que no esté vacío y tenga formato básico
+        
         return token != null && !token.trim().isEmpty() && token.startsWith("simple-");
     }
 }

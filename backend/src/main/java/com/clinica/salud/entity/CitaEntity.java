@@ -39,7 +39,7 @@ public class CitaEntity {
     @Column(name = "motivo_consulta", columnDefinition = "TEXT")
     private String motivoConsulta;
     
-    // Estado actual de la cita (por defecto PROGRAMADA)
+    // Estado actual de la cita
     @Size(max = 20, message = "El estado no puede exceder 20 caracteres")
     @Builder.Default
     @Column(name = "estado", length = 20)

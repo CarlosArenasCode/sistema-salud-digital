@@ -18,9 +18,7 @@ import java.util.List;
  */
 @Repository
 public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMedicoEntity, Long> {
-         // ===============================================================
-       // SECCIÓN 1: CONSULTAS POR PACIENTE
-       // ===============================================================
+       // Consultas por paciente
        
        // Busca todos los historiales de un paciente específico
        List<HistorialMedicoEntity> findByPaciente_Id(Long patientId);
@@ -30,11 +28,9 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        // Obtiene historiales de un paciente ordenados por fecha descendente
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.paciente.id = :patientId " +
-                 "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findByPatientOrderByDateDesc(@Param("patientId") Long patientId);
-         // ===============================================================
-       // SECCIÓN 2: CONSULTAS POR MÉDICO
-       // ===============================================================
+                 "ORDER BY h.fechaVisita DESC")       List<HistorialMedicoEntity> findByPatientOrderByDateDesc(@Param("patientId") Long patientId);
+       
+       // Consultas por médico
        
        // Busca todos los historiales creados por un médico específico
        List<HistorialMedicoEntity> findByMedicoId(Long doctorId);
@@ -44,11 +40,10 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        // Obtiene historiales de un médico ordenados por fecha descendente
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.medico.id = :doctorId " +
-                 "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findByDoctorOrderByDateDesc(@Param("doctorId") Long doctorId);
-         // ===============================================================
-       // SECCIÓN 3: CONSULTAS POR FECHA
-       // ===============================================================
+                 "ORDER BY h.fechaVisita DESC")      
+                List<HistorialMedicoEntity> findByDoctorOrderByDateDesc(@Param("doctorId") Long doctorId);
+       
+       // Consultas por fecha
        
        // Busca historiales de una fecha específica
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE DATE(h.fechaVisita) = :date")
@@ -66,12 +61,11 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "DATE(h.fechaVisita) >= :startDate AND " +
                  "DATE(h.fechaVisita) <= :endDate " +
-                 "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findRecordsByDateRangeOrderedDesc(@Param("startDate") LocalDate startDate, 
-                                                                                                                  @Param("endDate") LocalDate endDate);
-         // ===============================================================
-       // SECCIÓN 4: BÚSQUEDAS POR DIAGNÓSTICO
-       // ===============================================================
+                 "ORDER BY h.fechaVisita DESC")       
+                 List<HistorialMedicoEntity> findRecordsByDateRangeOrderedDesc(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+                                                                                                                  
+       
+       // Búsquedas por diagnóstico
        
        // Busca historiales que contengan un diagnóstico específico
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
@@ -89,11 +83,10 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "LOWER(h.diagnostico) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
                  "LOWER(h.tratamiento) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                 "LOWER(h.observaciones) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-       Page<HistorialMedicoEntity> searchMedicalRecordsWithPagination(@Param("searchTerm") String searchTerm, Pageable pageable);
-         // ===============================================================
-       // SECCIÓN 5: CONSULTAS POR SEGUIMIENTO
-       // ===============================================================
+                 "LOWER(h.observaciones) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")       
+                 Page<HistorialMedicoEntity> searchMedicalRecordsWithPagination(@Param("searchTerm") String searchTerm, Pageable pageable);
+       
+       // Consultas por seguimiento
        
        // Busca historiales con una próxima cita específica
        List<HistorialMedicoEntity> findByProximaCita(LocalDateTime nextAppointment);
@@ -108,38 +101,35 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.proximaCita IS NOT NULL AND " +
                  "DATE(h.proximaCita) BETWEEN :startDate AND :endDate")
-       List<HistorialMedicoEntity> findRecordsWithFollowUpBetween(@Param("startDate") LocalDate startDate, 
-                                                                                                            @Param("endDate") LocalDate endDate);
+       List<HistorialMedicoEntity> findRecordsWithFollowUpBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+                                                                                                            
        
        // Busca historiales con seguimiento vencido
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.proximaCita IS NOT NULL AND " +
-                 "h.proximaCita < CURRENT_TIMESTAMP")
-       List<HistorialMedicoEntity> findOverdueFollowUps();
-         // ===============================================================
-       // SECCIÓN 6: CONSULTAS COMBINADAS
-       // ===============================================================
+                 "h.proximaCita < CURRENT_TIMESTAMP")       List<HistorialMedicoEntity> findOverdueFollowUps();
+       
+       // Consultas combinadas
        
        // Busca historiales de un paciente en un rango de fechas
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.paciente.id = :patientId AND " +
                  "DATE(h.fechaVisita) BETWEEN :startDate AND :endDate " +
                  "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findPatientRecordsByDateRange(@Param("patientId") Long patientId,
-                                                                                                           @Param("startDate") LocalDate startDate,
-                                                                                                           @Param("endDate") LocalDate endDate);
+       List<HistorialMedicoEntity> findPatientRecordsByDateRange(@Param("patientId") Long patientId, @Param("endDate") LocalDate endDate);
+                                                                                                           
+                                                                                                           
        
        // Busca historiales de un médico en un rango de fechas
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.medico.id = :doctorId AND " +
                  "DATE(h.fechaVisita) BETWEEN :startDate AND :endDate " +
-                 "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findDoctorRecordsByDateRange(@Param("doctorId") Long doctorId,
-                                                                                                          @Param("startDate") LocalDate startDate,
-                                                                                                          @Param("endDate") LocalDate endDate);
-         // ===============================================================
-       // SECCIÓN 7: ÚLTIMOS REGISTROS
-       // ===============================================================
+                 "ORDER BY h.fechaVisita DESC")       
+                 List<HistorialMedicoEntity> findDoctorRecordsByDateRange(@Param("doctorId") Long doctorId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+                                                                                                          
+                                                                                                          
+       
+       // Últimos registros
        
        // Obtiene los últimos registros de un paciente con paginación
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
@@ -149,11 +139,10 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        
        // Obtiene los registros más recientes del sistema
        @Query("SELECT h FROM HistorialMedicoEntity h " +
-                 "ORDER BY h.fechaVisita DESC")
-       List<HistorialMedicoEntity> findRecentRecords(Pageable pageable);
-         // ===============================================================
-       // SECCIÓN 8: ESTADÍSTICAS
-       // ===============================================================
+                 "ORDER BY h.fechaVisita DESC")       
+                 List<HistorialMedicoEntity> findRecentRecords(Pageable pageable);
+       
+       // Estadísticas
        
        // Cuenta el total de historiales médicos
        @Query("SELECT COUNT(h) FROM HistorialMedicoEntity h")
@@ -166,8 +155,8 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        // Cuenta historiales médicos en un rango de fechas
        @Query("SELECT COUNT(h) FROM HistorialMedicoEntity h WHERE " +
                  "DATE(h.fechaVisita) BETWEEN :startDate AND :endDate")
-       long countRecordsByDateRange(@Param("startDate") LocalDate startDate, 
-                                                         @Param("endDate") LocalDate endDate);
+       long countRecordsByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+                                                        
        
        // Cuenta historiales médicos agrupados por médico
        @Query("SELECT h.medico.id, COUNT(h) FROM HistorialMedicoEntity h " +
@@ -182,11 +171,10 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        long countOverdueFollowUps();
        
        // Cuenta historiales creados después de una fecha
-       @Query("SELECT COUNT(h) FROM HistorialMedicoEntity h WHERE h.fechaCreacion >= :date")
+       @Query("SELECT COUNT(h) FROM HistorialMedicoEntity h WHERE h.fechaCreacion >= :date")       
        long countRecordsCreatedAfter(@Param("date") LocalDateTime date);
-         // ===============================================================
-       // SECCIÓN 9: DIAGNÓSTICOS MÁS COMUNES
-       // ===============================================================
+       
+       // Diagnósticos más comunes
        
        // Encuentra los diagnósticos más comunes desde una fecha específica
        @Query("SELECT h.diagnostico, COUNT(h) FROM HistorialMedicoEntity h " +
@@ -198,38 +186,34 @@ public interface HistorialMedicoJpaRepository extends JpaRepository<HistorialMed
        // Cuenta todos los diagnósticos ordenados por frecuencia
        @Query("SELECT h.diagnostico, COUNT(h) FROM HistorialMedicoEntity h " +
                  "GROUP BY h.diagnostico " +
-                 "ORDER BY COUNT(h) DESC")
-       List<Object[]> findAllDiagnosesCount(Pageable pageable);
-         // ===============================================================
-       // SECCIÓN 10: CONSULTAS POR TRATAMIENTO
-       // ===============================================================
+                 "ORDER BY COUNT(h) DESC")       
+                 List<Object[]> findAllDiagnosesCount(Pageable pageable);
+       
+       // Consultas por tratamiento
        
        // Busca historiales que contengan un tratamiento específico
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.tratamiento IS NOT NULL AND " +
-                 "LOWER(h.tratamiento) LIKE LOWER(CONCAT('%', :treatment, '%'))")
-       List<HistorialMedicoEntity> findByTreatmentContaining(@Param("treatment") String treatment);
-         // ===============================================================
-       // SECCIÓN 11: CONSULTAS POR OBSERVACIONES
-       // ===============================================================
+                 "LOWER(h.tratamiento) LIKE LOWER(CONCAT('%', :treatment, '%'))")       
+                 List<HistorialMedicoEntity> findByTreatmentContaining(@Param("treatment") String treatment);
+       
+       // Consultas por observaciones
        
        // Busca historiales que contengan observaciones específicas
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +
                  "h.observaciones IS NOT NULL AND " +
-                 "LOWER(h.observaciones) LIKE LOWER(CONCAT('%', :observations, '%'))")
-       List<HistorialMedicoEntity> findByObservationsContaining(@Param("observations") String observations);
-         // ===============================================================
-       // SECCIÓN 12: HISTORIAL COMPLETO DEL PACIENTE
-       // ===============================================================
+                 "LOWER(h.observaciones) LIKE LOWER(CONCAT('%', :observations, '%'))")       
+                 List<HistorialMedicoEntity> findByObservationsContaining(@Param("observations") String observations);
+       
+       // Historial completo del paciente
        
        // Obtiene el historial completo de un paciente ordenado cronológicamente
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +           
                  "h.paciente.id = :patientId " +
-                 "ORDER BY h.fechaVisita ASC")
-       List<HistorialMedicoEntity> findCompletePatientHistory(@Param("patientId") Long patientId);
-         // ===============================================================
-       // SECCIÓN 13: CONSULTAS POR ESPECIALIZACIÓN DEL MÉDICO
-       // ===============================================================
+                 "ORDER BY h.fechaVisita ASC")       
+                 List<HistorialMedicoEntity> findCompletePatientHistory(@Param("patientId") Long patientId);
+       
+       // Consultas por especialización del médico
        
        // Busca historiales por especialización médica ordenados por fecha
        @Query("SELECT h FROM HistorialMedicoEntity h WHERE " +

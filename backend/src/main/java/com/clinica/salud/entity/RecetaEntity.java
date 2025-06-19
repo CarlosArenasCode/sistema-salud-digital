@@ -15,12 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RecetaEntity {
-    
-    @Id
+      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Identificador único de la receta
       
-    // ==================== RELACIONES ====================
+    // Relaciones
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_paciente", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "recetas"})
@@ -37,11 +36,10 @@ public class RecetaEntity {
     private MedicamentoEntity medicamento; // Medicamento prescrito
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_historial")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "id_historial")    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private HistorialMedicoEntity historialMedico; // Historial médico asociado (opcional)
     
-    // ==================== DATOS DE LA RECETA ====================
+    // Datos de la Receta
     @NotBlank(message = "La dosis es obligatoria")
     @Column(name = "dosis", nullable = false)
     private String dosis; // Cantidad de medicamento por toma
@@ -69,10 +67,9 @@ public class RecetaEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")
-    @Builder.Default
-    private EstadoReceta estado = EstadoReceta.ACTIVA; // Estado actual de la receta
+    @Builder.Default    private EstadoReceta estado = EstadoReceta.ACTIVA; // Estado actual de la receta
     
-    // ==================== AUDITORÍA ====================
+    // Auditoria
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion; // Timestamp de creación del registro
     
@@ -92,22 +89,20 @@ public class RecetaEntity {
     }
     
     @PreUpdate
-    protected void onUpdate() {
-        fechaActualizacion = LocalDateTime.now(); // Actualiza timestamp en cada modificación
+    protected void onUpdate() {        fechaActualizacion = LocalDateTime.now(); // Actualiza timestamp en cada modificación
     }
     
-    // ==================== MÉTODOS DE NEGOCIO ====================
+    // Metodos de Negocio
     // Verifica si la receta ha vencido según su fecha de vencimiento
     public boolean isVencida() {
         return fechaVencimientoReceta != null && fechaVencimientoReceta.isBefore(LocalDate.now());
     }
     
     // Verifica si la receta está activa y no ha vencido
-    public boolean isActiva() {
-        return estado == EstadoReceta.ACTIVA && !isVencida();
+    public boolean isActiva() {        return estado == EstadoReceta.ACTIVA && !isVencida();
     }
     
-    // ==================== ENUM PARA ESTADO ====================
+    // Enum para Estado
     public enum EstadoReceta {
         ACTIVA, // Receta válida y no dispensada
         DISPENSADA, // Receta completamente dispensada

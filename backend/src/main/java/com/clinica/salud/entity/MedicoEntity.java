@@ -17,20 +17,19 @@ import java.time.LocalDateTime;
 @Builder
 @EqualsAndHashCode(callSuper = false)
 public class MedicoEntity {
-      //--------------------------------------------------------------------------
-    // IDENTIFICADORES
-    //--------------------------------------------------------------------------
+
+    // Identifidadores
+
     // Clave primaria autoincremental
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    // Referencia al usuario asociado con el médico
-    @Column(name = "id_usuario")
+      // Referencia al usuario asociado con el médico (opcional)
+    @Column(name = "id_usuario", nullable = true)
     private Long idUsuario;
-      //--------------------------------------------------------------------------
-    // DATOS PERSONALES
-    //--------------------------------------------------------------------------
+
+    // Datos personales
+
     // Nombres del médico (obligatorio, máx 100 caracteres)
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 100, message = "Los nombres no pueden exceder 100 caracteres")
@@ -53,9 +52,9 @@ public class MedicoEntity {
     @Size(max = 100, message = "El email no puede exceder 100 caracteres")
     @Column(name = "email", length = 100)
     private String email;
-      //--------------------------------------------------------------------------
-    // INFORMACIÓN PROFESIONAL
-    //--------------------------------------------------------------------------
+
+    // Informacion profecional
+
     // Área de especialización médica (obligatorio, máx 100 caracteres)
     @NotBlank(message = "La especialización es obligatoria")
     @Size(max = 100, message = "La especialización no puede exceder 100 caracteres")
@@ -81,9 +80,9 @@ public class MedicoEntity {
     // Fecha de graduación universitaria
     @Column(name = "fecha_graduacion")
     private LocalDate fechaGraduacion;
-      //--------------------------------------------------------------------------
-    // INFORMACIÓN DE CONSULTA Y DISPONIBILIDAD
-    //--------------------------------------------------------------------------
+
+    // Información de consulta
+
     // Costo por consulta médica (no negativo, hasta 10 dígitos con 2 decimales)
     @DecimalMin(value = "0.0", message = "La tarifa de consulta no puede ser negativa")
     @Column(name = "tarifa_consulta", precision = 10, scale = 2)
@@ -103,9 +102,9 @@ public class MedicoEntity {
     @Size(max = 50, message = "El consultorio no puede exceder 50 caracteres")
     @Column(name = "consultorio", length = 50)
     private String consultorio;
-      //--------------------------------------------------------------------------
-    // DATOS DE CONTROL
-    //--------------------------------------------------------------------------
+
+    // Datos de control
+
     // Estado del médico en el sistema (activo por defecto)
     @Builder.Default
     @Column(name = "activo")
@@ -117,17 +116,16 @@ public class MedicoEntity {
     
     // Fecha y hora de última actualización del registro
     @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;      //--------------------------------------------------------------------------
-    // RELACIONES
-    //--------------------------------------------------------------------------    
+    private LocalDateTime fechaActualizacion;     
+    
+    // Relaciones
+    
     // Relación con UsuarioEntity (carga eager, excluye contraseña en JSON)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "contrasena"})
     private UsuarioEntity usuario;
-      //--------------------------------------------------------------------------
-    // MÉTODOS DE CICLO DE VIDA
-    //--------------------------------------------------------------------------
+
     // Ejecutado automáticamente antes de persistir la entidad
     @PrePersist
     protected void onCreate() {
@@ -140,9 +138,7 @@ public class MedicoEntity {
     protected void onUpdate() {
         fechaActualizacion = LocalDateTime.now();
     }
-      //--------------------------------------------------------------------------
-    // MÉTODOS UTILITARIOS
-    //--------------------------------------------------------------------------
+
     // Concatena nombres y apellidos para obtener el nombre completo
     public String getNombreCompleto() {
         return nombres + " " + apellidos;

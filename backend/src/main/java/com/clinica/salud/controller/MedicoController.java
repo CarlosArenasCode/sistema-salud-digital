@@ -21,11 +21,23 @@ public class MedicoController {
     @GetMapping
     public List<MedicoEntity> getAll() {
         return repository.findAll();    }
-    
-    // Endpoint GET /medicos/{id} - Busca médico específico por ID
+      // Endpoint GET /medicos/{id} - Busca médico específico por ID
     @GetMapping("/{id}")
     public MedicoEntity getById(@PathVariable Long id) {
         return repository.findById(id).orElse(null);    }
+    
+    // Endpoint POST /medicos - Crea nuevo médico
+    @PostMapping
+    public MedicoEntity create(@RequestBody MedicoEntity medico) {
+        return repository.save(medico);
+    }
+    
+    // Endpoint PUT /medicos/{id} - Actualiza médico existente
+    @PutMapping("/{id}")
+    public MedicoEntity update(@PathVariable Long id, @RequestBody MedicoEntity medico) {
+        medico.setId(id);
+        return repository.save(medico);
+    }
       // Endpoint DELETE /medicos/{id} - Elimina médico por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

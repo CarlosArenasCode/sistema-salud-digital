@@ -78,4 +78,4 @@ spring:
   # Configuración de inicialización de scripts SQL
   sql:
     init:
-      mode: never  # Desactivado porque se gestionará manualmente
+      mode: never # Desactiva la inicialización automática de scripts SQL
